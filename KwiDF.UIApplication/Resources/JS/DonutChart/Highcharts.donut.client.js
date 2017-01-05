@@ -38,7 +38,7 @@ function renderCore(sfdata) {
     indexdata = [];
     indicesarray = [];
     indicesarrayobject = [];
-    //markedAssets = [];
+    markedAssets = [];
     var seriesData = [];
     var DateValue = new Date(sfdata.config.DateFilter);
     var DateValueFormatted = DateValue.valueOf();
@@ -85,6 +85,7 @@ function renderCore(sfdata) {
 
         assetArray = [];
         seriesData = [];
+        markedAssets = [];
         for (i = 0; i < actualData.length; i++) {
             if (sfdata.config.FilteredCategory != undefined && sfdata.config.FilteredCategory != "") {
                 if (sfdata.config.FilteredCategory == actualData[i].items[0]) {
@@ -99,7 +100,7 @@ function renderCore(sfdata) {
                     indicesarrayobject.push(indicesobject);
                     targetData.push(actualData[i].items[3]);
                     if (actualData[i].hints.marked != undefined && actualData[i].hints.marked) {
-                        //markedAssets.push(actualData[i].items[1]);
+                        markedAssets.push(actualData[i].items[1]);
                     }
                 }
             }
@@ -110,7 +111,7 @@ function renderCore(sfdata) {
 
                 //log(actualData[i].hints.marked);
                 if (actualData[i].hints.marked != undefined && actualData[i].hints.marked) {
-                    //markedAssets.push(actualData[i].items[1]);
+                    markedAssets.push(actualData[i].items[1]);
                 }
 
                 indexdata.push(actualData[i].hints.index);
@@ -242,45 +243,58 @@ function createCustomControl(renderObject, Title, data) {
 
     // var chartVal = Highcharts.chart('js_chart', options);
     var chartVal = new Highcharts.Chart(options);
-    //log("markedAssets" + markedAssets[0]);
+    log("MarkedAssets Length-" + markedAssets.length);
     if (markedAssets != undefined && markedAssets.length > 0) {
+        for (j = 0; j < markedAssets.length; j++) {
+            for (i = 0; i < chartVal.series[0].data.length; i++) {
+                //color = convertHex(chartVal.series[0].data[i].color, 100);
+                //chartVal.series[0].data[i].update({ color: color });
+                if (chartVal.series[0].data[i].name == markedAssets[j]) {
+                    if (chartVal.series[0].data[i].color.indexOf("#") != -1) {
+                        color = convertHex(chartVal.series[0].data[i].color, 100);;
+
+                        //log("color after marking" + color)
+                        chartVal.series[0].data[i].update({ color: color });
+                    }
+
+                    else {
+                        if (chartVal.series[0].data[i].color.indexOf("rgba") != -1)
+
+                            color = chartVal.series[0].data[i].color;
+                        color = color.replace(/[^,]+(?=\))/, '1');
+                        chartVal.series[0].data[i].update({ color: color });
+                    }
+                }
+                else
+                {
+                    if (chartVal.series[0].data[i].color.indexOf("#") != -1) {
+                        color = convertHex(chartVal.series[0].data[i].color, 50);
+                        //log("ColorCode:"+color);
+                        chartVal.series[0].data[i].update({ color: color });
+                    }
+                    else {
+                        if (chartVal.series[0].data[i].color.indexOf("rgba") != -1)
+
+                            color = chartVal.series[0].data[i].color;
+                        color = color.replace(/[^,]+(?=\))/, '0.9');
+                        chartVal.series[0].data[i].update({ color: color });
+                    }
+                }
+            }
+
+        }
 
 
+        /*
         for (i = 0; i < chartVal.series[0].data.length; i++) {
             //log(chartVal.series[0].data.length);
             //log(Title);
 
             var marked = false;
             var flag = true;
-            for (j = 0; j < markedAssets.length; j++) {
-                //log("MarkedAssetValue"+markedAssets[j]);
-                //log("ChartValue"+chartVal.series[0].data[i].name);
-                //log("thisChartValue"+this.chartVal.series[0].data[i].name);
-                if (chartVal.series[0].data[i].name == markedAssets[j]) {
-                    //chartVal.series[0].data[i].opacity='0.25';
-                    //this.chartVal.series[i].data[0].update({ color: 'red' });
-
+            for (j = 0; j < markedAssets.length; j++) {             
+                if (chartVal.series[0].data[i].name == markedAssets[j]) {                   
                     marked = true;
-
-                    //this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)', borderColor: '#fff' });
-                    //chartVal.series[0].data[i].setState('hover');
-                    //chartVal.series[0].data[i].update({ color: '#80FF0000', borderColor: '#fff' });
-
-                    //chartVal.series[0].fillOpacity= '0.1';
-                    //log("Chart value matched(IF)");
-                    //log("DefaultColor:"+chartVal.series[0].data[i].color);
-                    //chartVal.series[0].data[i].update({ setState: 'hover' });
-                    /*if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
-						
-						                        this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)', borderColor: '#fff' });
-
-                    } 
-					
-else {
-						
-						                        this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)', borderColor: '#fff' });
-
-                    }*/
                     var color = "";
                     if (chartVal.series[0].data[i].color.indexOf("#") != -1) {
                         color = convertHex(chartVal.series[0].data[i].color, 100);;
@@ -307,15 +321,7 @@ else {
 
                 else if (!marked) {
                     debugger;
-                    //chartVal.series[0].data[i].color.opacity=1;
-
-                    //chartVal.series[0].data[i].update({ color: '#80FF0000', borderColor: '#fff' });
-                    //chartVal.series[0].data[i].update({ setState: '' });
-
-
-                    //  if (this.chartVal.series[0].data[i].y >= this.chartVal.series[0].data[i].y) {
-                    //this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 0.3)' });
-                    //log("ColorHexCode:"+chartVal.series[0].data[i].color);
+                    
                     if (chartVal.series[0].data[i].color.indexOf("#") != -1) {
                         color = convertHex(chartVal.series[0].data[i].color, 50);
                         //log("ColorCode:"+color);
@@ -327,32 +333,17 @@ else {
                             color = chartVal.series[0].data[i].color;
                         color = color.replace(/[^,]+(?=\))/, '0.9');
                         chartVal.series[0].data[i].update({ color: color });
-                    }
-
-
-                    //log("Chart value matched(ELSE)");
-
-
-                    // } 
-
-                    /*else {
-                         
-                                                 this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 0.3)' });
- 
-                     }*/
-                    //this.chartVal.series[0].data[i].update({ color: '#294251' });
+                    }                    
                 }
             }
-        }
+        }*/
     }
     else {
-
+        for (i = 0; i < chartVal.series[0].data.length; i++) {
+            color = convertHex(chartVal.series[0].data[i].color, 100);
+            chartVal.series[0].data[i].update({ color: color });
+        }
     }
-    //$("#js_chart .highcharts-container").after("<span class='dataLabels'>"+totalCount+"</span>");
-
-
-    //chartVal = new Highcharts.Chart(options);
-    //setInterval(chartFunction(chartVal, actualValue), 500);
 
 }
 
@@ -412,6 +403,3 @@ function convertHex(hex, opacity) {
 // 
 // #endregion Resizing Code
 //////////////////////////////////////////////////////////////////////////////
-
-
-

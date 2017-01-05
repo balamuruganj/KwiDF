@@ -65,6 +65,7 @@
     <Content Include="Resources\CSS\Highcharts.donut.css" />
     <Content Include="Resources\CSS\Highcharts.Gauge.css" />
     <Content Include="Resources\CSS\Highcharts.KPI.css" />
+    <Content Include="Resources\fonts\fontawesome-webfont.svg" />
     <Content Include="Resources\JS\Bullet Chart\Highcharts.bar.client.js" />
     <Content Include="Resources\JS\Common\CheckboxChartFilter.js" />
     <Content Include="Resources\JS\Common\CheckBoxFilter.js" />
@@ -93,6 +94,11 @@
   <ItemGroup>
     <Content Include="DXPs\OS Page 1and2_IISS.dxp" />
     <Content Include="DXPs\OS Page 3and4_IISS.dxp" />
+    <Content Include="Resources\fonts\fontawesome-webfont.eot" />
+    <Content Include="Resources\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Resources\fonts\fontawesome-webfont.woff" />
+    <Content Include="Resources\fonts\fontawesome-webfont.woff2" />
+    <Content Include="Resources\fonts\FontAwesome.otf" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
