@@ -49,3 +49,5 @@
       
   FROM [ProdOps].[dbo].[OS_Manager_Overview] WHERE DATE ='01-27-2016'  AND [ReservoirPotential] IS NOT NULL
   GROUP BY FIELD, DATE
+
+  --
