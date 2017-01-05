@@ -60,6 +60,7 @@
   <ItemGroup>
     <Content Include="DB Test Scripts\OS\OSPage 3and4.sql" />
     <Content Include="DB Test Scripts\OS\OS_Page 1and2.sql" />
+    <Content Include="DB Test Scripts\OS\OS_Page5.sql" />
     <Content Include="Resources\CSS\font-awesome.css" />
     <Content Include="Resources\CSS\Highcharts.bar.css" />
     <Content Include="Resources\CSS\Highcharts.donut.css" />
