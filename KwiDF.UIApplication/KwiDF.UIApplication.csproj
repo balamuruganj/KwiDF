@@ -100,6 +100,9 @@
     <Content Include="Resources\fonts\fontawesome-webfont.woff" />
     <Content Include="Resources\fonts\fontawesome-webfont.woff2" />
     <Content Include="Resources\fonts\FontAwesome.otf" />
+    <Content Include="Resources\web.config" />
+    <Content Include="Test Pages\web.config" />
+    <None Include="Properties\PublishProfiles\IIS.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

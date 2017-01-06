@@ -408,8 +408,8 @@ $("header .target-holder", drawChart).append("<div>Target :</div><div>" + target
         }
 		
 		//TopColor
-		log("lastTopData -"+lastTopData);
-		log("lastTargetData -"+lastTargetData);
+		//log("lastTopData -"+lastTopData);
+		//log("lastTargetData -"+lastTargetData);
       if (lastTopData > lastTargetData) {
             $(".smallSection header").addClass('green');
 			$(".smallSection header").removeClass('yellow');
