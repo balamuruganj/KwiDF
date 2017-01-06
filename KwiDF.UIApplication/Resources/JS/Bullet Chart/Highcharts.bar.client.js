@@ -67,7 +67,10 @@ function renderCore(sfdata) {
         if (sfdata.config.FilteredCategory != undefined && sfdata.config.FilteredCategory != "") {
             if (sfdata.config.FilteredCategory == actualData[i].items[0]) {
                 assetArray.push([actualData[i].items[1]]);
-                data.push(actualData[i].items[2]);
+                //data.push(actualData[i].items[2]);
+                //data.push(actualData[i].items[2] & "," & actualData[i].items[3]);
+
+                data.push({ y: actualData[i].items[2], target: actualData[i].items[3], actual: actualData[i].items[2] });
 
                 indexdata.push(actualData[i].hints.index);
                 indicesobject = {};
@@ -75,7 +78,8 @@ function renderCore(sfdata) {
                 indicesobject.Asset = actualData[i].items[1];
                 indicesobject.marked = actualData[i].hints.marked != undefined ? actualData[i].hints.marked : false;
                 indicesarrayobject.push(indicesobject);
-                targetData.push(actualData[i].items[3]);
+                targetData.push({ y: actualData[i].items[3], actual: actualData[i].items[2], target: actualData[i].items[3] });
+
                 if (actualData[i].hints.marked != undefined && actualData[i].hints.marked) {
                     markedAssets.push(actualData[i].items[1]);
                 }
@@ -93,8 +97,10 @@ function renderCore(sfdata) {
 
             indexdata.push(actualData[i].hints.index);
             assetArray.push([actualData[i].items[1]]);
-            data.push(actualData[i].items[2]);
-            targetData.push(actualData[i].items[3]);
+            //data.push(actualData[i].items[2] & "," & actualData[i].items[3]);
+            data.push({ y: actualData[i].items[2], target: actualData[i].items[3], actual: actualData[i].items[2] });
+            //targetData.push(actualData[i].items[3]);
+            targetData.push({ y: actualData[i].items[3], actual: actualData[i].items[2], target: actualData[i].items[3] });
         }
     }
     series =
@@ -199,12 +205,12 @@ function renderCore(sfdata) {
 
                     for (var i = 0; i < this.series[0].data.length; i++) {
                         if (this.series[1].data[i].y >= this.series[0].data[i].y) {
-							                            this.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)' });
+                            this.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)' });
 
-							
+
                         } else {
-							
-							                            this.series[0].data[i].update({ color: 'rgba(31, 174, 57,1)' });
+
+                            this.series[0].data[i].update({ color: 'rgba(31, 174, 57,1)' });
 
                         }
                         //this.series[0].data[i].update({ color: '#26a2ed' }, true, false);
@@ -266,7 +272,8 @@ function renderCore(sfdata) {
             //shared: true
             formatter: function () {
                 debugger;
-                return this.series.name + ": <strong>" + Highcharts.numberFormat(this.y, 2) + "</strong><br></br> Field: <strong>" + this.x + "</strong>"
+
+                return "Field: <strong>" + this.x + "</strong>" + "<br /> Target: <strong>" + Highcharts.numberFormat(this.point.target, 2) + "</strong><br/>" + "Actual" + ": <strong>" + Highcharts.numberFormat(this.point.actual, 2) + "</strong><br/>";
                 ;
             }
         },
@@ -316,11 +323,11 @@ function renderCore(sfdata) {
 
     for (i = 0; i < chartVal.series[0].data.length; i++) {
         if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
-			            this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)' });
+            this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)' });
 
         } else {
-			
-			            this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57,1)' });
+
+            this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57,1)' });
 
         }
     }
@@ -339,12 +346,12 @@ function renderCore(sfdata) {
 
                     marked = true;
                     if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
-						
-						                        this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)', borderColor: '#fff' });
+
+                        this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)', borderColor: '#fff' });
 
                     } else {
-						
-						                        this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)', borderColor: '#fff' });
+
+                        this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)', borderColor: '#fff' });
 
                     }
                     debugger;
@@ -355,11 +362,11 @@ function renderCore(sfdata) {
                     debugger;
 
                     if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
-						                        this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 0.3)' });
+                        this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 0.3)' });
 
                     } else {
-						
-						                        this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 0.3)' });
+
+                        this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 0.3)' });
 
                     }
                     //this.chartVal.series[0].data[i].update({ color: '#294251' });

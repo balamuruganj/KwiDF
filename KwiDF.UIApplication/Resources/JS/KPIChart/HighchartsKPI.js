@@ -9,23 +9,23 @@
             updateColor();
             //assignDocPropertyValue(0);
             setDocumentProperty("RefreshKPI", "false");
-			setDocumentProperty("RefreshKPIGC", "false");
-			setDocumentProperty("RefreshKPIEP", "false");
+            setDocumentProperty("RefreshKPIGC", "false");
+            setDocumentProperty("RefreshKPIEP", "false");
             // runScript("DynamicProductionCategory", [{ "Key": "colName", "Value": "Sum([" + configData.FilteredCategory[0] + "])"+ ","+ "Sum([" + configData.FilteredCategory[1] + "])" }, { "Key": "isDelete", "Value": 0 }]);
-			var actual=actualVal + ' as ' + actualDisplay;
-			var target=targetVal + ' as ' + targetDisplay;
-            runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": actual }, { "Key": "targetValue", "Value": target },{ "Key": "isDelete", "Value": 0 }]);
+            var actual = actualVal + ' as ' + actualDisplay;
+            var target = targetVal + ' as ' + targetDisplay;
+            runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": actual }, { "Key": "targetValue", "Value": target }, { "Key": "isDelete", "Value": 0 }]);
         } else {
             $(".overlay", $(this)).hide();
             updateColor();
-           // assignDocPropertyValue(1);
+            // assignDocPropertyValue(1);
             setDocumentProperty("RefreshKPI", "false");
-			setDocumentProperty("RefreshKPIGC", "false");
-			setDocumentProperty("RefreshKPIEP", "false");
+            setDocumentProperty("RefreshKPIGC", "false");
+            setDocumentProperty("RefreshKPIEP", "false");
             //runScript("DynamicProductionCategory", [{ "Key": "colName", "Value": "Sum([" + configData.FilteredCategory[0] + "])"+ ","+ "Sum([" + configData.FilteredCategory[1] + "])" }, { "Key": "isDelete", "Value": 1 }]);
-			var actual=actualVal + ' as ' + actualDisplay;
-			var target=targetVal + ' as ' + targetDisplay;
-             runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": actual }, { "Key": "targetValue", "Value": target },{ "Key": "isDelete", "Value": 1 }]);
+            var actual = actualVal + ' as ' + actualDisplay;
+            var target = targetVal + ' as ' + targetDisplay;
+            runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": actual }, { "Key": "targetValue", "Value": target }, { "Key": "isDelete", "Value": 1 }]);
         }
     });
 
@@ -103,26 +103,26 @@ var actualVal = "";
 var targetVal = "";
 var maxValue;
 var minValue;
-var selectedCategoryActual="";
-var selectedCategoryTarget="";
+var selectedCategoryActual = "";
+var selectedCategoryTarget = "";
 function renderCore(sfdata) {
     //log("RefreshKPI" + "-" + sfdata.config.RefreshKPI);
-  
+
     var DateValue = new Date(sfdata.config.DateFilter);
     var DateValueFormatted = DateValue.valueOf();
     var nextDate = DateValue;
     var numberOfDaysToAdd = 1;
     nextDate.setDate(nextDate.getDate() + numberOfDaysToAdd);
     var nextDateValueFormatted = nextDate.valueOf();
-		actualVal=sfdata.config.ColumnName[0];
-		targetVal=sfdata.config.ColumnName[1];
-		actualDisplay=sfdata.config.DisplayName[0];
-		targetDisplay=sfdata.config.DisplayName[1];
+    actualVal = sfdata.config.ColumnName[0];
+    targetVal = sfdata.config.ColumnName[1];
+    actualDisplay = sfdata.config.DisplayName[0];
+    targetDisplay = sfdata.config.DisplayName[1];
     if (sfdata.config.RefreshKPI == "true") {
-		
-		 selectedCategoryActual = sfdata.config.CategoryConditionActual;
-   selectedCategoryTarget = sfdata.config.CategoryConditionTarget;
-   // log("selectedActual -" + selectedCategoryActual)
+
+        selectedCategoryActual = sfdata.config.CategoryConditionActual;
+        selectedCategoryTarget = sfdata.config.CategoryConditionTarget;
+        // log("selectedActual -" + selectedCategoryActual)
         configData = sfdata.config;
         var actualData = sfdata.data;
         actualData = actualData.filter(function (el) {
@@ -132,11 +132,11 @@ function renderCore(sfdata) {
             return el.items[0].replace("/Date(", "").replace(")/", "") <= DateValueFormatted;
 
         });
-	
+
         colName = sfdata.columns[2];
         columnsArray = sfdata.columns;
-		actualVal=sfdata.columns[2];
-		targetVal=sfdata.columns[3];
+        actualVal = sfdata.columns[2];
+        targetVal = sfdata.columns[3];
         var series = {};
         var processed_json = new Array();
         data = [];
@@ -201,26 +201,35 @@ function renderCore(sfdata) {
             }
 
             if (lastTopData > lastTargetData) {
-                maxValue = lastTopData + ((20 / 100) * lastTopData);
+
                 if (lastTargetData < 0) {
-                    minValue = lastTargetData - ((20 / 100) * lastTargetData);
+                    minValue = lastTargetData + ((20 / 100) * lastTargetData);
                 }
                 else {
                     minValue = 0;
                 }
+                if (lastTopData < 0)
+                    maxValue = lastTopData - ((20 / 100) * lastTopData);
+                else
+                    maxValue = lastTopData + ((20 / 100) * lastTopData);
             }
             else {
-                maxValue = lastTargetData + ((20 / 100) * lastTargetData);
+
                 if (lastTopData < 0) {
-                    minValue = lastTopData - ((20 / 100) * lastTopData);
+                    minValue = lastTopData + ((20 / 100) * lastTopData);
                 }
                 else {
                     minValue = 0;
                 }
+                if (lastTargetData < 0)
+                    maxValue = lastTargetData - ((20 / 100) * lastTargetData);
+                else
+                    maxValue = lastTargetData + ((20 / 100) * lastTargetData);
+
             }
 
-           // log("MaxValue-" + maxValue);
-           // log("MinValue-" + minValue);
+            // log("MaxValue-" + maxValue);
+            // log("MinValue-" + minValue);
 
         }
         else {
@@ -231,39 +240,38 @@ function renderCore(sfdata) {
             lastTopData = 0;
         }
         var chartObj = $("#js_chart");
-		if (selectedCategoryActual != "" && selectedCategoryActual != undefined) {            
+        if (selectedCategoryActual != "" && selectedCategoryActual != undefined) {
             if (selectedCategoryActual.indexOf(sfdata.columns[2]) > -1) {
                 kpiactive = true;
-				
+
             }
             else {
                 kpiactive = false;
             }
         }
-		else
-		{
-			kpiactive = false;
-		}
-		
-			
+        else {
+            kpiactive = false;
+        }
+
+
         if ($('.wrapper', chartObj).length == 0) {
             $(chartObj).wrapInner("<div class='wrapper'/>");
             var drawChart = $('.wrapper', chartObj);
 
             $(drawChart).addClass("smallSection");
-			
-			
-		
+
+
+
             $(drawChart).append("<header/>");
             $(drawChart).append("<section class='chartHolder' id='chartHolder'/>");
             $(drawChart).append("<section class='gaugeHolder' id='gaugeHolder'/>");
-            
+
 
 
 
             $("header", drawChart).append("<h2>" + sfdata.config.lableText + " <span>" + sfdata.config.UOMText + "</span></h2>").append("<p>" + topValue + "</p>");
-$("header", drawChart).append("<div class='target-holder'/>");
-$("header .target-holder", drawChart).append("<div>Target :</div><div>" + targetValue + "</div>");
+            $("header", drawChart).append("<div class='target-holder'/>");
+            $("header .target-holder", drawChart).append("<div>Target</div><div>" + targetValue + "</div>");
 
             $(drawChart).append("<footer/>");
             $("footer", drawChart).append("<span class='up'>" + bottomValue + "</span>");
@@ -332,13 +340,13 @@ $("header .target-holder", drawChart).append("<div>Target :</div><div>" + target
 
                 lineWidth: 1,
                 opposite: true,
-
+                lineColor: '#fff',
                 labels: {
                     enabled: true,
                     align: 'left',
                     x: 5,
                     style: {
-                        //color: '#fff'
+                        color: '#fff'
                     }
                 },
 
@@ -347,7 +355,7 @@ $("header .target-holder", drawChart).append("<div>Target :</div><div>" + target
 
                 title: {
                     enabled: false,
-                    text: 'Temperature (°C)'
+                    text: ''
                 }
 
             }, ],
@@ -383,15 +391,15 @@ $("header .target-holder", drawChart).append("<div>Target :</div><div>" + target
         //log(bottomData);
         //bottomVal = numberWithCommas(bottomData);
         $("footer span").html(bottomValue);
-		$("header .target-holder").html("<div>Target :</div><div>" + targetValue + "</div>");
-		//bottomColor
-		
-          if (bottomData < 0) {
+        $("header .target-holder").html("<div>Target</div><div>" + targetValue + "</div>");
+        //bottomColor
+
+        if (bottomData < 0) {
             $(".smallSection span").addClass("down");
             $(".smallSection span").removeClass("up");
             $(".smallSection span").removeClass("neutral");
             $(".smallSection header").addClass('red');
-			
+
         }
         else if (bottomData == 0) {
             $(".smallSection span").addClass("neutral");
@@ -406,58 +414,55 @@ $("header .target-holder", drawChart).append("<div>Target :</div><div>" + target
 
 
         }
-		
-		//TopColor
-		//log("lastTopData -"+lastTopData);
-		//log("lastTargetData -"+lastTargetData);
-      if (lastTopData > lastTargetData) {
+
+        //TopColor
+        if (lastTopData > lastTargetData) {
             $(".smallSection header").addClass('green');
-			$(".smallSection header").removeClass('yellow');
-			$(".smallSection header").removeClass('red');
-		
+            $(".smallSection header").removeClass('yellow');
+            $(".smallSection header").removeClass('red');
+
         }
         else if (lastTopData < lastTargetData) {
             $(".smallSection header").addClass('red');
-			$(".smallSection header").removeClass('yellow');
-			$(".smallSection header").removeClass('green');			
+            $(".smallSection header").removeClass('yellow');
+            $(".smallSection header").removeClass('green');
         }
-        else if (lastTopData == lastTargetData){
+        else if (lastTopData == lastTargetData) {
             $(".smallSection header").addClass('yellow');
-			$(".smallSection header").removeClass('red');
-			$(".smallSection header").removeClass('green');
-			
+            $(".smallSection header").removeClass('red');
+            $(".smallSection header").removeClass('green');
+
         }
         chooseSelection();
         //  wait ( sfdata.wait, sfdata.static ); 
         checkNoData();
-		//log("kpiActive - " + kpiactive);
-	
-		var smallSecObj= $('.smallSection', drawChart);
-	
-			if(kpiactive)
-			{
-			
-			$('.wrapper', chartObj).addClass('selected');
-			$(".overlay", chartObj).show();
-			//log("KPI Style Selected added-"+kpiactive);
-			}
-			else{
-			$('.wrapper', chartObj).removeClass('selected');
-			$(".overlay", chartObj).hide();
-			//log("KPI Style Selected removed-"+kpiactive);
-			}
+        //log("kpiActive - " + kpiactive);
+
+        var smallSecObj = $('.smallSection', drawChart);
+
+        if (kpiactive) {
+
+            $('.wrapper', chartObj).addClass('selected');
+            $(".overlay", chartObj).show();
+            //log("KPI Style Selected added-"+kpiactive);
+        }
+        else {
+            $('.wrapper', chartObj).removeClass('selected');
+            $(".overlay", chartObj).hide();
+            //log("KPI Style Selected removed-"+kpiactive);
+        }
         //log("Testing" + selectedCategoryActual);
-       /* if (selectedCategoryActual != "" && selectedCategoryActual != undefined) {
-            //$('.wrapper').toggleClass('selected');
-            if (selectedCategoryActual.indexOf(sfdata.columns[2]) > -1) {
-                //log(selectedCategory);
-                // $(".overlay", $('.wrapper')).show();
-            }
-            else {
-                // $(".overlay", $('.wrapper')).hide();
-            }
-        }*/
-    }    
+        /* if (selectedCategoryActual != "" && selectedCategoryActual != undefined) {
+             //$('.wrapper').toggleClass('selected');
+             if (selectedCategoryActual.indexOf(sfdata.columns[2]) > -1) {
+                 //log(selectedCategory);
+                 // $(".overlay", $('.wrapper')).show();
+             }
+             else {
+                 // $(".overlay", $('.wrapper')).hide();
+             }
+         }*/
+    }
 
 
 }
@@ -514,28 +519,34 @@ function createCustomGauge() {
     var startColor = "";
     var stopColor = "";
     var borderColor = "";
-    plotBandStartColor = "#ff9517";
-	plotBandEndColor="#429e2f";
-	
-//MidColor
- if (lastTopData > lastTargetData) {
-         startColor = "#ddb90a";
+    plotBandStartColor = "#ff5050";
+    plotBandEndColor = "#429e2f";
+
+    //MidColor
+    if (lastTopData > lastTargetData) {
+        startColor = "#ddb90a";
         stopColor = "#5e4f06";
         borderColor = "#473a00";
-       
+
     }
     else if (lastTopData < lastTargetData) {
-       	  startColor = "#ff0000";
-        stopColor = "#78091d";
-        borderColor = "#580212";
-        
+        startColor = "#ff0000";
+        stopColor = "#a50101";
+        borderColor = "#8f0000";
+
     }
     else {
-       startColor = "#429e2f";
+        startColor = "#429e2f";
         stopColor = "#124a06";
         borderColor = "#104004";
-       
-    } 
+
+    }
+    log("=================================");
+    log("actualValue " + lastTopData);
+    log("targetValue " + lastTargetData);
+    log("minValue " + minValue);
+    log("maxValue " + maxValue);
+    log("=================================");
     //var chartVal=new Highcharts.Chart({
     var options = {
         chart: {
@@ -645,25 +656,25 @@ function createCustomGauge() {
             title: {
                 text: ''
             },
-            max: maxValue,			
-			tickPositions:[lastTargetData],
+            max: maxValue,
+            tickPositions: [lastTargetData],
             lineColor: '#transparent',
             tickColor: '#fff',
             minorTickColor: '#fff',
             minorTickPosition: 'inside',
-			minorTickWidth:1.5,
+            minorTickWidth: 0,
             tickLength: 20,
             tickWidth: 3,
             minorTickLength: 7,
-            offset:0,
+            offset: 0,
             lineWidth: 1.5,
             labels: {
                 distance: 5,
-                rotation:50,
+                rotation: 50,
                 style: {
                     color: '#fff',
 
-                    fontSize: '11px',
+                    fontSize: '12px',
                     fontWeight: 'normal'
                 }
             },
@@ -677,16 +688,16 @@ function createCustomGauge() {
                 from: lastTargetData,
                 to: maxValue,
                 thickness: '17%',
-                color:plotBandEndColor 
+                color: plotBandEndColor
             },
             ]
         }
         ],
-		 tooltip: {
-         pointFormat:'{series.name}: <b>{point.y}</b><br/>',
-            enabled: true,
-                                    shared:true
-        }, 
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.y}</b><br/>',
+            enabled: true,
+            shared: true
+        },
 
         series: [{
 
@@ -705,7 +716,7 @@ function createCustomGauge() {
 
             },
             tooltip: {
-                valueSuffix: '<br></br>Target: <b>' + lastTargetData+'</b>',
+                valueSuffix: '<br></br>Target<b>' + lastTargetData + '</b>',
                 backgroundColor: null,
                 borderWidth: 0,
                 shadow: true,
@@ -713,7 +724,7 @@ function createCustomGauge() {
                 style: {
                     padding: 0
                 }
-            } 
+            }
         }
         ]
 
