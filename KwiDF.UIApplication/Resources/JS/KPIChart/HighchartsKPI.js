@@ -7,25 +7,39 @@
         if ($(this).hasClass('selected')) {
             $(".overlay", $(this)).show();
             updateColor();
-            //assignDocPropertyValue(0);
+
             setDocumentProperty("RefreshKPI", "false");
             setDocumentProperty("RefreshKPIGC", "false");
             setDocumentProperty("RefreshKPIEP", "false");
-            // runScript("DynamicProductionCategory", [{ "Key": "colName", "Value": "Sum([" + configData.FilteredCategory[0] + "])"+ ","+ "Sum([" + configData.FilteredCategory[1] + "])" }, { "Key": "isDelete", "Value": 0 }]);
+
+
             var actual = actualVal + ' as ' + actualDisplay;
-            var target = targetVal + ' as ' + targetDisplay;
-            runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": actual }, { "Key": "targetValue", "Value": target }, { "Key": "isDelete", "Value": 0 }]);
+            if (showTarget == "true") {
+                var target = targetVal + ' as ' + targetDisplay;
+                runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": actual }, { "Key": "targetValue", "Value": target }, { "Key": "isDelete", "Value": 0 }]);
+            }
+            else {
+                runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": actual }, { "Key": "targetValue", "Value": "" }, { "Key": "isDelete", "Value": 0 }]);
+            }
         } else {
             $(".overlay", $(this)).hide();
             updateColor();
-            // assignDocPropertyValue(1);
+
             setDocumentProperty("RefreshKPI", "false");
             setDocumentProperty("RefreshKPIGC", "false");
             setDocumentProperty("RefreshKPIEP", "false");
-            //runScript("DynamicProductionCategory", [{ "Key": "colName", "Value": "Sum([" + configData.FilteredCategory[0] + "])"+ ","+ "Sum([" + configData.FilteredCategory[1] + "])" }, { "Key": "isDelete", "Value": 1 }]);
+
             var actual = actualVal + ' as ' + actualDisplay;
-            var target = targetVal + ' as ' + targetDisplay;
-            runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": actual }, { "Key": "targetValue", "Value": target }, { "Key": "isDelete", "Value": 1 }]);
+            if (showTarget == "true") {
+                var target = targetVal + ' as ' + targetDisplay;
+                runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": actual }, { "Key": "targetValue", "Value": target }, { "Key": "isDelete", "Value": 1 }]);
+            }
+            else {
+
+                runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": actual }, { "Key": "targetValue", "Value": "" }, { "Key": "isDelete", "Value": 1 }]);
+            }
+
+
         }
     });
 
@@ -35,51 +49,6 @@
 
 
 });
-
-function assignDocPropertyValue(isDelete) {
-    var splitActual = [];
-    actualVal = "";
-    splitActual = selectedCategoryActual.split(',');
-    for (var i = 0; i < splitActual.length; i++) {
-
-        if (columnsArray[2] != splitActual[i])
-            if (actualVal == '')
-                actualVal = splitActual[i]
-            else
-                actualVal += ',' + splitActual[i]
-    }
-    if (isDelete == 0) {
-        if (actualVal != "") {
-            actualVal += ',' + columnsArray[2];
-        }
-        else {
-            actualVal = columnsArray[2];
-        }
-    }
-    //log(actualVal);
-    //setDocumentProperty(propertyName[0],actualVal);			
-    var splitTarget = [];
-    targetVal = "";
-    splitTarget = selectedCategoryTarget.split(',');
-    for (var i = 0; i < splitTarget.length; i++) {
-
-        if (columnsArray[3] != splitTarget[i])
-            if (targetVal == '')
-                targetVal = splitTarget[i]
-            else
-                targetVal += ',' + splitTarget[i]
-    }
-    if (isDelete == 0) {
-        if (targetVal != "") {
-            targetVal += ',' + columnsArray[3]
-        }
-        else {
-            targetVal = columnsArray[3];
-        }
-    }
-    //log(targetVal);
-    //setDocumentProperty(propertyName[1],targetVal);	
-}
 
 
 //var RefreshKPI=true;
@@ -105,8 +74,10 @@ var maxValue;
 var minValue;
 var selectedCategoryActual = "";
 var selectedCategoryTarget = "";
+var showTarget = "";
+var showChange = "";
+var dateRange;
 function renderCore(sfdata) {
-    //log("RefreshKPI" + "-" + sfdata.config.RefreshKPI);
 
     var DateValue = new Date(sfdata.config.DateFilter);
     var DateValueFormatted = DateValue.valueOf();
@@ -114,96 +85,217 @@ function renderCore(sfdata) {
     var numberOfDaysToAdd = 1;
     nextDate.setDate(nextDate.getDate() + numberOfDaysToAdd);
     var nextDateValueFormatted = nextDate.valueOf();
-    actualVal = sfdata.config.ColumnName[0];
-    targetVal = sfdata.config.ColumnName[1];
-    actualDisplay = sfdata.config.DisplayName[0];
-    targetDisplay = sfdata.config.DisplayName[1];
+    showTarget = sfdata.config.ShowTarget;
+    showChange = sfdata.config.ShowChange;
+    if (sfdata.config.ShowTarget == "true") {
+        actualVal = sfdata.config.ColumnName[0];
+        targetVal = sfdata.config.ColumnName[1];
+        actualDisplay = sfdata.config.DisplayName[0];
+        targetDisplay = sfdata.config.DisplayName[1];
+    }
+    else {
+        actualVal = sfdata.config.ColumnName[0];
+        actualDisplay = sfdata.config.DisplayName[0];
+    }
     if (sfdata.config.RefreshKPI == "true") {
+        dateRange = sfdata.config.DateRange;
 
-        selectedCategoryActual = sfdata.config.CategoryConditionActual;
-        selectedCategoryTarget = sfdata.config.CategoryConditionTarget;
-        // log("selectedActual -" + selectedCategoryActual)
-        configData = sfdata.config;
+        var date2 = new Date(sfdata.config.DateFilter);
+        date2.setDate(date2.getDate() - dateRange);
+
         var actualData = sfdata.data;
         actualData = actualData.filter(function (el) {
             DateValue = new Date(sfdata.config.DateFilter);
             DateValueFormatted = DateValue.valueOf();
-            //log("DateValueFormatted" + DateValueFormatted + "DateValue" + el.items[0]);
-            return el.items[0].replace("/Date(", "").replace(")/", "") <= DateValueFormatted;
+            startDateValue = date2.valueOf();
+
+            return el.items[0].replace("/Date(", "").replace(")/", "") >= startDateValue && el.items[0].replace("/Date(", "").replace(")/", "") <= DateValueFormatted;
 
         });
+        if (sfdata.config.ShowTarget == "true") {
+            selectedCategoryActual = sfdata.config.CategoryConditionActual;
+            selectedCategoryTarget = sfdata.config.CategoryConditionTarget;
+            var series = {};
+            var processed_json = new Array();
+            data = [];
+            targetData = [];
+            changeData = [];
+            selectionType = sfdata.config.ChartType;
+            colorCode = sfdata.config.ColorCode;
 
-        colName = sfdata.columns[2];
-        columnsArray = sfdata.columns;
-        actualVal = sfdata.columns[2];
-        targetVal = sfdata.columns[3];
-        var series = {};
-        var processed_json = new Array();
-        data = [];
-        targetData = [];
-        changeData = [];
-        selectionType = sfdata.config.ChartType;
-        colorCode = sfdata.config.ColorCode;
+            for (i = 0; i < actualData.length; i++) {
 
-        propertyName = sfdata.config.PropertyName;
-        //log("DocPropInit" + selectedCategoryActual);
-        for (i = 0; i < actualData.length; i++) {
-            /* if (sfdata.config.FilteredCategory != undefined && sfdata.config.FilteredCategory != "" && sfdata.config.GroupCategory != undefined && sfdata.config.GroupCategory != "") {
-                 if (sfdata.config.FilteredCategory == actualData[i].items[1] && sfdata.config.GroupCategory == actualData[i].items[3]) {
-                     data.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
-                     bottomArray.push([actualData[i].items[4]]);
-                }           
-             }
-             else if (sfdata.config.FilteredCategory != undefined && sfdata.config.FilteredCategory != "") {
-                 if (sfdata.config.FilteredCategory == actualData[i].items[1]) {
-                     data.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
-                     bottomArray.push([actualData[i].items[4]]);
-                 }
-             }
-             else if (sfdata.config.GroupCategory != undefined && sfdata.config.GroupCategory != "") {
-                 if (sfdata.config.GroupCategory == actualData[i].items[3]) {
-                     data.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
-                     bottomArray.push([actualData[i].items[4]]);
-                 }
-             }
-             else {*/
-            //var dateVal=new Date(actualData[i].items[0]);
-            //var xAxisDate=Date.UTC(dateVal.getUTCFullYear(), dateVal.getUTCMonth(), dateVal.getUTCDate(), dateVal.getUTCHours(), dateVal.getUTCMinutes(), dateVal.getUTCSeconds());
-            //data.push([xAxisDate, actualData[i].items[2]]);
-            data.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
-            targetData.push([parseInt(actualData[i].items[0]), actualData[i].items[3]]);
-            changeData.push(actualData[i].items[4]);
-            //bottomArray.push([actualData[i].items[4]]);
-            //}
-        }
-        series = {
-            name: sfdata.columns[2],
-            data: data
-        };
-        processed_json.push(series);
+                data.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
+                targetData.push([parseInt(actualData[i].items[0]), actualData[i].items[3]]);
+                if (sfdata.config.ShowChange == "true") {
+                    changeData.push(actualData[i].items[4]);
+                }
 
-        var lastData = 0;
-        if (data.length > 0) {
-            var len = data.length - 1;
-            lastData = data[len][1] != 0 && data[len][1] != "" ? Math.round(data[len][1]) : 0;
-            lastTopData = lastData;
-            topValue = numberWithCommas(lastData);
-
-            if (targetData.length > 0) {
-                var len = targetData.length - 1;
-                lastTargetData = targetData[len][1] != 0 && targetData[len][1] != "" ? Math.round(targetData[len][1]) : 0;
-                targetValue = numberWithCommas(lastTargetData);
             }
-            if (changeData.length > 0) {
-                var len = changeData.length - 1;
-                var bottomData = changeData[len] != 0 && changeData[len] != "" ? Math.round(changeData[len]) : 0;
-                bottomValue = numberWithCommas(bottomData);
+            series = {
+                name: sfdata.columns[2],
+                data: data
+            };
+            processed_json.push(series);
+
+            var lastData = 0;
+            if (data.length > 0) {
+                var len = data.length - 1;
+                lastData = data[len][1] != 0 && data[len][1] != "" ? Math.round(data[len][1]) : 0;
+                lastTopData = lastData;
+                topValue = numberWithCommas(lastData);
+
+                if (targetData.length > 0) {
+                    var len = targetData.length - 1;
+                    lastTargetData = targetData[len][1] != 0 && targetData[len][1] != "" ? Math.round(targetData[len][1]) : 0;
+                    targetValue = numberWithCommas(lastTargetData);
+                }
+                if (sfdata.config.ShowChange == "true") {
+                    if (changeData.length > 0) {
+                        var len = changeData.length - 1;
+                        var bottomData = changeData[len] != 0 && changeData[len] != "" ? Math.round(changeData[len]) : 0;
+                        bottomValue = numberWithCommas(bottomData);
+                    }
+                }
+
+                if (lastTopData > lastTargetData) {
+
+                    if (lastTargetData < 0) {
+                        minValue = lastTargetData + ((20 / 100) * lastTargetData);
+                    }
+                    else {
+                        minValue = 0;
+                    }
+                    if (lastTopData < 0)
+                        maxValue = lastTopData - ((20 / 100) * lastTopData);
+                    else
+                        maxValue = lastTopData + ((20 / 100) * lastTopData);
+                }
+                else {
+
+                    if (lastTopData < 0) {
+                        minValue = lastTopData + ((20 / 100) * lastTopData);
+                    }
+                    else {
+                        minValue = 0;
+                    }
+                    if (lastTargetData < 0)
+                        maxValue = lastTargetData - ((20 / 100) * lastTargetData);
+                    else
+                        maxValue = lastTargetData + ((20 / 100) * lastTargetData);
+
+                }
+
             }
+            else {
+                topValue = "";
+                bottomValue = "";
+                targetValue = 0;
+                lastTargetData = 0;
+                lastTopData = 0;
+            }
+            var chartObj = $("#js_chart");
+
+            if ($('.wrapper', chartObj).length == 0) {
+
+                $(chartObj).wrapInner("<div class='wrapper'/>");
+                var drawChart = $('.wrapper', chartObj);
+                $(drawChart).addClass("smallSection");
+
+
+                $(drawChart).append("<header/>");
+                $(drawChart).append("<section class='chartHolder' id='chartHolder'/>");
+                $(drawChart).append("<section class='gaugeHolder' id='gaugeHolder'/>");
+
+
+                $("header", drawChart).append("<h2>" + sfdata.config.lableText + " <span>" + sfdata.config.UOMText + "</span></h2>").append("<p>" + topValue + "</p>");
+                $("header", drawChart).append("<div class='target-holder'/>");
+                $("header .target-holder", drawChart).append("<div>Target</div><div>" + targetValue + "</div>");
+
+                $(drawChart).append("<footer/>");
+                if (sfdata.config.ShowChange == "true") {
+                    $("footer", drawChart).append("<span class='up'>" + bottomValue + "</span>");
+                }
+                $("footer", drawChart).append("<div class='icon-holder'/>");
+                $("footer .icon-holder", drawChart).append('<button onclick="clickedGuage()"  class="active" id="guage"><i class="fa fa-tachometer" aria-hidden="true"></i></button>');
+                $("footer .icon-holder", drawChart).append('<button onclick="clickedLine()"  id="line"><i class="fa fa-line-chart" aria-hidden="true"></i></button>');
+                $("footer .icon-holder", drawChart).append('<button onclick="clickedChart()" id="bar"><i class="fa fa-bar-chart" aria-hidden="true"></i></button>');
+                //$("footer .icon-holder",drawChart).append('<button onclick="clickedCurrency()"  id="currency"><i class="fa fa-arrows-h" aria-hidden="true"></i></button>');
+                drawChart.append("<div class='overlay'/>");
+
+            }
+
+            $("header p").html(topValue);
+            if (sfdata.config.ShowChange == "true") {
+                $("footer span").html(bottomValue);
+            }
+            $("header .target-holder").html("<div>Target</div><div>" + targetValue + "</div>");
 
             if (lastTopData > lastTargetData) {
+                $(".smallSection header").addClass('green');
+                $(".smallSection header").removeClass('yellow');
+                $(".smallSection header").removeClass('red');
 
-                if (lastTargetData < 0) {
-                    minValue = lastTargetData + ((20 / 100) * lastTargetData);
+            }
+            else if (lastTopData < lastTargetData) {
+                $(".smallSection header").addClass('red');
+                $(".smallSection header").removeClass('yellow');
+                $(".smallSection header").removeClass('green');
+            }
+            else if (lastTopData == lastTargetData) {
+                $(".smallSection header").addClass('yellow');
+                $(".smallSection header").removeClass('red');
+                $(".smallSection header").removeClass('green');
+
+            }
+
+        }
+
+        else if (sfdata.config.ShowTarget == "false") {
+
+            selectedCategoryActual = sfdata.config.CategoryConditionActual;
+            var series = {};
+            var processed_json = new Array();
+            data = [];
+            targetData = [];
+            changeData = [];
+            selectionType = sfdata.config.ChartType;
+            colorCode = sfdata.config.ColorCode;
+
+            for (i = 0; i < actualData.length; i++) {
+
+                data.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
+
+                if (sfdata.config.ShowChange == "true") {
+                    changeData.push(actualData[i].items[3]);
+                }
+
+            }
+            series = {
+                name: sfdata.columns[2],
+                data: data
+            };
+            processed_json.push(series);
+
+            var lastData = 0;
+            if (data.length > 0) {
+                var len = data.length - 1;
+                lastData = data[len][1] != 0 && data[len][1] != "" ? Math.round(data[len][1]) : 0;
+                lastTopData = lastData;
+                topValue = numberWithCommas(lastData);
+
+                if (sfdata.config.ShowChange == "true") {
+                    if (changeData.length > 0) {
+                        var len = changeData.length - 1;
+                        var bottomData = changeData[len] != 0 && changeData[len] != "" ? Math.round(changeData[len]) : 0;
+                        bottomValue = numberWithCommas(bottomData);
+                    }
+                }
+
+
+
+                if (lastTopData < 0) {
+                    minValue = lastTopData + ((20 / 100) * lastTopData);
                 }
                 else {
                     minValue = 0;
@@ -212,79 +304,76 @@ function renderCore(sfdata) {
                     maxValue = lastTopData - ((20 / 100) * lastTopData);
                 else
                     maxValue = lastTopData + ((20 / 100) * lastTopData);
-            }
-            else {
 
-                if (lastTopData < 0) {
-                    minValue = lastTopData + ((20 / 100) * lastTopData);
-                }
-                else {
-                    minValue = 0;
-                }
-                if (lastTargetData < 0)
-                    maxValue = lastTargetData - ((20 / 100) * lastTargetData);
-                else
-                    maxValue = lastTargetData + ((20 / 100) * lastTargetData);
-
-            }
-
-            // log("MaxValue-" + maxValue);
-            // log("MinValue-" + minValue);
-
-        }
-        else {
-            topValue = "";
-            bottomValue = "";
-            targetValue = 0;
-            lastTargetData = 0;
-            lastTopData = 0;
-        }
-        var chartObj = $("#js_chart");
-        if (selectedCategoryActual != "" && selectedCategoryActual != undefined) {
-            if (selectedCategoryActual.indexOf(sfdata.columns[2]) > -1) {
-                kpiactive = true;
 
             }
             else {
-                kpiactive = false;
+                topValue = "";
+                bottomValue = "";
+                targetValue = 0;
+                lastTargetData = 0;
+                lastTopData = 0;
+            }
+            var chartObj = $("#js_chart");
+
+            if ($('.wrapper', chartObj).length == 0) {
+
+                $(chartObj).wrapInner("<div class='wrapper'/>");
+                var drawChart = $('.wrapper', chartObj);
+                $(drawChart).addClass("smallSection");
+
+
+                $(drawChart).append("<header/>");
+                $(drawChart).append("<section class='chartHolder' id='chartHolder'/>");
+                $(drawChart).append("<section class='gaugeHolder' id='gaugeHolder'/>");
+
+
+                $("header", drawChart).append("<h2>" + sfdata.config.lableText + " <span>" + sfdata.config.UOMText + "</span></h2>").append("<p>" + topValue + "</p>");
+                $("header", drawChart).append("<div class='target-holder'/>");
+
+
+                $(drawChart).append("<footer/>");
+                if (sfdata.config.ShowChange == "true") {
+                    $("footer", drawChart).append("<span class='up'>" + bottomValue + "</span>");
+                }
+                $("footer", drawChart).append("<div class='icon-holder'/>");
+                $("footer .icon-holder", drawChart).append('<button onclick="clickedGuage()"  class="active" id="guage"><i class="fa fa-tachometer" aria-hidden="true"></i></button>');
+                $("footer .icon-holder", drawChart).append('<button onclick="clickedLine()"  id="line"><i class="fa fa-line-chart" aria-hidden="true"></i></button>');
+                $("footer .icon-holder", drawChart).append('<button onclick="clickedChart()" id="bar"><i class="fa fa-bar-chart" aria-hidden="true"></i></button>');
+                drawChart.append("<div class='overlay'/>");
+
+            }
+
+            $("header p").html(topValue);
+            if (sfdata.config.ShowChange == "true") {
+                $("footer span").html(bottomValue);
+            }
+
+            $(".smallSection header").addClass('gray');
+
+        }
+        if (sfdata.config.ShowChange == "true") {
+            if (bottomData < 0) {
+                $(".smallSection span").addClass("down");
+                $(".smallSection span").removeClass("up");
+                $(".smallSection span").removeClass("neutral");
+                $(".smallSection header").addClass('red');
+
+            }
+            else if (bottomData == 0) {
+                $(".smallSection span").addClass("neutral");
+                $(".smallSection span").removeClass("up");
+                $(".smallSection span").removeClass("down");
+
+            }
+            else {
+                $(".smallSection span").removeClass("down");
+                $(".smallSection span").addClass("up");
+                $(".smallSection span").removeClass("neutral");
+
+
             }
         }
-        else {
-            kpiactive = false;
-        }
-
-
-        if ($('.wrapper', chartObj).length == 0) {
-            $(chartObj).wrapInner("<div class='wrapper'/>");
-            var drawChart = $('.wrapper', chartObj);
-
-            $(drawChart).addClass("smallSection");
-
-
-
-            $(drawChart).append("<header/>");
-            $(drawChart).append("<section class='chartHolder' id='chartHolder'/>");
-            $(drawChart).append("<section class='gaugeHolder' id='gaugeHolder'/>");
-
-
-
-
-            $("header", drawChart).append("<h2>" + sfdata.config.lableText + " <span>" + sfdata.config.UOMText + "</span></h2>").append("<p>" + topValue + "</p>");
-            $("header", drawChart).append("<div class='target-holder'/>");
-            $("header .target-holder", drawChart).append("<div>Target</div><div>" + targetValue + "</div>");
-
-            $(drawChart).append("<footer/>");
-            $("footer", drawChart).append("<span class='up'>" + bottomValue + "</span>");
-            $("footer", drawChart).append("<div class='icon-holder'/>");
-            $("footer .icon-holder", drawChart).append('<button onclick="clickedGuage()"  class="active" id="guage"><i class="fa fa-tachometer" aria-hidden="true"></i></button>');
-            $("footer .icon-holder", drawChart).append('<button onclick="clickedLine()"  id="line"><i class="fa fa-line-chart" aria-hidden="true"></i></button>');
-            $("footer .icon-holder", drawChart).append('<button onclick="clickedChart()" id="bar"><i class="fa fa-bar-chart" aria-hidden="true"></i></button>');
-            //$("footer .icon-holder",drawChart).append('<button onclick="clickedCurrency()"  id="currency"><i class="fa fa-arrows-h" aria-hidden="true"></i></button>');
-            drawChart.append("<div class='overlay'/>");
-
-
-        }
-
         var options = {
             chart: {
                 renderTo: 'chartHolder',
@@ -334,7 +423,6 @@ function renderCore(sfdata) {
                 }
             },
 
-
             exporting: { enabled: false },
             yAxis: [{
 
@@ -370,10 +458,7 @@ function renderCore(sfdata) {
                 }
             },
             legend: {
-                //  layout: 'vertical',
-                //  align: 'center',
-                // verticalAlign: 'bottom',
-                // borderWidth: 0
+
                 enabled: false
             },
             series: processed_json
@@ -384,64 +469,25 @@ function renderCore(sfdata) {
 
 
         createCustomGauge();
-
-
-
-        $("header p").html(topValue);
-        //log(bottomData);
-        //bottomVal = numberWithCommas(bottomData);
-        $("footer span").html(bottomValue);
-        $("header .target-holder").html("<div>Target</div><div>" + targetValue + "</div>");
-        //bottomColor
-
-        if (bottomData < 0) {
-            $(".smallSection span").addClass("down");
-            $(".smallSection span").removeClass("up");
-            $(".smallSection span").removeClass("neutral");
-            $(".smallSection header").addClass('red');
-
-        }
-        else if (bottomData == 0) {
-            $(".smallSection span").addClass("neutral");
-            $(".smallSection span").removeClass("up");
-            $(".smallSection span").removeClass("down");
-
-        }
-        else {
-            $(".smallSection span").removeClass("down");
-            $(".smallSection span").addClass("up");
-            $(".smallSection span").removeClass("neutral");
-
-
-        }
-
-        //TopColor
-        if (lastTopData > lastTargetData) {
-            $(".smallSection header").addClass('green');
-            $(".smallSection header").removeClass('yellow');
-            $(".smallSection header").removeClass('red');
-
-        }
-        else if (lastTopData < lastTargetData) {
-            $(".smallSection header").addClass('red');
-            $(".smallSection header").removeClass('yellow');
-            $(".smallSection header").removeClass('green');
-        }
-        else if (lastTopData == lastTargetData) {
-            $(".smallSection header").addClass('yellow');
-            $(".smallSection header").removeClass('red');
-            $(".smallSection header").removeClass('green');
-
-        }
         chooseSelection();
-        //  wait ( sfdata.wait, sfdata.static ); 
+
         checkNoData();
-        //log("kpiActive - " + kpiactive);
 
         var smallSecObj = $('.smallSection', drawChart);
 
-        if (kpiactive) {
+        if (selectedCategoryActual != "" && selectedCategoryActual != undefined) {
+            if (selectedCategoryActual.indexOf(sfdata.columns[2]) > -1) {
+                kpiactive = true;
 
+            }
+            else {
+                kpiactive = false;
+            }
+        }
+        else {
+            kpiactive = false;
+        }
+        if (kpiactive) {
             $('.wrapper', chartObj).addClass('selected');
             $(".overlay", chartObj).show();
             //log("KPI Style Selected added-"+kpiactive);
@@ -451,17 +497,7 @@ function renderCore(sfdata) {
             $(".overlay", chartObj).hide();
             //log("KPI Style Selected removed-"+kpiactive);
         }
-        //log("Testing" + selectedCategoryActual);
-        /* if (selectedCategoryActual != "" && selectedCategoryActual != undefined) {
-             //$('.wrapper').toggleClass('selected');
-             if (selectedCategoryActual.indexOf(sfdata.columns[2]) > -1) {
-                 //log(selectedCategory);
-                 // $(".overlay", $('.wrapper')).show();
-             }
-             else {
-                 // $(".overlay", $('.wrapper')).hide();
-             }
-         }*/
+
     }
 
 
@@ -480,15 +516,7 @@ function chooseSelection() {
     else {
         clickedGuage();
     }
-    /* if(selection == "gaugeHolder"){
-                   clickedGuage();
-     }else{
-            if(selectionType == "line"){
-                   clickedLine();
-            }else{
-                   clickedChart();
-            }
-     }*/
+
     updateColor();
 }
 
