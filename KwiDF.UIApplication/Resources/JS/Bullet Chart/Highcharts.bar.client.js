@@ -108,6 +108,20 @@ function renderCore(sfdata) {
         [{
             name: 'Actual',
             data: data,
+		 dataLabels: {
+                enabled: true,
+                //rotation: -90,
+                color: '#FFFFFF',
+                align: 'center',
+                format: '{point.y}', // one decimal
+               y:30, // 10 pixels down from the top
+                style: {
+                    fontSize: '12px',
+                    fontFamily: 'arial, sans-serif',
+					textOutline:'1px 1px #646465',
+                }
+            },
+			
             pointPadding: 0,
             pointPlacement: 0,
             pointWidth: 30,
@@ -347,11 +361,11 @@ function renderCore(sfdata) {
                     marked = true;
                     if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
 
-                        this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)', borderColor: '#fff' });
+                        this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)', borderColor: '#fff',borderWidth:'0.5' });
 
                     } else {
 
-                        this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)', borderColor: '#fff' });
+                        this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)', borderColor: '#fff',borderWidth:'0.5' });
 
                     }
                     debugger;

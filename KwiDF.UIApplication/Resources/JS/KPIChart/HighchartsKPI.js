@@ -11,8 +11,8 @@
             setDocumentProperty("RefreshKPI", "false");
             setDocumentProperty("RefreshKPIGC", "false");
             setDocumentProperty("RefreshKPIEP", "false");
-
-
+			setDocumentProperty("RefreshKPIWF","false");
+			setDocumentProperty("RefreshKPIWHP","false");
             var actual = actualVal + ' as ' + actualDisplay;
             if (showTarget == "true") {
                 var target = targetVal + ' as ' + targetDisplay;
@@ -28,7 +28,8 @@
             setDocumentProperty("RefreshKPI", "false");
             setDocumentProperty("RefreshKPIGC", "false");
             setDocumentProperty("RefreshKPIEP", "false");
-
+			setDocumentProperty("RefreshKPIWF","false");
+			setDocumentProperty("RefreshKPIWHP","false");
             var actual = actualVal + ' as ' + actualDisplay;
             if (showTarget == "true") {
                 var target = targetVal + ' as ' + targetDisplay;
@@ -120,7 +121,8 @@ function renderCore(sfdata) {
             data = [];
             targetData = [];
             changeData = [];
-            selectionType = sfdata.config.ChartType;
+			if(selectionType == undefined || selectionType == "")
+				selectionType = sfdata.config.ChartType;
             colorCode = sfdata.config.ColorCode;
 
             for (i = 0; i < actualData.length; i++) {
@@ -259,7 +261,8 @@ function renderCore(sfdata) {
             data = [];
             targetData = [];
             changeData = [];
-            selectionType = sfdata.config.ChartType;
+			if(selectionType == undefined || selectionType == "")
+				selectionType = sfdata.config.ChartType;
             colorCode = sfdata.config.ColorCode;
 
             for (i = 0; i < actualData.length; i++) {
@@ -329,7 +332,7 @@ function renderCore(sfdata) {
 
 
                 $("header", drawChart).append("<h2>" + sfdata.config.lableText + " <span>" + sfdata.config.UOMText + "</span></h2>").append("<p>" + topValue + "</p>");
-                $("header", drawChart).append("<div class='target-holder'/>");
+                //$("header", drawChart).append("<div class='target-holder'/>");
 
 
                 $(drawChart).append("<footer/>");
@@ -551,6 +554,8 @@ function createCustomGauge() {
     plotBandEndColor = "#429e2f";
 
     //MidColor
+	if (showTarget == "true")
+	{
     if (lastTopData > lastTargetData) {
         startColor = "#ddb90a";
         stopColor = "#5e4f06";
@@ -569,6 +574,13 @@ function createCustomGauge() {
         borderColor = "#104004";
 
     }
+	}
+	else
+	{
+		startColor = "#429e2f";
+        stopColor = "#124a06";
+        borderColor = "#104004";
+	}
     log("=================================");
     log("actualValue " + lastTopData);
     log("targetValue " + lastTargetData);
@@ -744,7 +756,7 @@ function createCustomGauge() {
 
             },
             tooltip: {
-                valueSuffix: '<br></br>Target<b>' + lastTargetData + '</b>',
+                valueSuffix: showTarget == "true" ? '<br></br>Target: <b>' + lastTargetData + '</b>' : '',
                 backgroundColor: null,
                 borderWidth: 0,
                 shadow: true,
@@ -815,7 +827,7 @@ function clickedLine() {
     $(".icon-holder button").removeClass("active");
     $("#line").addClass("active");
     selection = "chartHolder";
-    selectionType = "line";
+    selectionType = "Line";
 }
 
 function clickedChart() {
@@ -832,7 +844,7 @@ function clickedChart() {
     $(".icon-holder button").removeClass("active");
     $("#bar").addClass("active");
     selection = "chartHolder";
-    selectionType = "column";
+    selectionType = "Bar";
 }
 
 function checkNoData() {

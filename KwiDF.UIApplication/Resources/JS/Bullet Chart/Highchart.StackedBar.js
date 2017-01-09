@@ -101,12 +101,24 @@ function renderCore(sfdata) {
     series =
 
         [{
-            name: 'Actual1',
+            name: 'Actual1', //Green
             data: additionalData,
-
+			dataLabels: {
+                enabled: true,
+                //rotation: -90,
+                color: '#FFFFFF',
+                align: 'center',
+                format: '{point.y:.0f}', // two decimal
+               y:-10, // 10 pixels down from the top
+                style: {
+                    fontSize: '11px',
+                    fontFamily: 'arial, sans-serif',
+					textOutline:'1px 1px #646465',
+                }
+            },
             pointPadding: 0,
             pointPlacement: 0,
-            pointWidth: 30,
+            pointWidth: 45,
             point: {
                 events: {
                     click: function ()
@@ -154,10 +166,22 @@ function renderCore(sfdata) {
         {
             name: 'Actual',
             data: data,
-
+	 dataLabels: {
+                enabled: true,
+                //rotation: -90,
+                color: '#FFFFFF',
+                align: 'center',
+                format: '{point.y:.0f}', // two decimal
+               y:-10, // 10 pixels down from the top
+                style: {
+                    fontSize: '11px',
+                    fontFamily: 'arial, sans-serif',
+					textOutline:'1px 1px #646465',
+                }
+            },
             pointPadding: 0,
             pointPlacement: 0,
-            pointWidth: 30,
+            pointWidth: 45,
             point: {
                 events: {
                     click: function ()
@@ -206,7 +230,7 @@ function renderCore(sfdata) {
         {
             name: 'Target',
             type: 'scatter',
-            pointWidth: 50,
+            pointWidth: 150,
 
             point: {
                 events: {
@@ -254,12 +278,12 @@ function renderCore(sfdata) {
 
                     for (var i = 0; i < this.series[0].data.length; i++) {
                         if (this.series[1].data[i].y >= this.series[0].data[i].y) {
-                            this.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)' });
+                            this.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)' }); //green
 
 
                         } else {
 
-                            this.series[0].data[i].update({ color: 'rgba(31, 174, 57,1)' });
+                            this.series[0].data[i].update({ color: 'rgba(11, 133, 213, 1)' }); //blue
 
                         }
                         //this.series[0].data[i].update({ color: '#26a2ed' }, true, false);
@@ -329,7 +353,7 @@ function renderCore(sfdata) {
 
             column: {
 
-                color: 'green',
+                color: 'blue',
                 grouping: false,
                 shadow: false,
                 borderWidth: 1,
@@ -340,9 +364,9 @@ function renderCore(sfdata) {
                 color: {
                     linearGradient: [500, 0, 500, 0],
                     stops: [
-                        [0, '#25acff'],
+                        [0, '#0b85d5'],
                                       [0.5, '#fff'],
-                                    [1, '#25acff']
+                                    [1, '#0b85d5']
                     ]
                 },
 
@@ -356,7 +380,7 @@ function renderCore(sfdata) {
 			    marker: {
 			        symbol: 'line',
 			        lineWidth: 6,
-			        radius: 16,
+			        radius: 24,
 			        lineColor: '#fcff01',
 
 			    }
@@ -383,11 +407,11 @@ function renderCore(sfdata) {
 
     for (i = 0; i < chartVal.series[0].data.length; i++) {
         if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
-            this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)' });
+            this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)' });  //green
 
         } else {
 
-            this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57,1)' });
+            this.chartVal.series[0].data[i].update({ color: 'rgba(11, 133, 213, 1)' }); //blue
 
         }
     }
@@ -407,11 +431,11 @@ function renderCore(sfdata) {
                     marked = true;
                     if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
 
-                        this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)', borderColor: '#fff' });
+                        this.chartVal.series[0].data[i].update({ color:  'rgba(31, 174, 57, 1)', borderColor: '#fff' });
 
                     } else {
 
-                        this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)', borderColor: '#fff' });
+                        this.chartVal.series[0].data[i].update({ color: 'rgba(11, 133, 213, 1)', borderColor: '#fff' });
 
                     }
                     debugger;
@@ -422,11 +446,11 @@ function renderCore(sfdata) {
                     debugger;
 
                     if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
-                        this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 0.3)' });
+                        this.chartVal.series[0].data[i].update({ color:  'rgba(31, 174, 57, 0.3)' });
 
                     } else {
 
-                        this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 0.3)' });
+                        this.chartVal.series[0].data[i].update({ color: 'rgba(11, 133, 213, 0.3)' });
 
                     }
                     //this.chartVal.series[0].data[i].update({ color: '#294251' });
