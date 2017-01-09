@@ -148,7 +148,7 @@ border-radius: 12px 12px 0 0;
 .smallSection header.red{ background:#ff0000;}
 .smallSection header.yellow{background:#ddb90a}
 .smallSection header.green{background:#429e2f}
-.smallSection header.gray{background:#646465}
+.smallSection header.gray{background:#868686}
 
 .smallSection header h2 {
      margin: 0 0 5px 0;
@@ -192,7 +192,7 @@ border-radius: 12px 12px 0 0;
 
 .smallSection footer .icon-holder {
 	float: right;
-	position:absolute;
+	position:relative;
 	right:0;
 	top:0;
 	z-index:9;
