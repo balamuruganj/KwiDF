@@ -3,6 +3,7 @@
     chartObj.on('click', '.wrapper', function () {
         $(this).toggleClass('selected');
 
+
         //log("DocClick" + selectedCategoryActual);
         if ($(this).hasClass('selected')) {
             $(".overlay", $(this)).show();

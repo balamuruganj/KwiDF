@@ -94,8 +94,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DXPs\OS Page 1and2_IISS.dxp" />
-    <Content Include="DXPs\OS Page 3and4_IISS.dxp" />
     <Content Include="Resources\fonts\fontawesome-webfont.eot" />
     <Content Include="Resources\fonts\fontawesome-webfont.ttf" />
     <Content Include="Resources\fonts\fontawesome-webfont.woff" />
@@ -103,6 +101,10 @@
     <Content Include="Resources\fonts\FontAwesome.otf" />
     <Content Include="Resources\web.config" />
     <Content Include="Test Pages\web.config" />
+    <Content Include="Docs\KOC-KWIDF_EXP-UI-DataMapping.xlsx" />
+    <Content Include="Docs\KwiDF Spotfire Reusable Component Development.docx" />
+    <Content Include="DXPs\OS Page 1and2.dxp" />
+    <Content Include="DXPs\OS Page 3and4.dxp" />
     <None Include="Properties\PublishProfiles\IIS.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -113,7 +115,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DB\" />
-    <Folder Include="Docs\" />
     <Folder Include="Resources\Images\" />
   </ItemGroup>
   <PropertyGroup>

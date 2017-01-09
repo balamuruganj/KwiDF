@@ -175,6 +175,7 @@ border-radius: 12px 12px 0 0;
 	 white-space: nowrap;
     text-overflow: ellipsis;
 }
+
 .smallSection footer {
     position: absolute;
     bottom: 0px;

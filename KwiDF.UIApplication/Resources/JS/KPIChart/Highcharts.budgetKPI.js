@@ -23,6 +23,7 @@ $(document).ready(function () {
 
 
 
+
 var chartValue;
 var gaugaChart;
 var colName;
