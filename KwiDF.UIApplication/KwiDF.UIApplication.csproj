@@ -68,7 +68,7 @@
     <Content Include="Resources\CSS\Highcharts.KPI.css" />
     <Content Include="Resources\fonts\fontawesome-webfont.svg" />
     <Content Include="Resources\JS\Bullet Chart\Highcharts.bar.client.js" />
-	  <Content Include="Resources\JS\Bullet Chart\Highchart.StackedBar.js" />
+    <Content Include="Resources\JS\Bullet Chart\Highchart.StackedBar.js" />
     <Content Include="Resources\JS\Common\CheckboxChartFilter.js" />
     <Content Include="Resources\JS\Common\CheckBoxFilter.js" />
     <Content Include="Resources\JS\Common\CheckBoxFilter_cm.js" />
@@ -113,6 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DB\" />
+    <Folder Include="Docs\" />
     <Folder Include="Resources\Images\" />
   </ItemGroup>
   <PropertyGroup>
