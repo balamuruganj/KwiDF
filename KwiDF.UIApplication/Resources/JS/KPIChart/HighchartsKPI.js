@@ -569,12 +569,7 @@ function createCustomGauge() {
         borderColor = "#104004";
 
     }
-    log("=================================");
-    log("actualValue " + lastTopData);
-    log("targetValue " + lastTargetData);
-    log("minValue " + minValue);
-    log("maxValue " + maxValue);
-    log("=================================");
+  
     //var chartVal=new Highcharts.Chart({
     var options = {
         chart: {
