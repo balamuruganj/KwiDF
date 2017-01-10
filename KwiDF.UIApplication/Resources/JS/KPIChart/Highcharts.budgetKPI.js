@@ -606,7 +606,8 @@ function clickedCurrency() {
     name:"USD",
     data: expenditureUSDdata
 }, true);
-	    $("header p").html(topExpenditureValue);
+	$("header p").html(topExpenditureValue);
+	$("header h2 span").html("($)");
     $(".icon-holder button").removeClass("active");
 	 $("#currencyUSD").removeClass("active");
 	 $("#currencyUSD").css("display","none");
@@ -625,7 +626,8 @@ function clickedCurrencyKD() {
     data: expenditureKDData
 }, true); //true / false to redraw
 	 //chartValue.series[0].setData(series);
-	 $("header p").html(topExpenditureKDValue);
+	$("header p").html(topExpenditureKDValue);
+	$("header h2 span").html("(KD)");
     $(".icon-holder button").removeClass("active");
 	 $("#currencyKD").removeClass("active");
 	 $("#currencyKD").css("display","none");

@@ -38,6 +38,11 @@ $(document).ready(function () {
 
             runScript("DynamicColorByScript", [{ "Key": "colorBy", "Value": colorAxis }]);
         }
+        else {
+
+            $("#checkbox" + ind[1]).prop('checked', false);
+            runScript("DynamicColorByScript", [{ "Key": "colorBy", "Value": "" }]);
+        }
 
     });
 

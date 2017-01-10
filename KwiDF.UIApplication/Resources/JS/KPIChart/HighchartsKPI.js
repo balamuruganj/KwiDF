@@ -3,7 +3,6 @@
     chartObj.on('click', '.wrapper', function () {
         $(this).toggleClass('selected');
 
-
         //log("DocClick" + selectedCategoryActual);
         if ($(this).hasClass('selected')) {
             $(".overlay", $(this)).show();
@@ -12,8 +11,9 @@
             setDocumentProperty("RefreshKPI", "false");
             setDocumentProperty("RefreshKPIGC", "false");
             setDocumentProperty("RefreshKPIEP", "false");
-			setDocumentProperty("RefreshKPIWF","false");
-			setDocumentProperty("RefreshKPIWHP","false");
+            setDocumentProperty("RefreshKPIWF", "false");
+            setDocumentProperty("RefreshKPIWHP", "false");
+            setDocumentProperty("RefreshKPIEWI", "false");
             var actual = actualVal + ' as ' + actualDisplay;
             if (showTarget == "true") {
                 var target = targetVal + ' as ' + targetDisplay;
@@ -29,8 +29,9 @@
             setDocumentProperty("RefreshKPI", "false");
             setDocumentProperty("RefreshKPIGC", "false");
             setDocumentProperty("RefreshKPIEP", "false");
-			setDocumentProperty("RefreshKPIWF","false");
-			setDocumentProperty("RefreshKPIWHP","false");
+            setDocumentProperty("RefreshKPIWF", "false");
+            setDocumentProperty("RefreshKPIWHP", "false");
+            setDocumentProperty("RefreshKPIEWI", "false");
             var actual = actualVal + ' as ' + actualDisplay;
             if (showTarget == "true") {
                 var target = targetVal + ' as ' + targetDisplay;
@@ -122,8 +123,8 @@ function renderCore(sfdata) {
             data = [];
             targetData = [];
             changeData = [];
-			if(selectionType == undefined || selectionType == "")
-				selectionType = sfdata.config.ChartType;
+            if (selectionType == undefined || selectionType == "")
+                selectionType = sfdata.config.ChartType;
             colorCode = sfdata.config.ColorCode;
 
             for (i = 0; i < actualData.length; i++) {
@@ -144,54 +145,66 @@ function renderCore(sfdata) {
             var lastData = 0;
             if (data.length > 0) {
                 var len = data.length - 1;
-                lastData = data[len][1] != 0 && data[len][1] != "" ? Math.round(data[len][1]) : 0;
-                lastTopData = lastData;
-                topValue = numberWithCommas(lastData);
+                var currentdate = data[len][0];
+                if (data[len][0] == DateValue.valueOf()) {
 
-                if (targetData.length > 0) {
-                    var len = targetData.length - 1;
-                    lastTargetData = targetData[len][1] != 0 && targetData[len][1] != "" ? Math.round(targetData[len][1]) : 0;
-                    targetValue = numberWithCommas(lastTargetData);
-                }
-                if (sfdata.config.ShowChange == "true") {
-                    if (changeData.length > 0) {
-                        var len = changeData.length - 1;
-                        var bottomData = changeData[len] != 0 && changeData[len] != "" ? Math.round(changeData[len]) : 0;
-                        bottomValue = numberWithCommas(bottomData);
+                    lastData = data[len][1] != 0 && data[len][1] != "" ? Math.round(data[len][1]) : 0;
+                    lastTopData = lastData;
+                    topValue = numberWithCommas(lastData);
+
+                    if (targetData.length > 0) {
+                        var len = targetData.length - 1;
+                        lastTargetData = targetData[len][1] != 0 && targetData[len][1] != "" ? Math.round(targetData[len][1]) : 0;
+                        targetValue = numberWithCommas(lastTargetData);
                     }
-                }
+                    if (sfdata.config.ShowChange == "true") {
+                        if (changeData.length > 0) {
+                            var len = changeData.length - 1;
+                            var bottomData = changeData[len] != 0 && changeData[len] != "" ? Math.round(changeData[len]) : 0;
+                            bottomValue = numberWithCommas(bottomData);
+                        }
+                    }
 
-                if (lastTopData > lastTargetData) {
+                    if (lastTopData > lastTargetData) {
 
-                    if (lastTargetData < 0) {
-                        minValue = lastTargetData + ((20 / 100) * lastTargetData);
+                        if (lastTargetData < 0) {
+                            minValue = lastTargetData + ((20 / 100) * lastTargetData);
+                        }
+                        else {
+                            minValue = 0;
+                        }
+                        if (lastTopData < 0)
+                            maxValue = lastTopData - ((20 / 100) * lastTopData);
+                        else
+                            maxValue = lastTopData + ((20 / 100) * lastTopData);
                     }
                     else {
-                        minValue = 0;
+
+                        if (lastTopData < 0) {
+                            minValue = lastTopData + ((20 / 100) * lastTopData);
+                        }
+                        else {
+                            minValue = 0;
+                        }
+                        if (lastTargetData < 0)
+                            maxValue = lastTargetData - ((20 / 100) * lastTargetData);
+                        else
+                            maxValue = lastTargetData + ((20 / 100) * lastTargetData);
+
                     }
-                    if (lastTopData < 0)
-                        maxValue = lastTopData - ((20 / 100) * lastTopData);
-                    else
-                        maxValue = lastTopData + ((20 / 100) * lastTopData);
                 }
                 else {
-
-                    if (lastTopData < 0) {
-                        minValue = lastTopData + ((20 / 100) * lastTopData);
-                    }
-                    else {
-                        minValue = 0;
-                    }
-                    if (lastTargetData < 0)
-                        maxValue = lastTargetData - ((20 / 100) * lastTargetData);
-                    else
-                        maxValue = lastTargetData + ((20 / 100) * lastTargetData);
-
+                    topValue = "No Data";
+                    bottomValue = "";
+                    targetValue = 0;
+                    lastTargetData = 0;
+                    lastTopData = 0;
                 }
+
 
             }
             else {
-                topValue = "";
+                topValue = "No Data";
                 bottomValue = "";
                 targetValue = 0;
                 lastTargetData = 0;
@@ -262,8 +275,8 @@ function renderCore(sfdata) {
             data = [];
             targetData = [];
             changeData = [];
-			if(selectionType == undefined || selectionType == "")
-				selectionType = sfdata.config.ChartType;
+            if (selectionType == undefined || selectionType == "")
+                selectionType = sfdata.config.ChartType;
             colorCode = sfdata.config.ColorCode;
 
             for (i = 0; i < actualData.length; i++) {
@@ -284,35 +297,45 @@ function renderCore(sfdata) {
             var lastData = 0;
             if (data.length > 0) {
                 var len = data.length - 1;
-                lastData = data[len][1] != 0 && data[len][1] != "" ? Math.round(data[len][1]) : 0;
-                lastTopData = lastData;
-                topValue = numberWithCommas(lastData);
+                if (data[len][0] == DateValue.valueOf()) {
 
-                if (sfdata.config.ShowChange == "true") {
-                    if (changeData.length > 0) {
-                        var len = changeData.length - 1;
-                        var bottomData = changeData[len] != 0 && changeData[len] != "" ? Math.round(changeData[len]) : 0;
-                        bottomValue = numberWithCommas(bottomData);
+                    lastData = data[len][1] != 0 && data[len][1] != "" ? Math.round(data[len][1]) : 0;
+                    lastTopData = lastData;
+                    topValue = numberWithCommas(lastData);
+
+                    if (sfdata.config.ShowChange == "true") {
+                        if (changeData.length > 0) {
+                            var len = changeData.length - 1;
+                            var bottomData = changeData[len] != 0 && changeData[len] != "" ? Math.round(changeData[len]) : 0;
+                            bottomValue = numberWithCommas(bottomData);
+                        }
                     }
-                }
 
 
 
-                if (lastTopData < 0) {
-                    minValue = lastTopData + ((20 / 100) * lastTopData);
+                    if (lastTopData < 0) {
+                        minValue = lastTopData + ((20 / 100) * lastTopData);
+                    }
+                    else {
+                        minValue = 0;
+                    }
+                    if (lastTopData < 0)
+                        maxValue = lastTopData - ((20 / 100) * lastTopData);
+                    else
+                        maxValue = lastTopData + ((20 / 100) * lastTopData);
+
                 }
                 else {
-                    minValue = 0;
+                    topValue = "No Data";
+                    bottomValue = "";
+                    targetValue = 0;
+                    lastTargetData = 0;
+                    lastTopData = 0;
                 }
-                if (lastTopData < 0)
-                    maxValue = lastTopData - ((20 / 100) * lastTopData);
-                else
-                    maxValue = lastTopData + ((20 / 100) * lastTopData);
-
 
             }
             else {
-                topValue = "";
+                topValue = "No Data";
                 bottomValue = "";
                 targetValue = 0;
                 lastTargetData = 0;
@@ -381,10 +404,10 @@ function renderCore(sfdata) {
         var options = {
             chart: {
                 renderTo: 'chartHolder',
-                spacingBottom: 0,
-                spacingTop: 10,
-                spacingLeft: 8,
-                spacingRight: 3
+                spacingBottom: 2,
+                spacingTop: 5,
+                spacingLeft: 5,
+                spacingRight: 5
             },
             backgroundColor: 'transparent',
             borderWidth: 0,
@@ -418,6 +441,21 @@ function renderCore(sfdata) {
 
             plotOptions: {
                 series: {
+
+                    marker: {
+                        enabled: true,
+                        symbol: 'circle',
+                        radius: 3,
+                        // if you want to remove hover efect, add the following lines
+                        /* 
+                        states: {
+                            hover: {
+                                radius: 7
+                            }
+                        }
+                        */
+                    },
+
                     color: colorCode,
                     pointPadding: 0,
                     groupPadding: 1,
@@ -555,33 +593,31 @@ function createCustomGauge() {
     plotBandEndColor = "#429e2f";
 
     //MidColor
-	if (showTarget == "true")
-	{
-    if (lastTopData > lastTargetData) {
-        startColor = "#ddb90a";
-        stopColor = "#5e4f06";
-        borderColor = "#473a00";
+    if (showTarget == "true") {
+        if (lastTopData > lastTargetData) {
+            startColor = "#ddb90a";
+            stopColor = "#5e4f06";
+            borderColor = "#473a00";
 
-    }
-    else if (lastTopData < lastTargetData) {
-        startColor = "#ff0000";
-        stopColor = "#a50101";
-        borderColor = "#8f0000";
+        }
+        else if (lastTopData < lastTargetData) {
+            startColor = "#ff0000";
+            stopColor = "#a50101";
+            borderColor = "#8f0000";
 
+        }
+        else {
+            startColor = "#429e2f";
+            stopColor = "#124a06";
+            borderColor = "#104004";
+
+        }
     }
     else {
         startColor = "#429e2f";
         stopColor = "#124a06";
         borderColor = "#104004";
-
     }
-	}
-	else
-	{
-		startColor = "#429e2f";
-        stopColor = "#124a06";
-        borderColor = "#104004";
-	}
     log("=================================");
     log("actualValue " + lastTopData);
     log("targetValue " + lastTargetData);

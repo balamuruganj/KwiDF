@@ -67,9 +67,14 @@
     <Content Include="Resources\CSS\Highcharts.Gauge.css" />
     <Content Include="Resources\CSS\Highcharts.KPI.css" />
     <Content Include="Resources\fonts\fontawesome-webfont.svg" />
+    <Content Include="Resources\Images\calendar.png" />
+    <Content Include="Resources\Images\help.png" />
     <Content Include="Resources\JS\Bullet Chart\Highcharts.bar.client.js" />
     <Content Include="Resources\JS\Bullet Chart\Highchart.StackedBar.js" />
+    <Content Include="Resources\JS\Bullet Chart\SplineChart.client.js" />
     <Content Include="Resources\JS\Common\CheckboxChartFilter.js" />
+    <Content Include="Resources\JS\Common\CheckboxChartFilterPage3.js" />
+    <Content Include="Resources\JS\Common\CheckboxChartFilterPage5.js" />
     <Content Include="Resources\JS\Common\CheckBoxFilter.js" />
     <Content Include="Resources\JS\Common\CheckBoxFilter_cm.js" />
     <Content Include="Resources\JS\Common\exporting.js" />
@@ -115,7 +120,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DB\" />
-    <Folder Include="Resources\Images\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
