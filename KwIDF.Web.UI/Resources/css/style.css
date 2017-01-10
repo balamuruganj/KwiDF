@@ -1,0 +1,258 @@
+
+.navbar-brand.topheader{min-height:100px;text-align: center;}
+.navbar-brand img{max-width:60px}
+
+#page-wrapper{
+	position: fixed;
+	top:100px;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.leftmenu{
+	width: 200px;
+    height: 100%;
+    position: absolute;
+    background: #101010;
+}
+
+.mainContainer{
+	height: 100%;
+    margin-left: 200px;
+}
+
+.mainContainer iframe{
+	width:100%;
+	height: 100%;
+	border:0;
+}
+
+    body,html{
+		height: 100%;
+	}
+
+	/* remove outer padding */
+	.main .row{
+		padding: 0px;
+		margin: 0px;
+	}
+
+	/*Remove rounded coners*/
+
+	nav.sidebar.navbar {
+		border-radius: 0px;
+	}
+
+	nav.sidebar, .main{
+		-webkit-transition: margin 200ms ease-out;
+	    -moz-transition: margin 200ms ease-out;
+	    -o-transition: margin 200ms ease-out;
+	    transition: margin 200ms ease-out;
+	}
+
+	/* Add gap to nav and right windows.*/
+	.main{
+		padding:0
+	}
+
+
+		
+
+	/* .....NavBar: Icon only with coloring/layout.....*/
+
+
+
+	/*small/medium side display*/
+	@media (min-width: 768px) {
+
+		/*Allow main to be next to Nav*/
+		.main{
+			position: fixed;
+		    float: right;
+		    left: 0;
+		    right: 0;
+		    bottom: 0;
+		    top: 0;
+				}
+
+			.bodyContainer {
+		    position: fixed;
+		    left: 40px;
+		    top: 100px;
+		    right: 0;
+		    bottom:5px;
+				}
+
+
+		/*lets nav bar to be showed on mouseover*/
+		nav.sidebar:hover + .main{
+			margin-left: 200px;
+		}
+
+		/*Center Brand*/
+		nav.sidebar.navbar.sidebar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+			margin-left: 0px;
+		}
+		/*Center Brand*/
+		nav.sidebar .navbar-brand, nav.sidebar .navbar-header{
+			text-align: center;
+			width: 100%;
+			margin-left: 0px;
+		}
+
+		/*Center Icons*/
+		nav.sidebar a{
+			padding-right: 13px;
+		}
+
+		/*adds border top to first nav box */
+		nav.sidebar .navbar-nav > li:first-child{
+			border-top: 1px #e5e5e5 solid;
+		}
+
+		/*adds border to bottom nav boxes*/
+		nav.sidebar .navbar-nav > li{
+			border-bottom: 1px #e5e5e5 solid;
+		}
+
+		/* Colors/style dropdown box*/
+		nav.sidebar .navbar-nav .open .dropdown-menu {
+			position: static;
+			float: none;
+			width: auto;
+			margin-top: 0;
+			background-color: transparent;
+			border: 0;
+			-webkit-box-shadow: none;
+			box-shadow: none;
+		}
+
+		/*allows nav box to use 100% width*/
+		nav.sidebar .navbar-collapse, nav.sidebar .container-fluid{
+			padding: 0 0px 0 0px;
+		}
+
+		/*colors dropdown box text */
+		.navbar-inverse .navbar-nav .open .dropdown-menu>li>a {
+			color: #777;
+		}
+
+		/*gives sidebar width/height*/
+		nav.sidebar{
+			width: 200px;
+			height: 100%;
+			margin-left: -160px;
+			float: left;
+			z-index: 8000;
+			margin-bottom: 0px;
+		}
+
+		/*give sidebar 100% width;*/
+		nav.sidebar li {
+			width: 100%;
+		}
+
+		/* Move nav to full on mouse over*/
+		nav.sidebar:hover{
+			margin-left: 0px;
+		}
+		/*for hiden things when navbar hidden*/
+		.forAnimate{
+			opacity: 0;
+		}
+	}
+
+	/* .....NavBar: Fully showing nav bar..... */
+
+	@media (min-width: 1330px) {
+
+		/*Allow main to be next to Nav*/
+		.main{
+			/*keeps 100% minus nav size*/
+			margin-left: 0;
+		}
+
+		/*Show all nav*/
+		nav.sidebar{
+			margin-left: 0px;
+			float: left;
+		}
+		/*Show hidden items on nav*/
+		nav.sidebar .forAnimate{
+			opacity: 1;
+		}
+
+		.bodyContainer {
+		 left: 200px;
+		}
+	}
+
+
+
+	nav.sidebar .navbar-nav .open .dropdown-menu>li>a:hover, nav.sidebar .navbar-nav .open .dropdown-menu>li>a:focus {
+		color: #CCC;
+		background-color: transparent;
+	}
+
+	nav:hover .forAnimate{
+		opacity: 1;
+	}
+	section{
+		padding-left: 15px;
+	}
+	.navbar-inverse{
+		border:0;
+	}
+	.main header{
+		height: 100px;
+		background: #222;
+	}
+
+
+.userProfile {
+    margin-top: 20px;
+    margin-right: 20px;
+}
+
+.userProfile a{
+    color:#fff;
+    text-decoration: none
+}
+
+
+.nav.userProfile .open>a, 
+.nav.userProfile .open>a:focus, 
+.nav.userProfile .open>a:hover,
+.nav.userProfile>li>a:focus, 
+.nav.userProfile>li>a:hover {
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.userProfile .well{margin-bottom: 0;}
+
+.userProfile .dropdown-menu {
+    margin: 0;
+    padding: 5px;
+    border-radius: 5px !important;
+}
+
+.nav.sideMenu>li>a{
+	padding:10px 15px 10px 5px;
+}
+
+.nav.sideMenu .dropdown-menu>li>a{
+	padding: 5px 20px 5px 10px;
+}
+
+.navbar-inverse .sideMenu.navbar-nav>li>a:focus, 
+.navbar-inverse .sideMenu.navbar-nav>li>a:hover{
+	color: #fff;
+    background-color: #080808;
+}
+.bodyContainer iframe{
+	width:100%;
+	height: 100%;
+}
+

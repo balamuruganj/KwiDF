@@ -93,6 +93,7 @@
     <Content Include="Test Pages\BulletChart.html" />
     <Content Include="Test Pages\Gauge.html" />
     <Content Include="Test Pages\KPI.html" />
+    <Content Include="Test Pages\StackedBarChart.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
