@@ -19,14 +19,10 @@
 //
 // Main Drawing Method
 //
-
-
 var chartVal;
 var colName;
 var configData;
 var dataLabel;
-var assetArray = [];
-var markedAssets;
 function renderCore(sfdata) {
     configData = sfdata.config;
     var actualData = sfdata.data;
@@ -39,7 +35,8 @@ function renderCore(sfdata) {
     indicesarray = [];
     indicesarrayobject = [];
     markedAssets = [];
-    var seriesData = [];
+    titleTooltip = ['Total Wells', 'Active Wells', 'InActive Wells']
+
     var DateValue = new Date(sfdata.config.DateFilter);
     var DateValueFormatted = DateValue.valueOf();
     var nextDate = new Date(sfdata.config.DateFilter);
@@ -84,13 +81,10 @@ function renderCore(sfdata) {
         //var scriptName =config.Script;
 
         assetArray = [];
-        seriesData = [];
-        markedAssets = [];
         for (i = 0; i < actualData.length; i++) {
             if (sfdata.config.FilteredCategory != undefined && sfdata.config.FilteredCategory != "") {
                 if (sfdata.config.FilteredCategory == actualData[i].items[0]) {
-                    assetArray.push([actualData[i].items[1], actualData[i].items[j + 2]]);
-                    seriesData.push([actualData[i].items[1], actualData[i].items[j + 2]]);
+                    assetArray.push([actualData[i].items[1] + "(" + actualData[i].items[j + 2] + ")", actualData[i].items[j + 2]]);
                     //totalCount = actualData[i].items[2];
                     indexdata.push(actualData[i].hints.index);
                     indicesobject = {};
@@ -105,8 +99,7 @@ function renderCore(sfdata) {
                 }
             }
             else {
-                assetArray.push([actualData[i].items[1], actualData[i].items[j + 2]]);
-                seriesData.push([actualData[i].items[1], actualData[i].items[j + 2]]);
+                assetArray.push([actualData[i].items[1] + "(" + actualData[i].items[j + 2] + ")", actualData[i].items[j + 2]]);
                 //totalCount = actualData[i].items[2];
 
                 //log(actualData[i].hints.marked);
@@ -119,18 +112,18 @@ function renderCore(sfdata) {
             //totalCount += totalCount;
         }
 
-        createCustomControl(wrapperObj, Title, seriesData)
+        createCustomControl(wrapperObj, Title, assetArray, titleTooltip[j])
 
     }
     $(".highcharts-container ", chartObj).after("<div class='overlay'/>");
 
 }
 
-function createCustomControl(renderObject, Title, data) {
+function createCustomControl(renderObject, Title, data, tooltipName) {
 
     //data =  assetArray;
     Highcharts.setOptions({
-        colors: ['#ff9517', '#ff4949', '#fffc00', '#26a2ed', '#429e2f']
+        colors: ['#25acff', '#429e2f', '#fcff01', '#275076', '#fd8f00', '#10d1fa']
     });
     //debugger;
     var options = {
@@ -144,20 +137,19 @@ function createCustomControl(renderObject, Title, data) {
             },
             events: {
                 click: function (event) {
-                    //log("Chart  Clicked");
+                    log("Chart  Clicked");
 
-                    log('Chart Click Event 1');
-                    log("assetArray Length - " + assetArray.length);
-                    for (var k = 0; k < assetArray.length; k++) {
-                        //log("assetArray" + data[k][0]);
+
+                    for (var k = 0; k < data.length; k++) {
+                        log("assetArray" + data[k][0]);
                         //var x= 
-                        markedAssets.push(assetArray[k][0]);
+
                         //log(this.x + "," +  this.y + "," + this.name);
-                        if (assetArray[k][0] == this.name) {
-                            //log("series matched" + this.name);
-                            //log("indexdata" + indexdata.length);
+                        if (data[k][0] == this.name) {
+                            log("series matched" + this.name);
+                            log("indexdata" + indexdata.length);
                             indicesarray.push(indexdata[k]);
-                            //log("index"+ indicesarray.length);
+                            log("index" + indicesarray.length);
                         }
                     }
                     var markData = {};
@@ -192,7 +184,7 @@ function createCustomControl(renderObject, Title, data) {
         },
         series: [{
 
-            name: Title,
+            name: tooltipName,
             data: data,
             point: {
                 events: {
@@ -201,23 +193,19 @@ function createCustomControl(renderObject, Title, data) {
                         //  runScript("OS1-Gauge");
                         //}
                     {
-                        //log("Chart Series Clicked");
+                        log("Chart Series Clicked");
 
-                        //log("assetArray" + assetArray.length);
-                        alert('Series Click Event aaaa - ' + this.name);
-                        alert('Asset Array - ' + assetArray[0][0]);
-                        markedAssets = [];
-                        markedAssets.push(this.name);
+                        log("assetArray" + assetArray.length);
                         for (var k = 0; k < assetArray.length; k++) {
-                            //log("assetArray" + assetArray[k][0]);
+                            log("assetArray" + assetArray[k][0]);
                             //var x= 
-                            alert('Series Click Event aaaa - ' + assetArray[0]);
+
                             //log(this.x + "," +  this.y + "," + this.name);
                             if (assetArray[k][0] == this.name) {
-                                //log("series matched" + this.name);
-                                //log("indexdata" + indexdata.length);
+                                log("series matched" + this.name);
+                                log("indexdata" + indexdata.length);
                                 indicesarray.push(indexdata[k]);
-                                //log("index"+ indicesarray.length);
+                                log("index" + indicesarray.length);
                             }
                         }
                         var markData = {};
@@ -228,6 +216,7 @@ function createCustomControl(renderObject, Title, data) {
                         //{
                         markIndices(markData);
                         //} 
+
                     }
 
 
@@ -243,58 +232,44 @@ function createCustomControl(renderObject, Title, data) {
 
     // var chartVal = Highcharts.chart('js_chart', options);
     var chartVal = new Highcharts.Chart(options);
-    log("MarkedAssets Length-" + markedAssets.length);
-    if (markedAssets != undefined && markedAssets.length > 0) {
-        for (j = 0; j < markedAssets.length; j++) {
-            for (i = 0; i < chartVal.series[0].data.length; i++) {
-                //color = convertHex(chartVal.series[0].data[i].color, 100);
-                //chartVal.series[0].data[i].update({ color: color });
-                if (chartVal.series[0].data[i].name == markedAssets[j]) {
-                    if (chartVal.series[0].data[i].color.indexOf("#") != -1) {
-                        color = convertHex(chartVal.series[0].data[i].color, 100);;
-
-                        //log("color after marking" + color)
-                        chartVal.series[0].data[i].update({ color: color });
-                    }
-
-                    else {
-                        if (chartVal.series[0].data[i].color.indexOf("rgba") != -1)
-
-                            color = chartVal.series[0].data[i].color;
-                        color = color.replace(/[^,]+(?=\))/, '1');
-                        chartVal.series[0].data[i].update({ color: color });
-                    }
-                }
-                else
-                {
-                    if (chartVal.series[0].data[i].color.indexOf("#") != -1) {
-                        color = convertHex(chartVal.series[0].data[i].color, 50);
-                        //log("ColorCode:"+color);
-                        chartVal.series[0].data[i].update({ color: color });
-                    }
-                    else {
-                        if (chartVal.series[0].data[i].color.indexOf("rgba") != -1)
-
-                            color = chartVal.series[0].data[i].color;
-                        color = color.replace(/[^,]+(?=\))/, '0.9');
-                        chartVal.series[0].data[i].update({ color: color });
-                    }
-                }
-            }
-
-        }
+    //log("markedAssets" + markedAssets[0]);
+    if (markedAssets.length > 0) {
 
 
-        /*
         for (i = 0; i < chartVal.series[0].data.length; i++) {
             //log(chartVal.series[0].data.length);
-            //log(Title);
+            log(Title);
 
             var marked = false;
             var flag = true;
-            for (j = 0; j < markedAssets.length; j++) {             
-                if (chartVal.series[0].data[i].name == markedAssets[j]) {                   
+            for (j = 0; j < markedAssets.length; j++) {
+                log("MarkedAssetValue" + markedAssets[j]);
+                log("ChartValue" + chartVal.series[0].data[i].name);
+                //log("thisChartValue"+this.chartVal.series[0].data[i].name);
+                if (chartVal.series[0].data[i].name == markedAssets[j]) {
+                    //chartVal.series[0].data[i].opacity='0.25';
+                    //this.chartVal.series[i].data[0].update({ color: 'red' });
+
                     marked = true;
+                    //this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)', borderColor: '#fff' });
+                    //chartVal.series[0].data[i].setState('hover');
+                    //chartVal.series[0].data[i].update({ color: '#80FF0000', borderColor: '#fff' });
+
+                    //chartVal.series[0].fillOpacity= '0.1';
+                    //log("Chart value matched(IF)");
+                    log("DefaultColor:" + chartVal.series[0].data[i].color);
+                    //chartVal.series[0].data[i].update({ setState: 'hover' });
+                    /*if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
+						
+						                        this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)', borderColor: '#fff' });
+
+                    } 
+					
+else {
+						
+						                        this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)', borderColor: '#fff' });
+
+                    }*/
                     var color = "";
                     if (chartVal.series[0].data[i].color.indexOf("#") != -1) {
                         color = convertHex(chartVal.series[0].data[i].color, 100);;
@@ -321,9 +296,17 @@ function createCustomControl(renderObject, Title, data) {
 
                 else if (!marked) {
                     debugger;
-                    
+                    //chartVal.series[0].data[i].color.opacity=1;
+
+                    //chartVal.series[0].data[i].update({ color: '#80FF0000', borderColor: '#fff' });
+                    //chartVal.series[0].data[i].update({ setState: '' });
+
+
+                    //  if (this.chartVal.series[0].data[i].y >= this.chartVal.series[0].data[i].y) {
+                    //this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 0.3)' });
+                    log("ColorHexCode:" + chartVal.series[0].data[i].color);
                     if (chartVal.series[0].data[i].color.indexOf("#") != -1) {
-                        color = convertHex(chartVal.series[0].data[i].color, 50);
+                        color = convertHex(chartVal.series[0].data[i].color, 30);
                         //log("ColorCode:"+color);
                         chartVal.series[0].data[i].update({ color: color });
                     }
@@ -331,19 +314,31 @@ function createCustomControl(renderObject, Title, data) {
                         if (chartVal.series[0].data[i].color.indexOf("rgba") != -1)
 
                             color = chartVal.series[0].data[i].color;
-                        color = color.replace(/[^,]+(?=\))/, '0.9');
+                        color = color.replace(/[^,]+(?=\))/, '0.3');
                         chartVal.series[0].data[i].update({ color: color });
-                    }                    
+                    }
+
+
+                    //log("Chart value matched(ELSE)");
+
+
+                    // } 
+
+                    /*else {
+                         
+                                                 this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 0.3)' });
+ 
+                     }*/
+                    //this.chartVal.series[0].data[i].update({ color: '#294251' });
                 }
             }
-        }*/
-    }
-    else {
-        for (i = 0; i < chartVal.series[0].data.length; i++) {
-            color = convertHex(chartVal.series[0].data[i].color, 100);
-            chartVal.series[0].data[i].update({ color: color });
         }
     }
+    //$("#js_chart .highcharts-container").after("<span class='dataLabels'>"+totalCount+"</span>");
+
+
+    //chartVal = new Highcharts.Chart(options);
+    //setInterval(chartFunction(chartVal, actualValue), 500);
 
 }
 
@@ -403,3 +398,6 @@ function convertHex(hex, opacity) {
 // 
 // #endregion Resizing Code
 //////////////////////////////////////////////////////////////////////////////
+
+
+

@@ -467,7 +467,7 @@ function renderCore(sfdata) {
 
             exporting: { enabled: false },
             yAxis: [{
-
+                allowDecimals: false,
                 lineWidth: 1,
                 opposite: true,
                 lineColor: '#fff',

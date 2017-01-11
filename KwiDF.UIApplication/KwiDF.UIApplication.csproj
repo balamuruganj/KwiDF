@@ -76,6 +76,7 @@
     <Content Include="Resources\JS\Common\CheckboxChartFilter.js" />
     <Content Include="Resources\JS\Common\CheckboxChartFilterPage3.js" />
     <Content Include="Resources\JS\Common\CheckboxChartFilterPage5.js" />
+    <Content Include="Resources\JS\Common\CheckboxChartFilterPage8.js" />
     <Content Include="Resources\JS\Common\CheckBoxFilter.js" />
     <Content Include="Resources\JS\Common\CheckBoxFilter_cm.js" />
     <Content Include="Resources\JS\Common\exporting.js" />

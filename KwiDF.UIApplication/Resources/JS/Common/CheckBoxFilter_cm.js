@@ -3,10 +3,10 @@ $(document).ready(function () {
 
     var chartObj = $("#js_chart");
     $(chartObj).wrapInner("<div class='wrapper' style='margin-top:15px'/>");
-    $(".wrapper").append("<p><input class='Checkbox' type='checkbox' value='Sum([DownTimeHours])' /> <span style='color: #ffffff;'>DownTime(Hrs)&nbsp;&nbsp;</span>&nbsp;<input class='Checkbox' type='checkbox' value='Sum([OilProductionGainLoss])' /> <span style='color: #ffffff;'>Losses(stb/day)</span>&nbsp;<input class='Checkbox' type='checkbox' value='Sum([WellPotential])' /> <span style='color: #ffffff;'>Well Potential</span>&nbsp;<input class='Checkbox' type='checkbox' value='Sum([ReservoirPotential])' /> <span style='color: #ffffff;'>Reservoir Potential</span>&nbsp;<input class='Checkbox' type='checkbox' value='Sum([PipelinePotential])' /> <span style='color: #ffffff;'>Pipeline Potential </span>&nbsp;<input class='Checkbox' type='checkbox' value='Sum([IntegrityCapacity])' /> <span style='color: #ffffff;'>Integrity Capacity</span>&nbsp;<input class='Checkbox' type='checkbox' value='Sum([DCPFull])' /> <span style='color: #ffffff;'>DCP Full</span></p>");    
-if ($('.wrapper', chartObj).length >0) {
-               $('.wrapper span',chartObj).css({'color':'#fff','fontSize':'17px','marginBottom':'5px', 'fontFamily':'Arial'});
-}
+    $(".wrapper").append("<ul style='list-style: none;margin:0;padding:0'><li style='padding-bottom:5px;'><input class='Checkbox' type='checkbox' value='Sum([DownTimeHours]) as [DownTime(Hrs)]' /> <span style='color: #ffffff;'>DownTime(Hrs)&nbsp;&nbsp;</span>&nbsp;</li><li style='padding-bottom:5px;'><input class='Checkbox' type='checkbox' value='Sum([OilProductionGainLoss]) as [Losses(stb/day)]' /> <span style='color: #ffffff;'>Losses(stb/day)</span>&nbsp;</li><li style='padding-bottom:5px;'><input class='Checkbox' type='checkbox' value='Sum([WellPotential]) as [Well Potential]' /> <span style='color: #ffffff;'>Well Potential</span>&nbsp;</li><li style='padding-bottom:5px;'><input class='Checkbox' type='checkbox' value='Sum([ReservoirPotential]) as [Reservoir Potential]' /> <span style='color: #ffffff;'>Reservoir Potential</span>&nbsp;</li><li style='padding-bottom:5px;'><input class='Checkbox' type='checkbox' value='Sum([PipelinePotential]) as [Pipeline Potential]' /> <span style='color: #ffffff;'>Pipeline Potential </span>&nbsp;</li><li style='padding-bottom:5px;'><input class='Checkbox' type='checkbox' value='Sum([IntegrityCapacity]) as [Integrity Capacity]' /> <span style='color: #ffffff;'>Integrity Capacity</span>&nbsp;</li><li><input class='Checkbox' type='checkbox' value='Sum([DCPFull]) as [DCP Full]' /> <span style='color: #ffffff;'>DCP Full</span></li></ul>");
+    if ($('.wrapper', chartObj).length > 0) {
+        $('.wrapper span', chartObj).css({ 'color': '#fff', 'fontSize': '15px', 'fontFamily': 'Arial' });
+    }
 
     var chartObj = $("#js_chart");
     chartObj.on('click', '.Checkbox', function () {
@@ -24,7 +24,7 @@ if ($('.wrapper', chartObj).length >0) {
             //log("selectedCategoryActual : " + selectedCategoryActual);
             assignDocPropertyValue(0, $(this).val());
             setDocumentProperty("RefreshKPI", "false");
-			log("ifactualVal"+ actualVal +  "selectedCategoryTarget" + selectedCategoryTarget);
+            log("ifactualVal" + actualVal + "selectedCategoryTarget" + selectedCategoryTarget);
             // runScript("DynamicProductionCategory", [{ "Key": "colName", "Value": "Sum([" + configData.FilteredCategory[0] + "])"+ ","+ "Sum([" + configData.FilteredCategory[1] + "])" }, { "Key": "isDelete", "Value": 0 }]);
             runScript("DynamicProductionCategory_cm", [{ "Key": "actualValue", "Value": actualVal }, { "Key": "targetValue", "Value": selectedCategoryTarget }]);
         }
@@ -34,7 +34,7 @@ if ($('.wrapper', chartObj).length >0) {
             //updateColor();
             assignDocPropertyValue(1, $(this).val());
             setDocumentProperty("RefreshKPI", "false");
-			log("elseactualVal"+ actualVal +  "selectedCategoryTarget" + selectedCategoryTarget);
+            log("elseactualVal" + actualVal + "selectedCategoryTarget" + selectedCategoryTarget);
             //runScript("DynamicProductionCategory", [{ "Key": "colName", "Value": "Sum([" + configData.FilteredCategory[0] + "])"+ ","+ "Sum([" + configData.FilteredCategory[1] + "])" }, { "Key": "isDelete", "Value": 1 }]);
             runScript("DynamicProductionCategory_cm", [{ "Key": "actualValue", "Value": actualVal }, { "Key": "targetValue", "Value": selectedCategoryTarget }]);
         }
@@ -63,7 +63,7 @@ function assignDocPropertyValue(isDelete, SelectedValue) {
             actualVal = SelectedValue;
         }
     }
-    
+
     //setDocumentProperty(propertyName[0],actualVal);                                 
     /*var splitTarget=[];
     targetVal="";

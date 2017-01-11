@@ -68,15 +68,21 @@ function renderCore(sfdata) {
         if (sfdata.config.FilteredCategory != undefined && sfdata.config.FilteredCategory != "") {
             if (sfdata.config.FilteredCategory == actualData[i].items[0]) {
                 assetArray.push([actualData[i].items[1]]);
-                data.push(actualData[i].items[2]);
-                additionalData.push(actualData[i].items[5]);
+                //data.push(actualData[i].items[2]);
+
+                //targetData.push(actualData[i].items[3]);
+
+                //additionalData.push(actualData[i].items[5]);
                 indexdata.push(actualData[i].hints.index);
                 indicesobject = {};
                 indicesobject.index = actualData[i].hints.index;
                 indicesobject.Asset = actualData[i].items[1];
                 indicesobject.marked = actualData[i].hints.marked != undefined ? actualData[i].hints.marked : false;
                 indicesarrayobject.push(indicesobject);
-                targetData.push(actualData[i].items[3]);
+                //targetData.push(actualData[i].items[3]);
+                data.push({ y: actualData[i].items[2], target: actualData[i].items[3], water: actualData[i].items[2], Oil: actualData[i].items[5] });
+                targetData.push({ y: actualData[i].items[3], water: actualData[i].items[2], target: actualData[i].items[3], Oil: actualData[i].items[5] });
+                additionalData.push({ y: actualData[i].items[5], water: actualData[i].items[2], target: actualData[i].items[3], Oil: actualData[i].items[5] });
                 if (actualData[i].hints.marked != undefined && actualData[i].hints.marked) {
                     markedAssets.push(actualData[i].items[1]);
                 }
@@ -94,9 +100,13 @@ function renderCore(sfdata) {
 
             indexdata.push(actualData[i].hints.index);
             assetArray.push([actualData[i].items[1]]);
-            data.push(actualData[i].items[2]);
-            additionalData.push(actualData[i].items[5]);
-            targetData.push(actualData[i].items[3]);
+            //data.push(actualData[i].items[2]);
+            //additionalData.push(actualData[i].items[5]);
+            //additionalData.push({ y: actualData[i].items[5], water: actualData[i].items[2], target: actualData[i].items[3],Oil:actualData[i].items[5] });
+            //targetData.push(actualData[i].items[3]);
+            data.push({ y: actualData[i].items[2], target: actualData[i].items[3], water: actualData[i].items[2], Oil: actualData[i].items[5] });
+            targetData.push({ y: actualData[i].items[3], water: actualData[i].items[2], target: actualData[i].items[3], Oil: actualData[i].items[5] });
+            additionalData.push({ y: actualData[i].items[5], water: actualData[i].items[2], target: actualData[i].items[3], Oil: actualData[i].items[5] });
         }
     }
     series =
@@ -104,17 +114,17 @@ function renderCore(sfdata) {
         [{
             name: 'Actual1', //Green
             data: additionalData,
-			dataLabels: {
+            dataLabels: {
                 enabled: true,
                 //rotation: -90,
                 color: '#FFFFFF',
                 align: 'center',
                 format: '{point.y:.0f}', // two decimal
-               y:-10, // 10 pixels down from the top
+                y: -10, // 10 pixels down from the top
                 style: {
                     fontSize: '11px',
                     fontFamily: 'arial, sans-serif',
-					textOutline:'1px 1px #646465',
+                    textOutline: '1px 1px #646465',
                 }
             },
             pointPadding: 0,
@@ -167,17 +177,17 @@ function renderCore(sfdata) {
         {
             name: 'Actual',
             data: data,
-	 dataLabels: {
+            dataLabels: {
                 enabled: true,
                 //rotation: -90,
                 color: '#FFFFFF',
                 align: 'center',
                 format: '{point.y:.0f}', // two decimal
-               y:-10, // 10 pixels down from the top
+                y: -10, // 10 pixels down from the top
                 style: {
                     fontSize: '11px',
                     fontFamily: 'arial, sans-serif',
-					textOutline:'1px 1px #646465',
+                    textOutline: '1px 1px #646465',
                 }
             },
             pointPadding: 0,
@@ -346,7 +356,7 @@ function renderCore(sfdata) {
             //shared: true
             formatter: function () {
                 debugger;
-                return this.series.name + ": <strong>" + Highcharts.numberFormat(this.y, 2) + "</strong><br></br> Field: <strong>" + this.x + "</strong>"
+                return "GC: <strong>" + this.x + "</strong>" + "<br /> Oil: <strong>" + Highcharts.numberFormat(this.point.Oil, 2) + "</strong><br/>" + "Water: <strong>" + Highcharts.numberFormat(this.point.water, 2) + "</strong><br/>Target:<strong>" + Highcharts.numberFormat(this.point.target, 2) + "</strong>";
                 ;
             }
         },
@@ -432,7 +442,7 @@ function renderCore(sfdata) {
                     marked = true;
                     if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
 
-                        this.chartVal.series[0].data[i].update({ color:  'rgba(31, 174, 57, 1)', borderColor: '#fff' });
+                        this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)', borderColor: '#fff' });
 
                     } else {
 
@@ -447,7 +457,7 @@ function renderCore(sfdata) {
                     debugger;
 
                     if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
-                        this.chartVal.series[0].data[i].update({ color:  'rgba(31, 174, 57, 0.3)' });
+                        this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 0.3)' });
 
                     } else {
 
