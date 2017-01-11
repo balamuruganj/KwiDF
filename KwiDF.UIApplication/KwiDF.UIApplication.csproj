@@ -69,6 +69,7 @@
     <Content Include="Resources\CSS\Highcharts.KPI.css" />
     <Content Include="Resources\fonts\fontawesome-webfont.svg" />
     <Content Include="Resources\Images\calendar.png" />
+    <Content Include="Resources\Images\export.png" />
     <Content Include="Resources\Images\help.png" />
     <Content Include="Resources\JS\Bullet Chart\Highcharts.bar.client.js" />
     <Content Include="Resources\JS\Bullet Chart\Highchart.StackedBar.js" />
