@@ -18,94 +18,41 @@ $(document).ready(function () {
         var ind = objId.split('checkbox');
         if (parseInt(ind[1]) == 0) {
             index = 0;
-            indexVal = 1;
+
         }
         else {
-            index = parseInt(ind[1]) + parseInt(ind[1]);
-            indexVal = index + 1;
+            index = 1;
         }
+        log("Document Ready ActualValueArray - " + actualValueArray.length);
+        log("Document Ready ActualDisplayArray - " + actualDisplayArray.length);
         var act = actualValueArray[index] + ' as ' + actualDisplayArray[index]
-        var tar = actualValueArray[indexVal] + ' as ' + actualDisplayArray[indexVal]
-        // $(this).toggleClass('selected');
 
-        //log("DocClick" + selectedCategoryActual);
+
         if ($(this).prop("checked") == true) {
-            // $(".overlay", $(this)).show();
-            //updateColor();
+
             log($(this).val());
-            //selectedCategoryActual+="," + $(this).val();
-            //log("selectedCategoryActual : " + selectedCategoryActual);
-            //assignDocPropertyValue(0, $(this).val());
-            setDocumentProperty("RefreshKPI", "false");
-            setDocumentProperty("RefreshKPIGC", "false");
+
             log("checkbox -" + act);
-            // runScript("DynamicProductionCategory", [{ "Key": "colName", "Value": "Sum([" + configData.FilteredCategory[0] + "])"+ ","+ "Sum([" + configData.FilteredCategory[1] + "])" }, { "Key": "isDelete", "Value": 0 }]);
-            runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": act }, { "Key": "targetValue", "Value": tar }, { "Key": "isDelete", "Value": 0 }]);
+            setDocumentProperty("RefreshKPIEWI", "false");
+
+
+            runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": act }, { "Key": "targetValue", "Value": "" }, { "Key": "isDelete", "Value": 0 }]);
         }
 
         else {
             log("checkbox -" + act);
             $(".overlay", $(this)).hide();
-            //updateColor();
-            //assignDocPropertyValue(1, $(this).val());
-            setDocumentProperty("RefreshKPI", "false");
-            setDocumentProperty("RefreshKPIGC", "false");
-            //runScript("DynamicProductionCategory", [{ "Key": "colName", "Value": "Sum([" + configData.FilteredCategory[0] + "])"+ ","+ "Sum([" + configData.FilteredCategory[1] + "])" }, { "Key": "isDelete", "Value": 1 }]);
-            runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": act }, { "Key": "targetValue", "Value": tar }, { "Key": "isDelete", "Value": 1 }]);
+
+            setDocumentProperty("RefreshKPIEWI", "false");
+
+            runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": act }, { "Key": "targetValue", "Value": "" }, { "Key": "isDelete", "Value": 1 }]);
         }
     });
 
 
 
 });
-function assignDocPropertyValue(isDelete, SelectedValue) {
-    var splitActual = [];
-    actualVal = "";
-    splitActual = selectedCategoryActual.split(',');
-    for (var i = 0; i < splitActual.length; i++) {
 
-        if (SelectedValue != splitActual[i])
-            if (actualVal == '')
-                actualVal = splitActual[i]
-            else
-                actualVal += ',' + splitActual[i]
-    }
-    if (isDelete == 0) {
-        if (actualVal != "") {
-            actualVal += ',' + SelectedValue;
-        }
-        else {
-            actualVal = SelectedValue;
-        }
-    }
-    log(actualVal);
-    //setDocumentProperty(propertyName[0],actualVal);                                 
-    /*var splitTarget=[];
-    targetVal="";
-    splitTarget=selectedCategoryTarget.split(',');
-    for(var i=0;i<splitTarget.length;i++)
-    {
-                        
-        if (columnsArray[3] != splitTarget[i])
-            if(targetVal == '')
-                targetVal = splitTarget[i]
-            else
-                targetVal+=','+splitTarget[i]
-    }
-    if(isDelete==0)
-    {
-        if(targetVal!="")
-        {
-            targetVal+=','+columnsArray[3]
-        }
-        else
-        {
-            targetVal=columnsArray[3];
-        }
-    }
-    log(targetVal);*/
-    //setDocumentProperty(propertyName[1],targetVal);   
-}
 var selectedCategoryActual = "";
 var selectedCategoryTarget = "";
 var actualValueArray = [];
@@ -115,6 +62,8 @@ var targetDisplay = "";
 function renderCore(sfdata) {
     actualValueArray = sfdata.config.ColumnName;
     actualDisplayArray = sfdata.config.DisplayName;
+    //log("Render core ActualValueArray - "+actualValueArray.length);
+    //log("Render core ActualDisplayArray - "+actualDisplayArray.length);
     selectedCategoryActual = sfdata.config.CategoryConditionActual;
     selectedCategoryTarget = sfdata.config.CategoryConditionTarget;
     if (sfdata.config.RefreshKPI == "true") {
@@ -125,8 +74,8 @@ function renderCore(sfdata) {
                         $("#checkbox0").prop('checked', true);
                     }
                     else {
-                        var n = i / 2;
-                        $("#checkbox" + n).prop('checked', true);
+
+                        $("#checkbox1").prop('checked', true);
                     }
 
 
@@ -136,8 +85,8 @@ function renderCore(sfdata) {
                         $("#checkbox0").prop('checked', false);
                     }
                     else {
-                        var n = i / 2;
-                        $("#checkbox" + n).prop('checked', false);
+
+                        $("#checkbox1").prop('checked', false);
                     }
                 }
             }
@@ -146,8 +95,8 @@ function renderCore(sfdata) {
                     $("#checkbox0").prop('checked', false);
                 }
                 else {
-                    var n = i / 2;
-                    $("#checkbox" + n).prop('checked', false);
+
+                    $("#checkbox1").prop('checked', false);
                 }
             }
         }

@@ -89,6 +89,7 @@
     <Content Include="Resources\JS\Common\JS-Viz-1.js" />
     <Content Include="Resources\JS\Common\JSViz.js" />
     <Content Include="Resources\JS\Common\no-data-to-display.js" />
+    <Content Include="Resources\JS\DonutChart\DrillingCount.donut.client.js" />
     <Content Include="Resources\JS\DonutChart\Highcharts.donut.client.js" />
     <Content Include="Resources\JS\Gauge\Gauge.js" />
     <Content Include="Resources\JS\KPIChart\Highcharts.budgetKPI.js" />

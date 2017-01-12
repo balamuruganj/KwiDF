@@ -228,7 +228,7 @@ function renderCore(sfdata) {
                 $("header", drawChart).append("<div class='target-holder'/>");
                 $("header .target-holder", drawChart).append("<div>Target</div><div>" + targetValue + "</div>");
 
-                $(drawChart).append("<footer/>");
+                $(drawChart).append("<footer id='footer'/>");
                 if (sfdata.config.ShowChange == "true") {
                     $("footer", drawChart).append("<span class='up'>" + bottomValue + "</span>");
                 }
@@ -595,28 +595,28 @@ function createCustomGauge() {
     //MidColor
     if (showTarget == "true") {
         if (lastTopData > lastTargetData) {
-            startColor = "#ddb90a";
-            stopColor = "#5e4f06";
-            borderColor = "#473a00";
+            startColor = "#a5a5a5";
+            stopColor = "#000";
+            borderColor = "#434242";
 
         }
         else if (lastTopData < lastTargetData) {
-            startColor = "#ff0000";
-            stopColor = "#a50101";
-            borderColor = "#8f0000";
+            startColor = "#a5a5a5";
+            stopColor = "#000";
+            borderColor = "#434242";
 
         }
         else {
-            startColor = "#429e2f";
-            stopColor = "#124a06";
-            borderColor = "#104004";
+            startColor = "#a5a5a5";
+            stopColor = "#000";
+            borderColor = "#434242";
 
         }
     }
     else {
-        startColor = "#429e2f";
-        stopColor = "#124a06";
-        borderColor = "#104004";
+        startColor = "#a5a5a5";
+        stopColor = "#000";
+        borderColor = "#434242";
     }
     log("=================================");
     log("actualValue " + lastTopData);
@@ -659,7 +659,7 @@ function createCustomGauge() {
             startAngle: -90,
             endAngle: 90,
             center: ['50%', '95%'],
-            size: '140%',
+            size: '100%',
             background:
 			{
 			    backgroundColor: {
@@ -674,8 +674,8 @@ function createCustomGauge() {
 			        ]
 			    },
 			    borderColor: borderColor,
-			    //outerRadius: '50%',
-			    //innerRadius: '10%',
+			    outerRadius: '102%',
+			    innerRadius: '10%',
 			}
 
         },
@@ -751,7 +751,7 @@ function createCustomGauge() {
                 style: {
                     color: '#fff',
 
-                    fontSize: '12px',
+                    fontSize: '11px',
                     fontWeight: 'normal'
                 }
             },
@@ -785,7 +785,7 @@ function createCustomGauge() {
                 formatter: function () {
                     var kmh = topValue;
                     dataLabel = '<span class="dataLabels">' + kmh + '</span>';
-                    $("#gaugeHolder .highcharts-container").after(dataLabel);
+                    $("#footer").after(dataLabel);
                 },
 
                 y: 12,

@@ -227,21 +227,21 @@ function createCustomGauge(renderObject, actualValue, targetValue, gaugeTitle, s
     plotBandStartColor = "#ff9517";
     plotBandEndColor = "#429e2f";
     if (actualValue > targetValue) {
-        startColor = "#ddb90a";
-        stopColor = "#5e4f06";
-        borderColor = "#473a00";
+        startColor = "#a5a5a5";
+        stopColor = "#000";
+        borderColor = "#434242";
 
     }
     else if (actualValue < targetValue) {
-        startColor = "#ff0000";
-        stopColor = "#78091d";
-        borderColor = "#580212";
+        startColor = "#a5a5a5";
+        stopColor = "#000";
+        borderColor = "#434242";
 
     }
     else {
-        startColor = "#429e2f";
-        stopColor = "#124a06";
-        borderColor = "#104004";
+        startColor = "#a5a5a5";
+        stopColor = "#000";
+        borderColor = "#434242";
 
     }
     var maxValue;

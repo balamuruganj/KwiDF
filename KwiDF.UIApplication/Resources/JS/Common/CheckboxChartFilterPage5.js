@@ -72,6 +72,11 @@ function renderCore(sfdata) {
                     $("#checkbox" + [i]).prop('checked', true);
 
                 }
+
+            }
+            else {
+                $("#checkbox0").prop('checked', false);
+                $("#checkbox1").prop('checked', false);
             }
 
         }
