@@ -71,15 +71,10 @@ font-size:11px;
 	overflow: hidden;
    
 	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#49484d+0,49484d+44,121013+100 */
-background: #49484d; /* Old browsers */
-background: -moz-linear-gradient(top,  #49484d 0%, #49484d 44%, #121013 100%); /* FF3.6-15 */
-background: -webkit-linear-gradient(top,  #49484d 0%,#49484d 44%,#121013 100%); /* Chrome10-25,Safari5.1-6 */
-background: linear-gradient(to bottom,  #49484d 0%,#49484d 44%,#121013 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#49484d', endColorstr='#121013',GradientType=0 ); /* IE6-9 */
-   
+background: #000; /* Old browsers */
 }
 .wrapper.smallSection{
-	border:1px solid transparent;
+	border:1px solid #3d3d3d;
 	-webkit-border-radius: 12px;
 	border-radius: 12px;
 	

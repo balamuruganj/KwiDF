@@ -30,7 +30,9 @@ function renderCore(sfdata) {
     data = [];
     targetData = [];
     assetArray = [];
+    assetArrayData = [];
     var totalCount = 0;
+
     indexdata = [];
     indicesarray = [];
     indicesarrayobject = [];
@@ -57,9 +59,6 @@ function renderCore(sfdata) {
         }
 
     });
-
-
-
     // Extract the config params section
     var config = sfdata.config;
     //categoryArray=config.title;
@@ -74,17 +73,16 @@ function renderCore(sfdata) {
         if ($('#' + wrapperObj, chartObj).length == 0) {
             $(chartObj).append("<div id=" + wrapperObj + " class='wrapper' />");
             $('#' + wrapperObj, chartObj).height(160);
-
-
         }
         var Title = config.title[j];
         //var scriptName =config.Script;
-
         assetArray = [];
+        assetArrayData = [];
         for (i = 0; i < actualData.length; i++) {
             if (sfdata.config.FilteredCategory != undefined && sfdata.config.FilteredCategory != "") {
                 if (sfdata.config.FilteredCategory == actualData[i].items[0]) {
                     assetArray.push([actualData[i].items[1] + "(" + actualData[i].items[j + 2] + ")", actualData[i].items[j + 2]]);
+                    assetArrayData.push([actualData[i].items[1] + "(" + actualData[i].items[j + 2] + ")", actualData[i].items[j + 2]]);
                     //totalCount = actualData[i].items[2];
                     indexdata.push(actualData[i].hints.index);
                     indicesobject = {};
@@ -94,29 +92,27 @@ function renderCore(sfdata) {
                     indicesarrayobject.push(indicesobject);
                     targetData.push(actualData[i].items[3]);
                     if (actualData[i].hints.marked != undefined && actualData[i].hints.marked) {
-                        markedAssets.push(actualData[i].items[1]);
+                        markedAssets.push(actualData[i].items[1] + "(" + actualData[i].items[j + 2] + ")");
                     }
                 }
             }
             else {
                 assetArray.push([actualData[i].items[1] + "(" + actualData[i].items[j + 2] + ")", actualData[i].items[j + 2]]);
+                assetArrayData.push([actualData[i].items[1] + "(" + actualData[i].items[j + 2] + ")", actualData[i].items[j + 2]]);
                 //totalCount = actualData[i].items[2];
 
                 //log(actualData[i].hints.marked);
                 if (actualData[i].hints.marked != undefined && actualData[i].hints.marked) {
-                    markedAssets.push(actualData[i].items[1]);
+                    markedAssets.push(actualData[i].items[1] + "(" + actualData[i].items[j + 2] + ")");
                 }
 
                 indexdata.push(actualData[i].hints.index);
             }
             //totalCount += totalCount;
         }
-
-        createCustomControl(wrapperObj, Title, assetArray, titleTooltip[j])
-
+        createCustomControl(wrapperObj, Title, assetArrayData, titleTooltip[j])
     }
     $(".highcharts-container ", chartObj).after("<div class='overlay'/>");
-
 }
 
 function createCustomControl(renderObject, Title, data, tooltipName) {
@@ -131,26 +127,18 @@ function createCustomControl(renderObject, Title, data, tooltipName) {
             renderTo: renderObject,
             type: 'pie',
             backgroundColor: 'transparent',
-            options3d: {
-                enabled: true,
-                alpha: 35
-            },
+
             events: {
                 click: function (event) {
                     log("Chart  Clicked");
 
 
-                    for (var k = 0; k < data.length; k++) {
-                        log("assetArray" + data[k][0]);
-                        //var x= 
+                    for (var k = 0; k < assetArray.length; k++) {
+                        log("assetArray" + assetArray[k][0]);
+                        log("indexdata" + indexdata.length);
+                        indicesarray.push(indexdata[k]);
+                        log("index" + indicesarray.length);
 
-                        //log(this.x + "," +  this.y + "," + this.name);
-                        if (data[k][0] == this.name) {
-                            log("series matched" + this.name);
-                            log("indexdata" + indexdata.length);
-                            indicesarray.push(indexdata[k]);
-                            log("index" + indicesarray.length);
-                        }
                     }
                     var markData = {};
                     //log("markIndices series click" + markData);
@@ -183,7 +171,6 @@ function createCustomControl(renderObject, Title, data, tooltipName) {
             }
         },
         series: [{
-
             name: tooltipName,
             data: data,
             point: {
@@ -197,11 +184,17 @@ function createCustomControl(renderObject, Title, data, tooltipName) {
 
                         log("assetArray" + assetArray.length);
                         for (var k = 0; k < assetArray.length; k++) {
-                            log("assetArray" + assetArray[k][0]);
-                            //var x= 
-
+                            log("assetArray:" + assetArray[k][0]);
+                            log("Current Field:" + this.name);
+                            //var x= 	
                             //log(this.x + "," +  this.y + "," + this.name);
-                            if (assetArray[k][0] == this.name) {
+                            var arrayname = assetArray[k][0];
+                            var seriesname = this.name;
+                            var res = arrayname.substring(0, 2);
+                            var seriesnameshort = seriesname.substring(0, 2);
+                            log("res" + res);
+                            log("this.name" + this.name);
+                            if (res == seriesnameshort) {
                                 log("series matched" + this.name);
                                 log("indexdata" + indexdata.length);
                                 indicesarray.push(indexdata[k]);
@@ -225,8 +218,6 @@ function createCustomControl(renderObject, Title, data, tooltipName) {
 
         }],
         exporting: { enabled: false },
-
-
 
     };
 
@@ -254,42 +245,31 @@ function createCustomControl(renderObject, Title, data, tooltipName) {
                     //this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)', borderColor: '#fff' });
                     //chartVal.series[0].data[i].setState('hover');
                     //chartVal.series[0].data[i].update({ color: '#80FF0000', borderColor: '#fff' });
-
                     //chartVal.series[0].fillOpacity= '0.1';
                     //log("Chart value matched(IF)");
                     log("DefaultColor:" + chartVal.series[0].data[i].color);
                     //chartVal.series[0].data[i].update({ setState: 'hover' });
                     /*if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
-						
-						                        this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)', borderColor: '#fff' });
+                       this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)', borderColor: '#fff' });
 
                     } 
-					
 else {
-						
-						                        this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)', borderColor: '#fff' });
+                       this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)', borderColor: '#fff' });
 
                     }*/
                     var color = "";
+
                     if (chartVal.series[0].data[i].color.indexOf("#") != -1) {
                         color = convertHex(chartVal.series[0].data[i].color, 100);;
-
                         //log("color after marking" + color)
                         chartVal.series[0].data[i].update({ color: color });
                     }
-
                     else {
                         if (chartVal.series[0].data[i].color.indexOf("rgba") != -1)
-
                             color = chartVal.series[0].data[i].color;
                         color = color.replace(/[^,]+(?=\))/, '1');
                         chartVal.series[0].data[i].update({ color: color });
                     }
-
-
-
-
-
                     debugger;
                 }
 
@@ -297,10 +277,8 @@ else {
                 else if (!marked) {
                     debugger;
                     //chartVal.series[0].data[i].color.opacity=1;
-
                     //chartVal.series[0].data[i].update({ color: '#80FF0000', borderColor: '#fff' });
                     //chartVal.series[0].data[i].update({ setState: '' });
-
 
                     //  if (this.chartVal.series[0].data[i].y >= this.chartVal.series[0].data[i].y) {
                     //this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 0.3)' });
@@ -312,23 +290,19 @@ else {
                     }
                     else {
                         if (chartVal.series[0].data[i].color.indexOf("rgba") != -1)
-
                             color = chartVal.series[0].data[i].color;
                         color = color.replace(/[^,]+(?=\))/, '0.3');
                         chartVal.series[0].data[i].update({ color: color });
                     }
-
-
                     //log("Chart value matched(ELSE)");
 
 
                     // } 
 
                     /*else {
-                         
-                                                 this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 0.3)' });
- 
-                     }*/
+                                         this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 0.3)' });
+                  
+                                      }*/
                     //this.chartVal.series[0].data[i].update({ color: '#294251' });
                 }
             }
@@ -336,15 +310,11 @@ else {
     }
     //$("#js_chart .highcharts-container").after("<span class='dataLabels'>"+totalCount+"</span>");
 
-
     //chartVal = new Highcharts.Chart(options);
     //setInterval(chartFunction(chartVal, actualValue), 500);
-
 }
 
 //wait(sfdata.wait, sfdata.static);
-
-
 
 
 
@@ -390,7 +360,6 @@ function convertHex(hex, opacity) {
     b = parseInt(hex.substring(4, 6), 16);
     //log("B" + b);
 
-
     result = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity / 100 + ')';
     return result;
 }
@@ -398,6 +367,3 @@ function convertHex(hex, opacity) {
 // 
 // #endregion Resizing Code
 //////////////////////////////////////////////////////////////////////////////
-
-
-

@@ -232,6 +232,8 @@ function renderCore(sfdata) {
                 if (sfdata.config.ShowChange == "true") {
                     $("footer", drawChart).append("<span class='up'>" + bottomValue + "</span>");
                 }
+                var dataLabel = '<span class="dataLabels" id="lableVal">' + topValue + '</span>';
+                $("#footer").after(dataLabel);
                 $("footer", drawChart).append("<div class='icon-holder'/>");
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedGuage()"  class="active" id="guage"><i class="fa fa-tachometer" aria-hidden="true"></i></button>');
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedLine()"  id="line"><i class="fa fa-line-chart" aria-hidden="true"></i></button>');
@@ -242,6 +244,7 @@ function renderCore(sfdata) {
             }
 
             $("header p").html(topValue);
+            $("#lableVal").html(topValue);
             if (sfdata.config.ShowChange == "true") {
                 $("footer span").html(bottomValue);
             }
@@ -363,6 +366,8 @@ function renderCore(sfdata) {
                 if (sfdata.config.ShowChange == "true") {
                     $("footer", drawChart).append("<span class='up'>" + bottomValue + "</span>");
                 }
+                var dataLabel = '<span class="dataLabels" id="lableVal">' + topValue + '</span>';
+                $("#footer").after(dataLabel);
                 $("footer", drawChart).append("<div class='icon-holder'/>");
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedGuage()"  class="active" id="guage"><i class="fa fa-tachometer" aria-hidden="true"></i></button>');
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedLine()"  id="line"><i class="fa fa-line-chart" aria-hidden="true"></i></button>');
@@ -372,6 +377,7 @@ function renderCore(sfdata) {
             }
 
             $("header p").html(topValue);
+            $("#lableVal").html(topValue);
             if (sfdata.config.ShowChange == "true") {
                 $("footer span").html(bottomValue);
             }
@@ -551,12 +557,15 @@ function chooseSelection() {
 
     if (selectionType == "Bar") {
         clickedChart();
+        $(".dataLabels").css("display", "none")
     }
     else if (selectionType == "Line") {
         clickedLine();
+        $(".dataLabels").css("display", "none")
     }
     else {
         clickedGuage();
+        $(".dataLabels").css("display", "block")
     }
 
     updateColor();
@@ -783,9 +792,8 @@ function createCustomGauge() {
             dataLabels: {
 
                 formatter: function () {
-                    var kmh = topValue;
-                    dataLabel = '<span class="dataLabels">' + kmh + '</span>';
-                    $("#footer").after(dataLabel);
+                    //var kmh = topValue;
+
                 },
 
                 y: 12,
@@ -844,6 +852,7 @@ function clickedGuage() {
     $('.chartHolder').addClass("pushBack");
     $('.gaugeHolder').removeClass("pushBack");
     $(".icon-holder button").removeClass("active");
+    $(".dataLabels").css("display", "block")
     $("#guage").addClass("active");
 
     selection = "gaugeHolder";
@@ -853,6 +862,7 @@ function clickedGuage() {
 function clickedLine() {
     $('.chartHolder').removeClass("pushBack");
     $('.gaugeHolder').addClass("pushBack");
+    $(".dataLabels").css("display", "none")
     var chart = $('.chartHolder').highcharts();
     chart.inverted = false;
     chart.xAxis[0].update({}, false);
@@ -870,6 +880,7 @@ function clickedLine() {
 function clickedChart() {
     $('.chartHolder').removeClass("pushBack");
     $('.gaugeHolder').addClass("pushBack");
+    $(".dataLabels").css("display", "none")
     var chart = $('.chartHolder').highcharts();
     chart.inverted = false;
     chart.xAxis[0].update({}, false);
