@@ -195,7 +195,21 @@ var year = new Date(sfdata.config.FilterDate).getUTCFullYear();
         },
 
         plotOptions: {
-            series: {
+		series: {
+			 marker: {
+                        enabled: true,
+                        symbol: 'circle',
+                        radius: 2,
+                        // if you want to remove hover efect, add the following lines
+                        
+                        states: {
+                            hover: {
+                                radius: 3
+                            }
+                        }
+                       
+                    },
+			
                 color: '#fff',
                 pointPadding: 0,
                 groupPadding: 1,

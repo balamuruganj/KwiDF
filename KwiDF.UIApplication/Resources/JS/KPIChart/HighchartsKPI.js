@@ -451,15 +451,15 @@ function renderCore(sfdata) {
                     marker: {
                         enabled: true,
                         symbol: 'circle',
-                        radius: 3,
+                        radius: 2,
                         // if you want to remove hover efect, add the following lines
-                        /* 
+                       
                         states: {
                             hover: {
-                                radius: 7
+                                radius: 3
                             }
                         }
-                        */
+                        
                     },
 
                     color: colorCode,

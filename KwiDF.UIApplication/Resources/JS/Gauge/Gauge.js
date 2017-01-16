@@ -164,9 +164,12 @@ function renderCore(sfdata) {
 
         for (var i = 0; i < config.noOfGauges; i++) {
             var wrapperObj = 'wrapper' + i;
+			var gaugeObj = 'gaugeHolder' + i;
             if ($('#' + wrapperObj, chartObj).length == 0) {
                 $(chartObj).append("<div id=" + wrapperObj + " class='wrapper' />");
-                $('#' + wrapperObj, chartObj).height(160);
+				$("#"+wrapperObj).append("<div id=" + gaugeObj + " class='gaugeHolder' />");
+				$('#' + wrapperObj, chartObj).height(200);
+				$('#' + gaugeObj, chartObj).height(180);
 
 
             }
@@ -174,12 +177,14 @@ function renderCore(sfdata) {
             //var gaugeParam=config.category[i];
             var scriptName = config.Script;
             if (targetData.length > 0) {
-                createCustomGauge(wrapperObj, actualData[i], targetData[i], gaugeTitle, scriptName)
+                createCustomGauge(gaugeObj, actualData[i], targetData[i], gaugeTitle, scriptName);
+				
             }
             else {
-                createCustomGauge(wrapperObj, actualData[i], 0, gaugeTitle, scriptName)
+                createCustomGauge(gaugeObj, actualData[i], 0, gaugeTitle, scriptName);
             }
-
+			var dataLabel = '<span class="dataLabels" >' +  actualData[i] + '</span>';
+			$("#"+wrapperObj+" .highcharts-container", chartObj).after(dataLabel);
         }
         for (var i = 0; i < actualValueArray.length - 1; i++) {
             if (selectedCategoryActual != "" && selectedCategoryActual != undefined) {
@@ -214,6 +219,7 @@ function renderCore(sfdata) {
             }
         }
         $(".highcharts-container ", chartObj).after("<div class='overlay'/>");
+		
 
     }
     // wait ( sfdata.wait, sfdata.static );
@@ -431,7 +437,7 @@ function createCustomGauge(renderObject, actualValue, targetValue, gaugeTitle, s
             dataLabels: {
                 formatter: function () {
                     var kmh = this.y;
-                    return '<span style="color:#bed730;font-size:11px; font-weight:normal;stroke:none;z-index:10000;">' + kmh + '/' + targetValue + '</span>';
+                 //   return '<span style="color:#bed730;font-size:11px; font-weight:normal;stroke:none;z-index:10000;">' + kmh + '/' + targetValue + '</span>';
                 },
                 y: 12,
                 zIndex: 10,

@@ -24,8 +24,8 @@ text.highcharts-credits{ display:none;}
 	max-width:250px;
 	position: relative;
 	margin-left:10px;
-}
 
+}
 
 .overlay{
 background: #fff;
@@ -50,3 +50,17 @@ background: #fff;
 	position:absolute !important;
 	z-index:9 !important;
 }
+
+.dataLabels{
+	color: #bed730;
+	font-size: 15px;
+	font-weight: bold;
+	text-align: center;
+	z-index: 10;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: -10px;
+	text-align: center;
+}
+

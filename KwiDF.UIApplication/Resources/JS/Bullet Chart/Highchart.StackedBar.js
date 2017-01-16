@@ -119,8 +119,13 @@ function renderCore(sfdata) {
                 //rotation: -90,
                 color: '#FFFFFF',
                 align: 'center',
-                format: '{point.y:.0f}', // two decimal
-                y: -10, // 10 pixels down from the top
+                //format: '{point.y:.0f}', // Oil - two decimal				
+				formatter: function() 
+				{
+					var val = this.point.Oil;
+					return Math.round(val/1000) + 'k';
+				},
+				y: -10, // 10 pixels down from the top
                 style: {
                     fontSize: '11px',
                     fontFamily: 'arial, sans-serif',
@@ -182,7 +187,12 @@ function renderCore(sfdata) {
                 //rotation: -90,
                 color: '#FFFFFF',
                 align: 'center',
-                format: '{point.y:.0f}', // two decimal
+                //format: '{point.y:.2f}', // water - two decimal				
+				formatter: function() 
+				{
+					var val = this.point.water;
+					return Math.round(val/1000) + 'k';
+				},
                 y: -10, // 10 pixels down from the top
                 style: {
                     fontSize: '11px',
@@ -274,6 +284,14 @@ function renderCore(sfdata) {
     Highcharts.Renderer.prototype.symbols.line = function (x, y, width, height) {
         return ['M', x, y + width / 2, 'L', x + height, y + width / 2];
     };
+	
+	Highcharts.setOptions({
+
+    lang: {
+      decimalPoint: '.',
+      thousandsSep: ','
+    }
+});
 
     var options = {
         credits: {
@@ -356,9 +374,10 @@ function renderCore(sfdata) {
             //shared: true
             formatter: function () {
                 debugger;
-                return "GC: <strong>" + this.x + "</strong>" + "<br /> Oil: <strong>" + Highcharts.numberFormat(this.point.Oil, 2) + "</strong><br/>" + "Water: <strong>" + Highcharts.numberFormat(this.point.water, 2) + "</strong><br/>Target:<strong>" + Highcharts.numberFormat(this.point.target, 2) + "</strong>";
+                return "GC: <strong>" + this.x + "</strong>" + "<br /> Oil: <strong>" + Highcharts.numberFormat(this.point.Oil, 0) + "</strong><br/>" + "Water: <strong>" + Highcharts.numberFormat(this.point.water, 0) + "</strong><br/>Target:<strong>" + Highcharts.numberFormat(this.point.target, 0) + "</strong>";
                 ;
             }
+			//pointFormat: 'GC: <b>{point.x}</b><br/>' + 'Oil: <b>{point.Oil:,.0f}</b><br/>'+ 'Water: <b>{point.water:,.0f}</b><br/>'+ 'Target: <b>{point.target:,.0f}</b><br/>'
         },
         plotOptions: {
 
@@ -397,6 +416,7 @@ function renderCore(sfdata) {
 			    }
 			},
             series: {
+				 
                 stacking: 'normal',
                 cursor: 'pointer',
                 events: {
@@ -449,12 +469,12 @@ function renderCore(sfdata) {
                         this.chartVal.series[0].data[i].update({ color: 'rgba(11, 133, 213, 1)', borderColor: '#fff' });
 
                     }
-                    debugger;
+                    
                 }
 
 
                 else if (!marked) {
-                    debugger;
+                    
 
                     if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
                         this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 0.3)' });
