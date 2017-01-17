@@ -372,6 +372,13 @@ function renderCore(sfdata) {
         exporting: { enabled: false },
         tooltip: {
             //shared: true
+			positioner: function(boxWidth, boxHeight, point) {
+             
+                return {
+                    x: point.plotX - (60),
+                    y: point.plotY
+                };
+            },
             formatter: function () {
                 debugger;
                 return "GC: <strong>" + this.x + "</strong>" + "<br /> Oil: <strong>" + Highcharts.numberFormat(this.point.Oil, 0) + "</strong><br/>" + "Water: <strong>" + Highcharts.numberFormat(this.point.water, 0) + "</strong><br/>Target:<strong>" + Highcharts.numberFormat(this.point.target, 0) + "</strong>";

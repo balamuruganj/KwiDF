@@ -80,6 +80,8 @@ var selectedCategoryTarget = "";
 var showTarget = "";
 var showChange = "";
 var dateRange;
+var dataLabel;
+
 function renderCore(sfdata) {
 
     var DateValue = new Date(sfdata.config.DateFilter);
@@ -232,8 +234,9 @@ function renderCore(sfdata) {
                 if (sfdata.config.ShowChange == "true") {
                     $("footer", drawChart).append("<span class='up'>" + bottomValue + "</span>");
                 }
-                var dataLabel = '<span class="dataLabels" id="lableVal">' + topValue + '</span>';
-                $("#footer").after(dataLabel);
+            //    dataLabel = '<span class="dataLabels" id="lableVal">testing' + topValue + '</span>';
+                //$("#footer").after(dataLabel);
+				$(".gaugeHolder").attr("data-top",topValue);
                 $("footer", drawChart).append("<div class='icon-holder'/>");
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedGuage()"  class="active" id="guage"><i class="fa fa-tachometer" aria-hidden="true"></i></button>');
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedLine()"  id="line"><i class="fa fa-line-chart" aria-hidden="true"></i></button>');
@@ -366,8 +369,9 @@ function renderCore(sfdata) {
                 if (sfdata.config.ShowChange == "true") {
                     $("footer", drawChart).append("<span class='up'>" + bottomValue + "</span>");
                 }
-                var dataLabel = '<span class="dataLabels" id="lableVal">' + topValue + '</span>';
-                $("#footer").after(dataLabel);
+              //  var dataLabel = '<span class="dataLabels" id="lableVal">' + topValue + '</span>';
+             //   $("#footer").after(dataLabel);
+				$(".gaugeHolder").attr("data-top",topValue);
                 $("footer", drawChart).append("<div class='icon-holder'/>");
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedGuage()"  class="active" id="guage"><i class="fa fa-tachometer" aria-hidden="true"></i></button>');
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedLine()"  id="line"><i class="fa fa-line-chart" aria-hidden="true"></i></button>');
@@ -383,6 +387,7 @@ function renderCore(sfdata) {
             }
 
             $(".smallSection header").addClass('gray');
+			
 
         }
         if (sfdata.config.ShowChange == "true") {
@@ -407,6 +412,15 @@ function renderCore(sfdata) {
 
             }
         }
+		
+			Highcharts.setOptions({
+
+    lang: {
+      decimalPoint: '.',
+      thousandsSep: ','
+    }
+});
+
         var options = {
             chart: {
                 renderTo: 'chartHolder',
@@ -483,7 +497,10 @@ function renderCore(sfdata) {
                     x: 5,
                     style: {
                         color: '#fff'
-                    }
+                    },
+					formatter: function () {
+					return Highcharts.numberFormat(this.value, 0)
+					}
                 },
 
                 gridLineDashStyle: 'Dash',
@@ -502,7 +519,7 @@ function renderCore(sfdata) {
                     var d1 = new Date(this.x);
                     var calendarNextDay = ("00" + (d1.getDate()).toString()).slice(-2) + "-" + ("00" + (d1.getMonth() + 1).toString()).slice(-2) + "-" + d1.getFullYear();
                     return 'Date:' + calendarNextDay + '<br/>' + sfdata.config.lableText + ':'
-                     + Math.round(this.y);
+                     + Highcharts.numberFormat(this.y, 0); //Math.round(this.y) 
                 }
             },
             legend: {
@@ -755,6 +772,7 @@ function createCustomGauge() {
             offset: 0,
             lineWidth: 1.5,
             labels: {
+	        //enabled:false,
                 distance: 5,
                 rotation: 50,
                 style: {
@@ -801,7 +819,7 @@ function createCustomGauge() {
 
             },
             tooltip: {
-                valueSuffix: showTarget == "true" ? '<br></br>Target: <b>' + lastTargetData + '</b>' : '',
+                valueSuffix: showTarget == "true" ? '<br></br>Target: <b>' + Highcharts.numberFormat(lastTargetData, 0) + '</b>' : '',
                 backgroundColor: null,
                 borderWidth: 0,
                 shadow: true,

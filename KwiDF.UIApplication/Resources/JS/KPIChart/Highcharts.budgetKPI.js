@@ -156,6 +156,15 @@ var year = new Date(sfdata.config.FilterDate).getUTCFullYear();
 
 
     }
+	
+	Highcharts.setOptions({
+
+    lang: {
+      decimalPoint: '.',
+      thousandsSep: ','
+    }
+});
+	
     var options = {
         chart: {
             renderTo: 'chartHolder'
@@ -232,7 +241,10 @@ var year = new Date(sfdata.config.FilterDate).getUTCFullYear();
                 x: 5,
                 style: {
                     //color: '#fff'
-                }
+                },
+				formatter: function () {
+				return Highcharts.numberFormat(this.value, 0)
+				}
             },
 
             gridLineDashStyle: 'Dash',
@@ -249,7 +261,7 @@ var year = new Date(sfdata.config.FilterDate).getUTCFullYear();
         tooltip: {
             formatter: function () {
 				var name=getMonthName(this.x-1)
-                return "Expenditure for the month " + name + " is, " + this.y + " "+this.series.name;
+                return "Expenditure for the month " + name + " is " + Highcharts.numberFormat(this.y, 0) + " "+this.series.name;
                 //return this.x + this.y
             }
         },

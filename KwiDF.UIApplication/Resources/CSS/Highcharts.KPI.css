@@ -101,28 +101,45 @@ background: #000; /* Old browsers */
 
 }
 .smallSection .chartHolder{top:72px;}
-.smallSection .gaugeHolder{bottom:10px;top:-10px;}
+.smallSection .gaugeHolder{
+
+/*bottom:10px;top:-10px;*/
+    bottom: 30px;
+    top: -31px;
+}
 
 .smallSection .gaugeHolder{
     padding: 0;      
        /* height:118px; */
 }
+.smallSection .gaugeHolder::after{
+		content: attr(data-top);
+		color: #bed730;
+		font-size: 18px;
+		font-weight: bold;
+		text-align: center;
+		display:block;
+		margin-top:5px;
+}
 
 .smallSection .gaugeHolder .highcharts-container {
-       max-height:calc(100% - 20px);
+       max-height:calc(100% - 21px);
+	  
 }
 /* .smallSection .chartHolder{height:110px} */
 
 
 .dataLabels{
 		color: #bed730;
-		font-size: 15px;
+		font-size: 18px;
 		font-weight: bold;
 		text-align: center;
-		bottom: 4px;
-		position: absolute;
-		left: 0;
-		right: 0;
+		display:block;
+		margin-top:5px;
+		position:absolute;
+		top:0;
+	left:0;
+z-index:444;
 	
 	}
 .wrapper.smallSection.selected .dataLabels {

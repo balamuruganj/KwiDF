@@ -285,6 +285,13 @@ function renderCore(sfdata) {
         exporting: { enabled: false },
         tooltip: {
             //shared: true
+			positioner: function(boxWidth, boxHeight, point) {
+             
+                return {
+                    x: point.plotX - (60),
+                    y: point.plotY
+                };
+            },
             formatter: function () {
                 debugger;
 
