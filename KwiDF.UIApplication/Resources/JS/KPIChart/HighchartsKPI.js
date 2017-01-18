@@ -234,9 +234,9 @@ function renderCore(sfdata) {
                 if (sfdata.config.ShowChange == "true") {
                     $("footer", drawChart).append("<span class='up'>" + bottomValue + "</span>");
                 }
-            //    dataLabel = '<span class="dataLabels" id="lableVal">testing' + topValue + '</span>';
+                //    dataLabel = '<span class="dataLabels" id="lableVal">testing' + topValue + '</span>';
                 //$("#footer").after(dataLabel);
-				$(".gaugeHolder").attr("data-top",topValue);
+
                 $("footer", drawChart).append("<div class='icon-holder'/>");
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedGuage()"  class="active" id="guage"><i class="fa fa-tachometer" aria-hidden="true"></i></button>');
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedLine()"  id="line"><i class="fa fa-line-chart" aria-hidden="true"></i></button>');
@@ -245,7 +245,7 @@ function renderCore(sfdata) {
                 drawChart.append("<div class='overlay'/>");
 
             }
-
+            $(".gaugeHolder").attr("data-top", topValue);
             $("header p").html(topValue);
             $("#lableVal").html(topValue);
             if (sfdata.config.ShowChange == "true") {
@@ -369,9 +369,9 @@ function renderCore(sfdata) {
                 if (sfdata.config.ShowChange == "true") {
                     $("footer", drawChart).append("<span class='up'>" + bottomValue + "</span>");
                 }
-              //  var dataLabel = '<span class="dataLabels" id="lableVal">' + topValue + '</span>';
-             //   $("#footer").after(dataLabel);
-				$(".gaugeHolder").attr("data-top",topValue);
+                //  var dataLabel = '<span class="dataLabels" id="lableVal">' + topValue + '</span>';
+                //   $("#footer").after(dataLabel);
+                $(".gaugeHolder").attr("data-top", topValue);
                 $("footer", drawChart).append("<div class='icon-holder'/>");
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedGuage()"  class="active" id="guage"><i class="fa fa-tachometer" aria-hidden="true"></i></button>');
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedLine()"  id="line"><i class="fa fa-line-chart" aria-hidden="true"></i></button>');
@@ -387,7 +387,7 @@ function renderCore(sfdata) {
             }
 
             $(".smallSection header").addClass('gray');
-			
+
 
         }
         if (sfdata.config.ShowChange == "true") {
@@ -412,14 +412,14 @@ function renderCore(sfdata) {
 
             }
         }
-		
-			Highcharts.setOptions({
 
-    lang: {
-      decimalPoint: '.',
-      thousandsSep: ','
-    }
-});
+        Highcharts.setOptions({
+
+            lang: {
+                decimalPoint: '.',
+                thousandsSep: ','
+            }
+        });
 
         var options = {
             chart: {
@@ -467,13 +467,13 @@ function renderCore(sfdata) {
                         symbol: 'circle',
                         radius: 2,
                         // if you want to remove hover efect, add the following lines
-                       
+
                         states: {
                             hover: {
                                 radius: 3
                             }
                         }
-                        
+
                     },
 
                     color: colorCode,
@@ -498,9 +498,9 @@ function renderCore(sfdata) {
                     style: {
                         color: '#fff'
                     },
-					formatter: function () {
-					return Highcharts.numberFormat(this.value, 0)
-					}
+                    formatter: function () {
+                        return Highcharts.numberFormat(this.value, 0)
+                    }
                 },
 
                 gridLineDashStyle: 'Dash',
@@ -644,12 +644,12 @@ function createCustomGauge() {
         stopColor = "#000";
         borderColor = "#434242";
     }
-   // log("=================================");
-   // log("actualValue " + lastTopData);
-   // log("targetValue " + lastTargetData);
-   // log("minValue " + minValue);
-   // log("maxValue " + maxValue);
-   // log("=================================");
+    // log("=================================");
+    // log("actualValue " + lastTopData);
+    // log("targetValue " + lastTargetData);
+    // log("minValue " + minValue);
+    // log("maxValue " + maxValue);
+    // log("=================================");
     //var chartVal=new Highcharts.Chart({
     var options = {
         chart: {
@@ -772,7 +772,7 @@ function createCustomGauge() {
             offset: 0,
             lineWidth: 1.5,
             labels: {
-	        //enabled:false,
+                enabled: false,
                 distance: 5,
                 rotation: 50,
                 style: {

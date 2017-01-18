@@ -52,8 +52,8 @@ background: #fff;
 }
 
 .dataLabels{
-	color: #bed730;
-	font-size: 15px;
+	color: #fff;
+	font-size: 18px;
 	font-weight: bold;
 	text-align: center;
 	z-index: 10;
@@ -62,5 +62,22 @@ background: #fff;
 	right: 0;
 	bottom: -10px;
 	text-align: center;
+font-family:GADUGI;
 }
 
+		.gaugeHolder::before{
+		content:attr(data-title);
+		color: #fff;
+		font-size: 16px;
+		font-weight: normal;
+		font-family:GADUGI;
+		position:absolute;
+		left: 0;
+		right: 0;
+		text-align: center;
+		top:22px;
+}
+.guageHolder .highcharts-container { position:absolute;top:-12px;}
+.wrapper .footer{ position:absolute;bottom:0;left:0;right:0;height:17px;background:#000;
+    z-index: 9;}
+		.wrapper.selected .footer{background:#666666;}

@@ -36,7 +36,7 @@ function renderCore(sfdata) {
     indicesarray = [];
     indicesarrayobject = [];
     markedAssets = [];
-    titleTooltip = ['Drilling Rigs Count'];
+    titleTooltip = sfdata.config.title;
 
     var DateValue = new Date(sfdata.config.DateFilter);
     var DateValueFormatted = DateValue.valueOf();

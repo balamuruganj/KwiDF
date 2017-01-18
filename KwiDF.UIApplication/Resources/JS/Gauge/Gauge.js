@@ -164,12 +164,16 @@ function renderCore(sfdata) {
 
         for (var i = 0; i < config.noOfGauges; i++) {
             var wrapperObj = 'wrapper' + i;
-			var gaugeObj = 'gaugeHolder' + i;
+            var gaugeObj = 'gaugeHolder' + i;
             if ($('#' + wrapperObj, chartObj).length == 0) {
                 $(chartObj).append("<div id=" + wrapperObj + " class='wrapper' />");
-				$("#"+wrapperObj).append("<div id=" + gaugeObj + " class='gaugeHolder' />");
-				$('#' + wrapperObj, chartObj).height(200);
-				$('#' + gaugeObj, chartObj).height(180);
+                $("#" + wrapperObj).append("<div id=" + gaugeObj + " class='gaugeHolder' />");
+                $("#" + wrapperObj).append("<div class='footer' />");
+                var gaugeTitle = config.title[i];
+                $("#" + gaugeObj).attr('data-title', gaugeTitle);
+
+                //$('#' + wrapperObj, chartObj).height(170);
+                $('#' + gaugeObj, chartObj).height(170);
 
 
             }
@@ -178,13 +182,13 @@ function renderCore(sfdata) {
             var scriptName = config.Script;
             if (targetData.length > 0) {
                 createCustomGauge(gaugeObj, actualData[i], targetData[i], gaugeTitle, scriptName);
-				
+
             }
             else {
                 createCustomGauge(gaugeObj, actualData[i], 0, gaugeTitle, scriptName);
             }
-			var dataLabel = '<span class="dataLabels" >' +  actualData[i] + '</span>';
-			$("#"+wrapperObj+" .highcharts-container", chartObj).after(dataLabel);
+            var dataLabel = '<span class="dataLabels" >' + actualData[i] + '</span>';
+            $("#" + wrapperObj + " .highcharts-container", chartObj).after(dataLabel);
         }
         for (var i = 0; i < actualValueArray.length - 1; i++) {
             if (selectedCategoryActual != "" && selectedCategoryActual != undefined) {
@@ -219,7 +223,7 @@ function renderCore(sfdata) {
             }
         }
         $(".highcharts-container ", chartObj).after("<div class='overlay'/>");
-		
+
 
     }
     // wait ( sfdata.wait, sfdata.static );
@@ -305,7 +309,7 @@ function createCustomGauge(renderObject, actualValue, targetValue, gaugeTitle, s
         },
 
         title: {
-            text: gaugeTitle,
+            text: '',
             style: { color: '#fff', 'font-size': '13px' }
 
         },
@@ -314,7 +318,7 @@ function createCustomGauge(renderObject, actualValue, targetValue, gaugeTitle, s
             startAngle: -90,
             endAngle: 90,
             center: ['50%', '95%'],
-            size: '140%',
+            size: '100%',
             background:
 			{
 			    backgroundColor: {
@@ -437,7 +441,7 @@ function createCustomGauge(renderObject, actualValue, targetValue, gaugeTitle, s
             dataLabels: {
                 formatter: function () {
                     var kmh = this.y;
-                 //   return '<span style="color:#bed730;font-size:11px; font-weight:normal;stroke:none;z-index:10000;">' + kmh + '/' + targetValue + '</span>';
+                    //   return '<span style="color:#bed730;font-size:11px; font-weight:normal;stroke:none;z-index:10000;">' + kmh + '/' + targetValue + '</span>';
                 },
                 y: 12,
                 zIndex: 10,
