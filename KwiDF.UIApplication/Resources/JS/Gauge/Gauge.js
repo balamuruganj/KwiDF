@@ -234,8 +234,8 @@ function createCustomGauge(renderObject, actualValue, targetValue, gaugeTitle, s
     var startColor = "";
     var stopColor = "";
     var borderColor = "";
-    plotBandStartColor = "#ff9517";
-    plotBandEndColor = "#429e2f";
+    plotBandStartColor = "#429e2f";
+    plotBandEndColor = "#ff5050";
     if (actualValue > targetValue) {
         startColor = "#a5a5a5";
         stopColor = "#000";

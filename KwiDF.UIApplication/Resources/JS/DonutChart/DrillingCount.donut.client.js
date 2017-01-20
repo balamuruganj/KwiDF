@@ -1,4 +1,4 @@
-/*
+distance/*
 Copyright (c) 2016 TIBCO Software Inc
 
 THIS SOFTWARE IS PROVIDED BY TIBCO SOFTWARE INC. ''AS IS'' AND ANY EXPRESS OR
@@ -75,7 +75,8 @@ function renderCore(sfdata) {
         var wrapperObj = 'wrapper' + j;
         if ($('#' + wrapperObj, chartObj).length == 0) {
             $(chartObj).append("<div id=" + wrapperObj + " class='wrapper' />");
-            $('#' + wrapperObj, chartObj).height(160);
+            $('#' + wrapperObj, chartObj).height($(window).height());
+
 
 
         }
@@ -135,6 +136,11 @@ function createCustomControl(renderObject, Title, data, tooltipName) {
             enabled: false
         },
         chart: {
+            margin: [20, 0, 0, 0],
+            spacingTop: 10,
+            spacingBottom: 0,
+            spacingLeft: 0,
+            spacingRight: 0,
             renderTo: renderObject,
             type: 'pie',
             backgroundColor: 'transparent',
@@ -177,12 +183,13 @@ function createCustomControl(renderObject, Title, data, tooltipName) {
         },
         plotOptions: {
             pie: {
-                innerSize: 40,
+                innerSize: 80,
                 depth: 20,
                 dataLabels: {
+                    distance: 10,
                     enabled: true,
                     color: '#fff',
-                    style: { fontFamily: 'arial', fontSize: '13px', fontWeight: 'normal', }
+                    style: { fontFamily: 'arial', fontSize: '11px', fontWeight: 'normal', }
                 }
             }
         },
