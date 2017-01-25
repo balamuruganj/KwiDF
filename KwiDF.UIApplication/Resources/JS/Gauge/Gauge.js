@@ -141,8 +141,10 @@ function renderCore(sfdata) {
         for (var j = 0; j < chartdataformatted[0].items.length; j++) {
             if (j % 2 == 0) {
                 actualData.push(chartdataformatted[0].items[j]);
+                //actualData.push(123);
             } else {
                 targetData.push(chartdataformatted[0].items[j]);
+
             }
             if (j == 8) {
 
@@ -187,12 +189,12 @@ function renderCore(sfdata) {
             else {
                 createCustomGauge(gaugeObj, actualData[i], 0, gaugeTitle, scriptName);
             }
-            var dataLabel = '<span class="dataLabels" >' + actualData[i] + '</span>';
+            var dataLabel = '<span class="dataLabels" >' + actualData[i] + '%</span>';
             $("#" + wrapperObj + " .highcharts-container", chartObj).after(dataLabel);
         }
-        for (var i = 0; i < actualValueArray.length - 1; i++) {
+        for (var i = 0; i < actualDisplayArray.length - 1; i++) {
             if (selectedCategoryActual != "" && selectedCategoryActual != undefined) {
-                if (selectedCategoryActual.indexOf(actualValueArray[i]) > -1) {
+                if (selectedCategoryActual.indexOf(actualDisplayArray[i]) > -1) {
                     if (i == 0) {
                         $("#wrapper0").addClass('selected');
                     }
@@ -204,7 +206,7 @@ function renderCore(sfdata) {
                 }
                 else {
                     if (i == 0) {
-                        $("#wrapper" + n).removeClass('selected');
+                        $("#wrapper" + i).removeClass('selected');
                     }
                     else {
                         var n = i / 2;
@@ -214,7 +216,7 @@ function renderCore(sfdata) {
             }
             else {
                 if (i == 0) {
-                    $("#wrapper" + n).removeClass('selected');
+                    $("#wrapper" + i).removeClass('selected');
                 }
                 else {
                     var n = i / 2;
@@ -407,6 +409,7 @@ function createCustomGauge(renderObject, actualValue, targetValue, gaugeTitle, s
             labels: {
                 distance: 15,
                 rotation: 0,
+                format: '{value}%',
                 style: {
                     color: '#fff',
 
