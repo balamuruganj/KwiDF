@@ -14,6 +14,7 @@
             setDocumentProperty("RefreshKPIWF", "false");
             setDocumentProperty("RefreshKPIWHP", "false");
             setDocumentProperty("RefreshKPIEWI", "false");
+            setDocumentProperty("RefreshKPIEWA", "false");
             var actual = actualVal + ' as ' + actualDisplay;
             if (showTarget == "true") {
                 var target = targetVal + ' as ' + targetDisplay;
@@ -32,6 +33,7 @@
             setDocumentProperty("RefreshKPIWF", "false");
             setDocumentProperty("RefreshKPIWHP", "false");
             setDocumentProperty("RefreshKPIEWI", "false");
+            setDocumentProperty("RefreshKPIEWA", "false");
             var actual = actualVal + ' as ' + actualDisplay;
             if (showTarget == "true") {
                 var target = targetVal + ' as ' + targetDisplay;
@@ -81,7 +83,8 @@ var showTarget = "";
 var showChange = "";
 var dateRange;
 var dataLabel;
-
+var hpLoading = "";
+var DWPConfig = "";
 function renderCore(sfdata) {
 
     var DateValue = new Date(sfdata.config.DateFilter);
@@ -102,6 +105,14 @@ function renderCore(sfdata) {
         actualVal = sfdata.config.ColumnName[0];
         actualDisplay = sfdata.config.DisplayName[0];
     }
+    if (sfdata.config.hasOwnProperty("HPLoading")) {
+        hpLoading = sfdata.config.HPLoading;
+    }
+    if (sfdata.config.hasOwnProperty("IsDWP")) {
+        DWPConfig = sfdata.config.IsDWP;
+    }
+
+
     if (sfdata.config.RefreshKPI == "true") {
         dateRange = sfdata.config.DateRange;
 
@@ -163,8 +174,31 @@ function renderCore(sfdata) {
                         if (changeData.length > 0) {
                             var len = changeData.length - 1;
                             var bottomData = changeData[len] != 0 && changeData[len] != "" ? Math.round(changeData[len]) : 0;
+                            //log(changeData.length);
+                            //log(changeData[len]);
                             bottomValue = numberWithCommas(bottomData);
                         }
+                    }
+                    var minactual = actualData.length > 0 ? actualData[0].items[2] : 0;
+                    var minTarget = actualData.length > 0 ? actualData[0].items[3] : 0;
+
+                    if (hpLoading == "true") {
+                        $.each(actualData, function (i, v) {
+                            thisVal = v.items[2];
+                            minactual = (minactual > thisVal) ? thisVal : minactual;
+                        })
+                        $.each(actualData, function (i, v) {
+                            thisVal = v.items[3];
+                            minTarget = (minTarget > thisVal) ? thisVal : minTarget;
+                        })
+                    }
+                    var min = 0;
+                    if (hpLoading == "true") {
+                        min = minTarget < minactual ? minTarget : minactual;
+
+                    }
+                    else {
+                        min = 0;
                     }
 
                     if (lastTopData > lastTargetData) {
@@ -173,7 +207,7 @@ function renderCore(sfdata) {
                             minValue = lastTargetData + ((20 / 100) * lastTargetData);
                         }
                         else {
-                            minValue = 0;
+                            minValue = min;
                         }
                         if (lastTopData < 0)
                             maxValue = lastTopData - ((20 / 100) * lastTopData);
@@ -186,8 +220,12 @@ function renderCore(sfdata) {
                             minValue = lastTopData + ((20 / 100) * lastTopData);
                         }
                         else {
-                            minValue = 0;
+
+                            minValue = min;
+
                         }
+
+
                         if (lastTargetData < 0)
                             maxValue = lastTargetData - ((20 / 100) * lastTargetData);
                         else
@@ -254,15 +292,31 @@ function renderCore(sfdata) {
             $("header .target-holder").html("<div>Target</div><div>" + targetValue + "</div>");
 
             if (lastTopData > lastTargetData) {
-                $(".smallSection header").addClass('green');
-                $(".smallSection header").removeClass('yellow');
-                $(".smallSection header").removeClass('red');
+                if (DWPConfig != "") {
+                    $(".smallSection header").removeClass('green');
+                    $(".smallSection header").removeClass('yellow');
+                    $(".smallSection header").addClass('red');
+                }
+                else {
+                    $(".smallSection header").addClass('green');
+                    $(".smallSection header").removeClass('yellow');
+                    $(".smallSection header").removeClass('red');
+                }
+
 
             }
             else if (lastTopData < lastTargetData) {
-                $(".smallSection header").addClass('red');
-                $(".smallSection header").removeClass('yellow');
-                $(".smallSection header").removeClass('green');
+                if (DWPConfig != "") {
+                    $(".smallSection header").removeClass('red');
+                    $(".smallSection header").removeClass('yellow');
+                    $(".smallSection header").addClass('green');
+                }
+                else {
+                    $(".smallSection header").addClass('red');
+                    $(".smallSection header").removeClass('yellow');
+                    $(".smallSection header").removeClass('green');
+                }
+
             }
             else if (lastTopData == lastTargetData) {
                 $(".smallSection header").addClass('yellow');
@@ -316,15 +370,26 @@ function renderCore(sfdata) {
                             bottomValue = numberWithCommas(bottomData);
                         }
                     }
-
-
+                    var minactual = actualData.length > 0 ? actualData[0].items[2] : 0;
+                    if (hpLoading == "true") {
+                        $.each(actualData, function (i, v) {
+                            thisVal = v.items[2];
+                            minactual = (minactual > thisVal) ? thisVal : minactual;
+                        })
+                    }
 
                     if (lastTopData < 0) {
                         minValue = lastTopData + ((20 / 100) * lastTopData);
                     }
                     else {
-                        minValue = 0;
+                        if (hpLoading == "true") {
+                            minValue = minactual;
+                        }
+                        else {
+                            minValue = 0;
+                        }
                     }
+
                     if (lastTopData < 0)
                         maxValue = lastTopData - ((20 / 100) * lastTopData);
                     else
@@ -371,7 +436,7 @@ function renderCore(sfdata) {
                 }
                 //  var dataLabel = '<span class="dataLabels" id="lableVal">' + topValue + '</span>';
                 //   $("#footer").after(dataLabel);
-                $(".gaugeHolder").attr("data-top", topValue);
+
                 $("footer", drawChart).append("<div class='icon-holder'/>");
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedGuage()"  class="active" id="guage"><i class="fa fa-tachometer" aria-hidden="true"></i></button>');
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedLine()"  id="line"><i class="fa fa-line-chart" aria-hidden="true"></i></button>');
@@ -379,7 +444,7 @@ function renderCore(sfdata) {
                 drawChart.append("<div class='overlay'/>");
 
             }
-
+            $(".gaugeHolder").attr("data-top", topValue);
             $("header p").html(topValue);
             $("#lableVal").html(topValue);
             if (sfdata.config.ShowChange == "true") {
@@ -392,10 +457,18 @@ function renderCore(sfdata) {
         }
         if (sfdata.config.ShowChange == "true") {
             if (bottomData < 0) {
-                $(".smallSection span").addClass("down");
-                $(".smallSection span").removeClass("up");
-                $(".smallSection span").removeClass("neutral");
-                $(".smallSection header").addClass('red');
+                if (DWPConfig != "") {
+                    $(".smallSection span").removeClass("down");
+                    $(".smallSection span").addClass("up");
+                    $(".smallSection span").removeClass("neutral");
+                    $(".smallSection header").addClass('green');
+                }
+                else {
+                    $(".smallSection span").addClass("down");
+                    $(".smallSection span").removeClass("up");
+                    $(".smallSection span").removeClass("neutral");
+                    $(".smallSection header").addClass('red');
+                }
 
             }
             else if (bottomData == 0) {
@@ -405,9 +478,18 @@ function renderCore(sfdata) {
 
             }
             else {
-                $(".smallSection span").removeClass("down");
-                $(".smallSection span").addClass("up");
-                $(".smallSection span").removeClass("neutral");
+                if (DWPConfig != "") {
+                    //log("condition matching");
+                    $(".smallSection span").addClass("down");
+
+                    $(".smallSection span").removeClass("up");
+                    $(".smallSection span").removeClass("neutral");
+                }
+                else {
+                    $(".smallSection span").removeClass("down");
+                    $(".smallSection span").addClass("up");
+                    $(".smallSection span").removeClass("neutral");
+                }
 
 
             }
@@ -615,8 +697,14 @@ function createCustomGauge() {
     var startColor = "";
     var stopColor = "";
     var borderColor = "";
-    plotBandStartColor = "#ff5050";
-    plotBandEndColor = "#429e2f";
+    if (DWPConfig != "") {
+        plotBandStartColor = "#429e2f";
+        plotBandEndColor = "#ff5050";
+    }
+    else {
+        plotBandStartColor = "#ff5050";
+        plotBandEndColor = "#429e2f";
+    }
 
     //MidColor
     if (showTarget == "true") {
@@ -684,7 +772,7 @@ function createCustomGauge() {
         pane: {
             startAngle: -90,
             endAngle: 90,
-            center: ['50%', '95%'],
+            center: ['50%', '93%'],
             size: '100%',
             background:
 			{
@@ -964,3 +1052,4 @@ window.onresize = function (event) {
     }
     resizing = false;
 }
+// JavaScript source code
