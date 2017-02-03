@@ -72,6 +72,16 @@ var KD = "";
 
 function renderCore(sfdata) {
 
+    //var UrlCSS = "http://localhost/KwiDF/Resources/CSS/font-awesome.css"; //replace with sfdata.config
+    var UrlCSS = sfdata.config.UrlCSS;
+    $("head").append("<link>");
+    var css = $("head").children(":last");
+    css.attr({
+        rel: "stylesheet",
+        type: "text/css",
+        href: UrlCSS
+    });
+
     configData = sfdata.config;
     var actualData = sfdata.data;
     colName = sfdata.columns[2];

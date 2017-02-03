@@ -1,4 +1,4 @@
-distance/*
+/*
 Copyright (c) 2016 TIBCO Software Inc
 
 THIS SOFTWARE IS PROVIDED BY TIBCO SOFTWARE INC. ''AS IS'' AND ANY EXPRESS OR

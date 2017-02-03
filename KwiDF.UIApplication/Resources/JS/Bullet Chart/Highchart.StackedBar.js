@@ -36,6 +36,7 @@ function renderCore(sfdata) {
     data = [];
     additionalData = [];
     targetData = [];
+    additionaltargetData = [];
     assetArray = [];
     indexdata = [];
     indicesarray = [];
@@ -80,9 +81,10 @@ function renderCore(sfdata) {
                 indicesobject.marked = actualData[i].hints.marked != undefined ? actualData[i].hints.marked : false;
                 indicesarrayobject.push(indicesobject);
                 //targetData.push(actualData[i].items[3]);
-                data.push({ y: actualData[i].items[2], target: actualData[i].items[3], water: actualData[i].items[2], Oil: actualData[i].items[5] });
-                targetData.push({ y: actualData[i].items[3], water: actualData[i].items[2], target: actualData[i].items[3], Oil: actualData[i].items[5] });
-                additionalData.push({ y: actualData[i].items[5], water: actualData[i].items[2], target: actualData[i].items[3], Oil: actualData[i].items[5] });
+                data.push({ y: actualData[i].items[2], target: actualData[i].items[3], water: actualData[i].items[2], Oil: actualData[i].items[5], oiltarget: actualData[i].items[3] });
+                targetData.push({ y: actualData[i].items[3], water: actualData[i].items[2], target: actualData[i].items[3], Oil: actualData[i].items[5], oiltarget: actualData[i].items[3] });
+                additionalData.push({ y: actualData[i].items[5], water: actualData[i].items[2], target: actualData[i].items[3], Oil: actualData[i].items[5], oiltarget: actualData[i].items[3] });
+                additionaltargetData.push({ y: actualData[i].items[5], water: actualData[i].items[2], target: actualData[i].items[3], Oil: actualData[i].items[5], oiltarget: actualData[i].items[3] });
                 if (actualData[i].hints.marked != undefined && actualData[i].hints.marked) {
                     markedAssets.push(actualData[i].items[1]);
                 }
@@ -104,9 +106,10 @@ function renderCore(sfdata) {
             //additionalData.push(actualData[i].items[5]);
             //additionalData.push({ y: actualData[i].items[5], water: actualData[i].items[2], target: actualData[i].items[3],Oil:actualData[i].items[5] });
             //targetData.push(actualData[i].items[3]);
-            data.push({ y: actualData[i].items[2], target: actualData[i].items[3], water: actualData[i].items[2], Oil: actualData[i].items[5] });
-            targetData.push({ y: actualData[i].items[3], water: actualData[i].items[2], target: actualData[i].items[3], Oil: actualData[i].items[5] });
-            additionalData.push({ y: actualData[i].items[5], water: actualData[i].items[2], target: actualData[i].items[3], Oil: actualData[i].items[5] });
+            data.push({ y: actualData[i].items[2], target: actualData[i].items[3], water: actualData[i].items[2], Oil: actualData[i].items[5], oiltarget: actualData[i].items[3] });
+            targetData.push({ y: actualData[i].items[3], water: actualData[i].items[2], target: actualData[i].items[3], Oil: actualData[i].items[5], oiltarget: actualData[i].items[3] });
+            additionalData.push({ y: actualData[i].items[5], water: actualData[i].items[2], target: actualData[i].items[3], Oil: actualData[i].items[5], oiltarget: actualData[i].items[3] });
+            additionaltargetData.push({ y: actualData[i].items[5], water: actualData[i].items[2], target: actualData[i].items[3], Oil: actualData[i].items[5], oiltarget: actualData[i].items[3] });
         }
     }
     series =
@@ -120,12 +123,11 @@ function renderCore(sfdata) {
                 color: '#FFFFFF',
                 align: 'center',
                 //format: '{point.y:.0f}', // Oil - two decimal				
-				formatter: function() 
-				{
-					var val = this.point.Oil;
-					return Math.round(val/1000) + 'k';
-				},
-				y: -10, // 10 pixels down from the top
+                formatter: function () {
+                    var val = this.point.Oil;
+                    return Math.round(val / 1000) + 'k';
+                },
+                y: -10, // 10 pixels down from the top
                 style: {
                     fontSize: '11px',
                     fontFamily: 'arial, sans-serif',
@@ -134,7 +136,7 @@ function renderCore(sfdata) {
             },
             pointPadding: 0,
             pointPlacement: 0,
-            pointWidth: 45,
+            pointWidth: 35,
             point: {
                 events: {
                     click: function ()
@@ -145,7 +147,7 @@ function renderCore(sfdata) {
                         /*for (var i = 0; i < this.series.data.length; i++) {
                             if (this.series != chartVal.series[0])
                             {
-                            if (chartVal.series[1].data[i].y >= chartVal.series[0].data[i].y) {
+                            if (chartVal.series[2].data[i].y >= chartVal.series[0].data[i].y) {
                                 chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 0.3)', borderColor: '#fff' });
                             } else {
                                 chartVal.series[0].data[i].update({ color: 'rgba(234, 52, 16,0.3)', borderColor: '#fff' });
@@ -179,6 +181,32 @@ function renderCore(sfdata) {
             }
 
         },
+          {
+              name: 'Target1',
+              type: 'scatter',
+              pointWidth: 35,
+
+              point: {
+                  events: {
+                      click: function ()
+                          //{
+                          //  runScript("OS1-Gauge");
+                          //}
+                      {
+                          for (var i = 0; i < this.series.data.length; i++) {
+                              //this.series.data[i].update({ color: '#294251' }, true, false);
+                          }
+                          //this.update({ color: '#26a2ed' }, true, false)
+                      }
+
+
+                  }
+              },
+
+              data: additionaltargetData,
+              pointPadding: 0,
+              pointPlacement: -0.15
+          },
         {
             name: 'Actual',
             data: data,
@@ -188,11 +216,10 @@ function renderCore(sfdata) {
                 color: '#FFFFFF',
                 align: 'center',
                 //format: '{point.y:.2f}', // water - two decimal				
-				formatter: function() 
-				{
-					var val = this.point.water;
-					return Math.round(val/1000) + 'k';
-				},
+                formatter: function () {
+                    var val = this.point.water;
+                    return Math.round(val / 1000) + 'k';
+                },
                 y: -10, // 10 pixels down from the top
                 style: {
                     fontSize: '11px',
@@ -202,7 +229,7 @@ function renderCore(sfdata) {
             },
             pointPadding: 0,
             pointPlacement: 0,
-            pointWidth: 45,
+            pointWidth: 35,
             point: {
                 events: {
                     click: function ()
@@ -213,7 +240,7 @@ function renderCore(sfdata) {
                         /*for (var i = 0; i < this.series.data.length; i++) {
                             if (this.series != chartVal.series[0])
                             {
-                            if (chartVal.series[1].data[i].y >= chartVal.series[0].data[i].y) {
+                            if (chartVal.series[2].data[i].y >= chartVal.series[0].data[i].y) {
                                 chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 0.3)', borderColor: '#fff' });
                             } else {
                                 chartVal.series[0].data[i].update({ color: 'rgba(234, 52, 16,0.3)', borderColor: '#fff' });
@@ -251,7 +278,7 @@ function renderCore(sfdata) {
         {
             name: 'Target',
             type: 'scatter',
-            pointWidth: 150,
+            pointWidth: 30,
 
             point: {
                 events: {
@@ -272,8 +299,10 @@ function renderCore(sfdata) {
 
             data: targetData,
             pointPadding: 0,
-            pointPlacement: 0
-        }];
+            pointPlacement: 0.15
+        }
+
+        ];
     var chartObj = $("#js_chart");
 
     if ($('#wrapper', chartObj).length == 0) {
@@ -284,14 +313,14 @@ function renderCore(sfdata) {
     Highcharts.Renderer.prototype.symbols.line = function (x, y, width, height) {
         return ['M', x, y + width / 2, 'L', x + height, y + width / 2];
     };
-	
-	Highcharts.setOptions({
 
-    lang: {
-      decimalPoint: '.',
-      thousandsSep: ','
-    }
-});
+    Highcharts.setOptions({
+
+        lang: {
+            decimalPoint: '.',
+            thousandsSep: ','
+        }
+    });
 
     var options = {
         credits: {
@@ -306,7 +335,7 @@ function renderCore(sfdata) {
                 click: function (event) {
 
                     for (var i = 0; i < this.series[0].data.length; i++) {
-                        if (this.series[1].data[i].y >= this.series[0].data[i].y) {
+                        if (this.series[2].data[i].y >= this.series[0].data[i].y) {
                             this.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)' }); //green
 
 
@@ -372,29 +401,28 @@ function renderCore(sfdata) {
         exporting: { enabled: false },
         tooltip: {
             //shared: true
-			positioner: function(boxWidth, boxHeight, point) {
-             
+            positioner: function (boxWidth, boxHeight, point) {
+
                 return {
-                    x: point.plotX - (60),
-                    y: point.plotY
+                    x: point.plotX -25,
+                    y: point.plotY -25
                 };
             },
             formatter: function () {
                 debugger;
-                return "GC: <strong>" + this.x + "</strong>" + "<br /> Oil: <strong>" + Highcharts.numberFormat(this.point.Oil, 0) + "</strong><br/>" + "Water: <strong>" + Highcharts.numberFormat(this.point.water, 0) + "</strong><br/>Target:<strong>" + Highcharts.numberFormat(this.point.target, 0) + "</strong>";
+                return "GC: <strong>" + this.x + "</strong>" + "<br /> Oil: <strong>" + Highcharts.numberFormat(this.point.Oil, 0) + "</strong><br/>" + "Water: <strong>" + Highcharts.numberFormat(this.point.water, 0) + "</strong><br/>Water Target:<strong>" + Highcharts.numberFormat(this.point.target, 0) + "</strong><br/>Oil Target:<strong>" + Highcharts.numberFormat(this.point.oiltarget, 0) + "</strong>";
                 ;
             }
-			//pointFormat: 'GC: <b>{point.x}</b><br/>' + 'Oil: <b>{point.Oil:,.0f}</b><br/>'+ 'Water: <b>{point.water:,.0f}</b><br/>'+ 'Target: <b>{point.target:,.0f}</b><br/>'
+            //pointFormat: 'GC: <b>{point.x}</b><br/>' + 'Oil: <b>{point.Oil:,.0f}</b><br/>'+ 'Water: <b>{point.water:,.0f}</b><br/>'+ 'Target: <b>{point.target:,.0f}</b><br/>'
         },
         plotOptions: {
 
             column: {
 
-                color: 'blue',
-                grouping: false,
-                shadow: false,
+                color: 'green',
                 borderWidth: 1,
                 borderColor: 'transparent'
+
 
             },
             column: {
@@ -406,25 +434,24 @@ function renderCore(sfdata) {
                                     [1, '#0b85d5']
                     ]
                 },
-
-                grouping: false,
-                shadow: false,
                 borderWidth: 1,
                 borderColor: 'transparent'
+
+
 
             }
 			, scatter: {
 			    marker: {
 			        symbol: 'line',
 			        lineWidth: 6,
-			        radius: 24,
+			        radius: 10,
 			        lineColor: '#fcff01',
+			        align: 'left'
 
 			    }
 			},
             series: {
-				 
-                stacking: 'normal',
+                stacking: false,
                 cursor: 'pointer',
                 events: {
                     click: function (e) {
@@ -444,7 +471,7 @@ function renderCore(sfdata) {
     //wait(sfdata.wait, sfdata.static);
 
     for (i = 0; i < chartVal.series[0].data.length; i++) {
-        if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
+        if (this.chartVal.series[2].data[i].y >= this.chartVal.series[0].data[i].y) {
             this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)' });  //green
 
         } else {
@@ -467,32 +494,39 @@ function renderCore(sfdata) {
                     //this.chartVal.series[i].data[0].update({ color: 'red' });
 
                     marked = true;
-                    if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
+                    if (this.chartVal.series[2].data[i].y >= this.chartVal.series[0].data[i].y) {
 
                         this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)', borderColor: '#fff' });
+                        this.chartVal.series[2].data[i].update({ color: 'rgba(11, 133, 213, 1)', borderColor: '#fff' });
 
                     } else {
 
                         this.chartVal.series[0].data[i].update({ color: 'rgba(11, 133, 213, 1)', borderColor: '#fff' });
-
+                        this.chartVal.series[2].data[i].update({ color: 'rgba(31, 174, 57, 1)', borderColor: '#fff' });
                     }
-                    
+
                 }
 
-
                 else if (!marked) {
-                    
 
-                    if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
+                    //log("markedAssetsData1-else: " + this.chartVal.series[2].data[i].y);
+                    //log("markedAssetsData0-else: " + this.chartVal.series[0].data[i].y);
+
+                    //this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 0.3)' });
+                    //this.chartVal.series[2].data[i].update({ color: 'rgba(11, 133, 213, 0.3)' });
+
+                    if (this.chartVal.series[2].data[i].y >= this.chartVal.series[0].data[i].y) {
                         this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 0.3)' });
+                        this.chartVal.series[2].data[i].update({ color: 'rgba(11, 133, 213, 0.3)' });
 
                     } else {
 
                         this.chartVal.series[0].data[i].update({ color: 'rgba(11, 133, 213, 0.3)' });
-
+                        this.chartVal.series[2].data[i].update({ color: 'rgba(31, 174, 57, 0.3)' });
                     }
                     //this.chartVal.series[0].data[i].update({ color: '#294251' });
                 }
+
             }
         }
     }
@@ -538,5 +572,8 @@ window.onresize = function (event) {
 // #endregion Resizing Code
 //////////////////////////////////////////////////////////////////////////////
 
+
+
+// JavaScript source code
 
 

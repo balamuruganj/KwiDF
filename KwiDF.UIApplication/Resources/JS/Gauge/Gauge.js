@@ -103,6 +103,7 @@ var columns;
 
 var selectedCategoryActual = "";
 var selectedCategoryTarget = "";
+var gaugeDataLength=0;
 
 function renderCore(sfdata) {
 
@@ -137,16 +138,31 @@ function renderCore(sfdata) {
     });
     var actualData = [];
     var targetData = [];
+	var thersholdActualData=[];
+	var thersholdTargetData=[];
+	gaugeDataLength=parseInt(sfdata.config.noOfGauges)*2;
     if (chartdataformatted.length > 0) {
-        for (var j = 0; j < chartdataformatted[0].items.length; j++) {
+        for (var j = 0; j <= gaugeDataLength; j++) {
             if (j % 2 == 0) {
                 actualData.push(chartdataformatted[0].items[j]);
-                //actualData.push(123);
+				//actualData.push(123);
             } else {
                 targetData.push(chartdataformatted[0].items[j]);
+				
+            }
+            if (j == 10) {
 
             }
-            if (j == 8) {
+        }
+		 for (var j = gaugeDataLength+1; j < chartdataformatted[0].items.length; j++) {
+            if (j % 2 == 0) {
+                thersholdTargetData.push(chartdataformatted[0].items[j]);
+				//actualData.push(123);
+            } else {
+                thersholdActualData.push(chartdataformatted[0].items[j]);
+				
+            }
+            if (j == 10) {
 
             }
         }
@@ -166,16 +182,16 @@ function renderCore(sfdata) {
 
         for (var i = 0; i < config.noOfGauges; i++) {
             var wrapperObj = 'wrapper' + i;
-            var gaugeObj = 'gaugeHolder' + i;
+			var gaugeObj = 'gaugeHolder' + i;
             if ($('#' + wrapperObj, chartObj).length == 0) {
                 $(chartObj).append("<div id=" + wrapperObj + " class='wrapper' />");
-                $("#" + wrapperObj).append("<div id=" + gaugeObj + " class='gaugeHolder' />");
-                $("#" + wrapperObj).append("<div class='footer' />");
-                var gaugeTitle = config.title[i];
-                $("#" + gaugeObj).attr('data-title', gaugeTitle);
-
-                //$('#' + wrapperObj, chartObj).height(170);
-                $('#' + gaugeObj, chartObj).height(170);
+				$("#"+wrapperObj).append("<div id=" + gaugeObj + " class='gaugeHolder' />");
+				$("#"+wrapperObj).append("<div class='footer' />");
+				var gaugeTitle = config.title[i];
+				$("#"+gaugeObj).attr('data-title',gaugeTitle);
+				
+				//$('#' + wrapperObj, chartObj).height(170);
+				$('#' + gaugeObj, chartObj).height(170);
 
 
             }
@@ -183,14 +199,14 @@ function renderCore(sfdata) {
             //var gaugeParam=config.category[i];
             var scriptName = config.Script;
             if (targetData.length > 0) {
-                createCustomGauge(gaugeObj, actualData[i], targetData[i], gaugeTitle, scriptName);
-
+                createCustomGauge(gaugeObj, actualData[i], targetData[i],thersholdActualData[i],thersholdTargetData[i], gaugeTitle, scriptName);
+				
             }
             else {
-                createCustomGauge(gaugeObj, actualData[i], 0, gaugeTitle, scriptName);
+                createCustomGauge(gaugeObj, actualData[i], 0,thersholdActualData[i],thersholdTargetData[i],gaugeTitle, scriptName);
             }
-            var dataLabel = '<span class="dataLabels" >' + actualData[i] + '%</span>';
-            $("#" + wrapperObj + " .highcharts-container", chartObj).after(dataLabel);
+			var dataLabel = '<span class="dataLabels" >' +  actualData[i] + '%</span>';
+			$("#"+wrapperObj+" .highcharts-container", chartObj).after(dataLabel);
         }
         for (var i = 0; i < actualDisplayArray.length - 1; i++) {
             if (selectedCategoryActual != "" && selectedCategoryActual != undefined) {
@@ -231,7 +247,7 @@ function renderCore(sfdata) {
     // wait ( sfdata.wait, sfdata.static );
 }
 
-function createCustomGauge(renderObject, actualValue, targetValue, gaugeTitle, scriptName) {
+function createCustomGauge(renderObject, actualValue, targetValue,thersholdActual,thersholdTarget,gaugeTitle, scriptName) {
     //var chartVal=new Highcharts.Chart({
     var startColor = "";
     var stopColor = "";
@@ -444,14 +460,14 @@ function createCustomGauge(renderObject, actualValue, targetValue, gaugeTitle, s
             dataLabels: {
                 formatter: function () {
                     var kmh = this.y;
-                    //   return '<span style="color:#bed730;font-size:11px; font-weight:normal;stroke:none;z-index:10000;">' + kmh + '/' + targetValue + '</span>';
+                 //   return '<span style="color:#bed730;font-size:11px; font-weight:normal;stroke:none;z-index:10000;">' + kmh + '/' + targetValue + '</span>';
                 },
                 y: 12,
                 zIndex: 10,
 
             },
             tooltip: {
-                valueSuffix: '<br></br>Target:' + targetValue,
+                valueSuffix: '<br></br>Limit:' + targetValue+ '<br></br>Actual Volume:' + Math.round(thersholdActual)+'<br></br>Target Volume:'+Math.round(thersholdTarget),
                 backgroundColor: null,
                 borderWidth: 0,
                 shadow: true,

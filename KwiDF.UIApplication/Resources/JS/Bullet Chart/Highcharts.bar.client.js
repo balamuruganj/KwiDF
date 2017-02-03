@@ -111,7 +111,7 @@ function renderCore(sfdata) {
             data: data,
 		 dataLabels: {
                 enabled: true,
-                //rotation: -90,
+                //rotation: 90,
                 color: '#FFFFFF',
                 align: 'center',
                 format: '{point.y}', // one decimal
@@ -169,23 +169,23 @@ function renderCore(sfdata) {
                 }
             }
 
-        }, {
-            name: 'Target',
-            type: 'scatter',
-            pointWidth: 50,
-
-            point: {
-                events: {
-                    click: function ()
-                        //{
-                        //  runScript("OS1-Gauge");
-                        //}
-                    {
-                        for (var i = 0; i < this.series.data.length; i++) {
-                            //this.series.data[i].update({ color: '#294251' }, true, false);
+            }, {
+                name: 'Target',
+                type: 'scatter',
+                pointWidth: 50,
+                visible:sfdata.config.showTarget =="true" ? true:false,
+                point: {
+                    events: {
+                        click: function ()
+                            //{
+                            //  runScript("OS1-Gauge");
+                            //}
+                        {
+                            for (var i = 0; i < this.series.data.length; i++) {
+                                //this.series.data[i].update({ color: '#294251' }, true, false);
+                            }
+                            //this.update({ color: '#26a2ed' }, true, false)
                         }
-                        //this.update({ color: '#26a2ed' }, true, false)
-                    }
 
 
                 }
@@ -219,10 +219,12 @@ function renderCore(sfdata) {
                 click: function (event) {
 
                     for (var i = 0; i < this.series[0].data.length; i++) {
-                        if (this.series[1].data[i].y >= this.series[0].data[i].y) {
-                            this.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)' });
+                        
 
-
+                            if (this.series[1].data[i].y >= this.series[0].data[i].y && sfdata.config.showTarget == "true") {
+                            //this.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)' });
+                                this.series[0].data[i].update({ color: 'rgba(240, 80, 80, 1)' });
+                            
                         } else {
 
                             this.series[0].data[i].update({ color: 'rgba(31, 174, 57,1)' });
@@ -257,7 +259,7 @@ function renderCore(sfdata) {
             labels:
 
 			{
-
+				rotation: -90,
 			    style: {
 			        color: '#fff'
 			    }
@@ -288,14 +290,22 @@ function renderCore(sfdata) {
 			positioner: function(boxWidth, boxHeight, point) {
              
                 return {
-                    x: point.plotX - (60),
-                    y: point.plotY
+                    x: point.plotX -25,
+                    y: point.plotY -25
                 };
             },
             formatter: function () {
                 debugger;
+                if (sfdata.config.showTarget == "true")
+                {
+                    return "Field: <strong>" + this.x + "</strong>" + "<br /> Target: <strong>" + Highcharts.numberFormat(this.point.target, 0) + "</strong><br/>" + "Actual" + ": <strong>" + Highcharts.numberFormat(this.point.actual, 0) + "</strong><br/>";
 
-                return "Field: <strong>" + this.x + "</strong>" + "<br /> Target: <strong>" + Highcharts.numberFormat(this.point.target, 2) + "</strong><br/>" + "Actual" + ": <strong>" + Highcharts.numberFormat(this.point.actual, 2) + "</strong><br/>";
+                }
+                else
+                {
+                    return "Field: <strong>" + this.x + "</strong>" + "<br /> Actual:<strong>" + Highcharts.numberFormat(this.point.actual, 0) + "</strong><br/>";
+                }
+                
                 ;
             }
         },
@@ -344,8 +354,9 @@ function renderCore(sfdata) {
     //wait(sfdata.wait, sfdata.static);
 
     for (i = 0; i < chartVal.series[0].data.length; i++) {
-        if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
-            this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)' });
+        if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y && sfdata.config.showTarget == "true") {
+            //this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)' });
+            this.chartVal.series[0].data[i].update({ color: 'rgba(240, 80, 80, 1)' });
 
         } else {
 
@@ -367,9 +378,11 @@ function renderCore(sfdata) {
                     //this.chartVal.series[i].data[0].update({ color: 'red' });
 
                     marked = true;
-                    if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
+                    if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y && sfdata.config.showTarget == "true") {
 
-                        this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)', borderColor: '#fff',borderWidth:'0.5' });
+                        //this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)', borderColor: '#fff', borderWidth: '0.5' });
+                        this.chartVal.series[0].data[i].update({ color: '  rgba(240, 80, 80, 1)', borderColor: '#fff', borderWidth: '0.5' });
+                      
 
                     } else {
 
@@ -383,9 +396,9 @@ function renderCore(sfdata) {
                 else if (!marked) {
                     debugger;
 
-                    if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y) {
-                        this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 0.3)' });
-
+                    if (this.chartVal.series[1].data[i].y >= this.chartVal.series[0].data[i].y && sfdata.config.showTarget == "true") {
+                        //this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 0.3)' });
+                        this.chartVal.series[0].data[i].update({ color: 'rgba(240, 80, 80, 0.3)' });
                     } else {
 
                         this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 0.3)' });

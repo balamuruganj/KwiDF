@@ -23,6 +23,12 @@
             else {
                 runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": actual }, { "Key": "targetValue", "Value": "" }, { "Key": "isDelete", "Value": 0 }]);
             }
+			if(isWellActivities=="true")
+			{
+				log("Marking");
+				runScript("MapMarkingFromKPI", [{ "Key": "layerName", "Value": labelText }, { "Key": "isDelete", "Value": 0 },{ "Key": "isReset", "Value": 1 }]);
+			}
+			
         } else {
             $(".overlay", $(this)).hide();
             updateColor();
@@ -43,7 +49,10 @@
 
                 runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": actual }, { "Key": "targetValue", "Value": "" }, { "Key": "isDelete", "Value": 1 }]);
             }
-
+			if(isWellActivities=="true")
+			{
+				runScript("MapMarkingFromKPI", [{ "Key": "layerName", "Value": labelText }, { "Key": "isDelete", "Value": 1 },{ "Key": "isReset", "Value": 1 }]);
+			}
 
         }
     });
@@ -85,7 +94,24 @@ var dateRange;
 var dataLabel;
 var hpLoading = "";
 var DWPConfig = "";
+var gainLossIndicator = "";
+var lossParameters = "";
+var targetLabelText = "";
+var ALRunLife = "";
+var isWellActivities="";
+var labelText="";
 function renderCore(sfdata) {
+
+//var UrlCSS = "http://localhost/KwiDF/Resources/CSS/font-awesome.css"; //replace with sfdata.config
+var UrlCSS =  sfdata.config.UrlCSS;
+//var UrlCSS = getDocumentProperty("UrlCSS");
+$("head").append("<link>");
+var css = $("head").children(":last");
+css.attr({
+      rel:  "stylesheet",
+      type: "text/css",
+      href: UrlCSS
+}); 
 
     var DateValue = new Date(sfdata.config.DateFilter);
     var DateValueFormatted = DateValue.valueOf();
@@ -95,6 +121,7 @@ function renderCore(sfdata) {
     var nextDateValueFormatted = nextDate.valueOf();
     showTarget = sfdata.config.ShowTarget;
     showChange = sfdata.config.ShowChange;
+	labelText=sfdata.config.lableText;
     if (sfdata.config.ShowTarget == "true") {
         actualVal = sfdata.config.ColumnName[0];
         targetVal = sfdata.config.ColumnName[1];
@@ -111,8 +138,21 @@ function renderCore(sfdata) {
     if (sfdata.config.hasOwnProperty("IsDWP")) {
         DWPConfig = sfdata.config.IsDWP;
     }
-
-
+    if (sfdata.config.hasOwnProperty("GainLossIndicator")) {
+        gainLossIndicator = sfdata.config.GainLossIndicator;
+    }
+    if (sfdata.config.hasOwnProperty("LossParameters")) {
+        lossParameters = sfdata.config.LossParameters;
+    }
+    if (sfdata.config.hasOwnProperty("TargetLableText")) {
+        targetLabelText = sfdata.config.TargetLableText;
+    }
+    if (sfdata.config.hasOwnProperty("ALRunLife")) {
+        ALRunLife = sfdata.config.ALRunLife;
+    }
+	if (sfdata.config.hasOwnProperty("IsWellActivities")) {
+		isWellActivities=sfdata.config.IsWellActivities;
+	}
     if (sfdata.config.RefreshKPI == "true") {
         dateRange = sfdata.config.DateRange;
 
@@ -264,9 +304,10 @@ function renderCore(sfdata) {
                 $(drawChart).append("<section class='gaugeHolder' id='gaugeHolder'/>");
 
 
-                $("header", drawChart).append("<h2>" + sfdata.config.lableText + " <span>" + sfdata.config.UOMText + "</span></h2>").append("<p>" + topValue + "</p>");
+                $("header", drawChart).append("<h2>" + sfdata.config.lableText + " <span></span></h2>").append("<p>" + topValue + "</p>");
+                $("header ", drawChart).append("<span class='uom'>" + sfdata.config.UOMText + "</span>");
                 $("header", drawChart).append("<div class='target-holder'/>");
-                $("header .target-holder", drawChart).append("<div>Target</div><div>" + targetValue + "</div>");
+                $("header .target-holder", drawChart).append("<div>" + targetLabelText + "</div><div>" + targetValue + "</div>");
 
                 $(drawChart).append("<footer id='footer'/>");
                 if (sfdata.config.ShowChange == "true") {
@@ -285,11 +326,12 @@ function renderCore(sfdata) {
             }
             $(".gaugeHolder").attr("data-top", topValue);
             $("header p").html(topValue);
+            $("header .uom").html(sfdata.config.UOMText);
             $("#lableVal").html(topValue);
             if (sfdata.config.ShowChange == "true") {
                 $("footer span").html(bottomValue);
             }
-            $("header .target-holder").html("<div>Target</div><div>" + targetValue + "</div>");
+            $("header .target-holder").html("<div>" + targetLabelText + "</div><div>" + targetValue + "</div>");
 
             if (lastTopData > lastTargetData) {
                 if (DWPConfig != "") {
@@ -342,11 +384,16 @@ function renderCore(sfdata) {
             for (i = 0; i < actualData.length; i++) {
 
                 data.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
+                targetData.push([parseInt(actualData[i].items[0]), actualData[i].items[3]]);
 
                 if (sfdata.config.ShowChange == "true") {
                     changeData.push(actualData[i].items[3]);
                 }
-
+                if (targetData.length > 0) {
+                    var len = targetData.length - 1;
+                    lastTargetData = targetData[len][1] != 0 && targetData[len][1] != "" ? Math.round(targetData[len][1]) : 0;
+                    targetValue = numberWithCommas(lastTargetData);
+                }
             }
             series = {
                 name: sfdata.columns[2],
@@ -426,8 +473,15 @@ function renderCore(sfdata) {
                 $(drawChart).append("<section class='gaugeHolder' id='gaugeHolder'/>");
 
 
-                $("header", drawChart).append("<h2>" + sfdata.config.lableText + " <span>" + sfdata.config.UOMText + "</span></h2>").append("<p>" + topValue + "</p>");
-                //$("header", drawChart).append("<div class='target-holder'/>");
+                $("header", drawChart).append("<h2>" + sfdata.config.lableText + " <span></span></h2>").append("<p>" + topValue + "</p>");
+                $("header ", drawChart).append("<span class='uom'>" + sfdata.config.UOMText + "</span>");
+                if (ALRunLife == "true")
+
+                {
+                    $("header", drawChart).append("<div class='target-holder'/>");
+                    $("header .target-holder", drawChart).append("<div>" + sfdata.config.TargetLableText + "</div><div>" + targetValue + "</div>");
+
+                }
 
 
                 $(drawChart).append("<footer/>");
@@ -446,28 +500,60 @@ function renderCore(sfdata) {
             }
             $(".gaugeHolder").attr("data-top", topValue);
             $("header p").html(topValue);
+            $("header .uom").html(sfdata.config.UOMText);
             $("#lableVal").html(topValue);
             if (sfdata.config.ShowChange == "true") {
                 $("footer span").html(bottomValue);
             }
+            if (gainLossIndicator == "true") {
+                if (lastTopData == 0) {
+                    $(".smallSection header").removeClass('red');
+                    $(".smallSection header").removeClass('green');
+                    $(".smallSection header").addClass('gray');
+                }
+                else if (lastTopData < 0) {
+                    $(".smallSection header").addClass('red');
+                    $(".smallSection header").removeClass('green');
+                    $(".smallSection header").removeClass('gray');
+                }
+                else {
+                    $(".smallSection header").removeClass('red');
+                    $(".smallSection header").addClass('green');
+                    $(".smallSection header").removeClass('gray');
+                }
+            }
+            else {
+                $(".smallSection header").addClass('gray');
+            }
 
-            $(".smallSection header").addClass('gray');
 
 
         }
         if (sfdata.config.ShowChange == "true") {
             if (bottomData < 0) {
                 if (DWPConfig != "") {
-                    $(".smallSection span").removeClass("down");
-                    $(".smallSection span").addClass("up");
-                    $(".smallSection span").removeClass("neutral");
-                    $(".smallSection header").addClass('green');
-                }
-                else {
-                    $(".smallSection span").addClass("down");
+                    $(".smallSection span").addClass("lossdown");
+                    $(".smallSection span").removeClass("lossup");
                     $(".smallSection span").removeClass("up");
                     $(".smallSection span").removeClass("neutral");
                     $(".smallSection header").addClass('red');
+                    $(".smallSection span").removeClass("down");
+                }
+                else {
+                    if (lossParameters == "true") {
+                        $(".smallSection span").addClass("lossdown");
+                        $(".smallSection span").removeClass("lossup");
+                        $(".smallSection span").removeClass("up");
+                        $(".smallSection span").removeClass("neutral");
+                        $(".smallSection header").addClass('red');
+                        $(".smallSection span").removeClass("down");
+                    }
+                    else {
+                        $(".smallSection span").addClass("down");
+                        $(".smallSection span").removeClass("up");
+                        $(".smallSection span").removeClass("neutral");
+                        $(".smallSection header").addClass('red');
+                    }
                 }
 
             }
@@ -480,15 +566,25 @@ function renderCore(sfdata) {
             else {
                 if (DWPConfig != "") {
                     //log("condition matching");
-                    $(".smallSection span").addClass("down");
-
+                    $(".smallSection span").addClass("lossup");
+                    $(".smallSection span").removeClass("lossdown");
+                    $(".smallSection span").removeClass("down");
                     $(".smallSection span").removeClass("up");
                     $(".smallSection span").removeClass("neutral");
                 }
                 else {
-                    $(".smallSection span").removeClass("down");
-                    $(".smallSection span").addClass("up");
-                    $(".smallSection span").removeClass("neutral");
+                    if (lossParameters == "true") {
+                        $(".smallSection span").addClass("lossup");
+                        $(".smallSection span").removeClass("lossdown");
+                        $(".smallSection span").removeClass("down");
+                        $(".smallSection span").removeClass("up");
+                        $(".smallSection span").removeClass("neutral");
+                    }
+                    else {
+                        $(".smallSection span").removeClass("down");
+                        $(".smallSection span").addClass("up");
+                        $(".smallSection span").removeClass("neutral");
+                    }
                 }
 
 
