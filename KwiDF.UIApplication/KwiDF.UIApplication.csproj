@@ -93,6 +93,7 @@
     <Content Include="Resources\JS\DonutChart\Highcharts.donut.client.js" />
     <Content Include="Resources\JS\Gauge\Gauge.js" />
     <Content Include="Resources\JS\KPIChart\Highcharts.budgetKPI.js" />
+    <Content Include="Resources\JS\KPIChart\Highcharts.OilGasPLClient.js" />
     <Content Include="Resources\JS\KPIChart\HighchartsKPI.js" />
     <Content Include="Test Pages\BulletChart.html" />
     <Content Include="Test Pages\Gauge.html" />

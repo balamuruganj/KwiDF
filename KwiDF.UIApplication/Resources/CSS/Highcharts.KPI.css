@@ -1,4 +1,4 @@
-﻿@import url('http://localhost/KwiDF/Resources/CSS/font-awesome.css');
+﻿//@import url('http://localhost/KwiDF/Resources/CSS/font-awesome.css');
 .highcharts-color-0 {
 	
 	//stroke: #7cb5ec;
@@ -168,7 +168,7 @@ border-radius: 12px 12px 0 0;
 .smallSection.down header{
 	background: #fe0c36;
 }
-.smallSection header.red{ background:#ff0000;}
+.smallSection header.red{ background:#800000;} 
 .smallSection header.yellow{background:#ddb90a}
 .smallSection header.green{background:#429e2f}
 .smallSection header.gray{background:#47759e}
@@ -300,6 +300,42 @@ border-radius: 12px 12px 0 0;
 	-o-transition: all 300ms ease;
 	transition: all 300ms ease;
   }
+.smallSection footer span.lossup::before{
+    position: absolute;
+    top:-2px;
+    left:0px;
+    width: 0;
+    height: 0;
+    content: "\25b2";
+    color: #fe0c36;
+    font-size: 17px;
+    /*border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid #429e2f;*/
+       -webkit-transition: all 300ms ease;
+    -moz-transition: all 300ms ease;
+    -ms-transition: all 300ms ease;
+    -o-transition: all 300ms ease;
+    transition: all 300ms ease;
+  }
+.smallSection footer span.lossdown::before{
+   position: absolute;
+    top:-2px;
+    left:0px;
+    width: 0;
+    height: 0;
+    content: "\25bc";
+    color: #429e2f;
+    font-size: 17px;
+    /*border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid #429e2f;*/
+       -webkit-transition: all 300ms ease;
+    -moz-transition: all 300ms ease;
+    -ms-transition: all 300ms ease;
+    -o-transition: all 300ms ease;
+    transition: all 300ms ease;
+}
 
 text.highcharts-credits {
     display:none;}
@@ -449,4 +485,28 @@ position: absolute;
     transition: all 300ms ease;
     font: 13px FontAwesome;
   }
+.uom {
+    font-size: 15px !important;
+    font-weight: 100 !important;
+    color: #fff;
+    display: inline-block;
+    margin-left: 5PX !important;
+    top: -7px !important;
+    position: relative;
+}
+
+.close-br {
+    color: #fff;
+    margin: 0;
+    font-size: 2.4em;
+    font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    top: -24px;
+    display: inline-block;
+    margin-left: 2px;
+}
+
+.smallSection header p{display:inline-block !important}
 

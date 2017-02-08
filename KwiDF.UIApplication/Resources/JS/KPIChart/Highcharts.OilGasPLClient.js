@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+$(document).ready(function () {
     var chartObj = $("#js_chart");
     chartObj.on('click', '.wrapper', function () {
         $(this).toggleClass('selected');
@@ -6,7 +6,7 @@
         //log("DocClick" + selectedCategoryActual);
         if ($(this).hasClass('selected')) {
             $(".overlay", $(this)).show();
-            updateColor();
+           // updateColor();
 
             setDocumentProperty("RefreshKPI", "false");
             setDocumentProperty("RefreshKPIGC", "false");
@@ -23,14 +23,9 @@
             else {
                 runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": actual }, { "Key": "targetValue", "Value": "" }, { "Key": "isDelete", "Value": 0 }]);
             }
-            if (isWellActivities == "true") {
-                log("Marking");
-                runScript("MapMarkingFromKPI", [{ "Key": "layerName", "Value": labelText }, { "Key": "isDelete", "Value": 0 }, { "Key": "isReset", "Value": 1 }]);
-            }
-
         } else {
             $(".overlay", $(this)).hide();
-            updateColor();
+            //updateColor();
 
             setDocumentProperty("RefreshKPI", "false");
             setDocumentProperty("RefreshKPIGC", "false");
@@ -48,9 +43,7 @@
 
                 runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": actual }, { "Key": "targetValue", "Value": "" }, { "Key": "isDelete", "Value": 1 }]);
             }
-            if (isWellActivities == "true") {
-                runScript("MapMarkingFromKPI", [{ "Key": "layerName", "Value": labelText }, { "Key": "isDelete", "Value": 1 }, { "Key": "isReset", "Value": 1 }]);
-            }
+
 
         }
     });
@@ -94,33 +87,36 @@ var hpLoading = "";
 var DWPConfig = "";
 var gainLossIndicator = "";
 var lossParameters = "";
-var targetLabelText = "";
+var IsOilGasLossKPI = "";
 var ALRunLife = "";
-var isWellActivities = "";
-var labelText = "";
-var targetSeries = [];
-var isMultiSeries = "";
-var isShowActualValue = "";
+var isShowTargetValue="";
+var isShowActualValue="";
+var isShowChangeValue="";
+var isMultiSeries="";
+var seriesData=[];
 var actualVolumeValue = "";
 var changeVolumeValue = "";
 var targetVolumeValue = "";
 var actualVolumeData = 0;
 var targetVolumeData = 0;
 var changeVolumeData = 0;
-var uomText = "";
-var gaugeLabel = "";
+var uomText="";
+var positiveColorCode="";
+var negativeColorCode="";
+var targetColorCode="";
+var isWaterGainLossKPI="";
+var gaugeLabel="";
 function renderCore(sfdata) {
 
-    //var UrlCSS = "http://localhost/KwiDF/Resources/CSS/font-awesome.css"; //replace with sfdata.config
-    var UrlCSS = sfdata.config.UrlCSS;
-    //var UrlCSS = getDocumentProperty("UrlCSS");
-    $("head").append("<link>");
-    var css = $("head").children(":last");
-    css.attr({
-        rel: "stylesheet",
-        type: "text/css",
-        href: UrlCSS
-    });
+  //var UrlCSS = "http://localhost/KwiDF/Resources/CSS/font-awesome.css"; //replace with sfdata.config
+var UrlCSS =  sfdata.config.UrlCSS;
+$("head").append("<link>");
+var css = $("head").children(":last");
+css.attr({
+      rel:  "stylesheet",
+      type: "text/css",
+      href: UrlCSS
+});
 
     var DateValue = new Date(sfdata.config.DateFilter);
     var DateValueFormatted = DateValue.valueOf();
@@ -130,8 +126,10 @@ function renderCore(sfdata) {
     var nextDateValueFormatted = nextDate.valueOf();
     showTarget = sfdata.config.ShowTarget;
     showChange = sfdata.config.ShowChange;
-    labelText = sfdata.config.lableText;
-    uomText = sfdata.config.UOMText;
+	positiveColorCode=sfdata.config.PositiveColorCode;
+	negativeColorCode=sfdata.config.NegativeColorCode;
+	targetColorCode=sfdata.config.TargetColorCode;
+	uomText=sfdata.config.UOMText;;
     if (sfdata.config.ShowTarget == "true") {
         actualVal = sfdata.config.ColumnName[0];
         targetVal = sfdata.config.ColumnName[1];
@@ -154,20 +152,28 @@ function renderCore(sfdata) {
     if (sfdata.config.hasOwnProperty("LossParameters")) {
         lossParameters = sfdata.config.LossParameters;
     }
-    if (sfdata.config.hasOwnProperty("TargetLableText")) {
-        targetLabelText = sfdata.config.TargetLableText;
+    if (sfdata.config.hasOwnProperty("IsOilGasLossKPI")) {
+        IsOilGasLossKPI = sfdata.config.IsOilGasLossKPI;
     }
+	 if (sfdata.config.hasOwnProperty("IsWaterGainLossKPI")) {
+        isWaterGainLossKPI = sfdata.config.IsWaterGainLossKPI;
+    }
+	
     if (sfdata.config.hasOwnProperty("ALRunLife")) {
         ALRunLife = sfdata.config.ALRunLife;
     }
-    if (sfdata.config.hasOwnProperty("IsWellActivities")) {
-        isWellActivities = sfdata.config.IsWellActivities;
+	if (sfdata.config.hasOwnProperty("IsShowTargetValue")) {
+        isShowTargetValue = sfdata.config.IsShowTargetValue;
     }
-    if (sfdata.config.hasOwnProperty("IsMultiSeries")) {
+	if (sfdata.config.hasOwnProperty("IsShowActualValue")) {
+        isShowActualValue = sfdata.config.IsShowActualValue;
+    }
+	if (sfdata.config.hasOwnProperty("IsMultiSeries")) {
         isMultiSeries = sfdata.config.IsMultiSeries;
     }
-    if (sfdata.config.hasOwnProperty("IsShowActualValue")) {
-        isShowActualValue = sfdata.config.IsShowActualValue;
+	
+	if (sfdata.config.hasOwnProperty("IsShowChangeValue")) {
+        isShowChangeValue = sfdata.config.IsShowChangeValue;
     }
     if (sfdata.config.RefreshKPI == "true") {
         dateRange = sfdata.config.DateRange;
@@ -187,47 +193,72 @@ function renderCore(sfdata) {
         if (sfdata.config.ShowTarget == "true") {
             selectedCategoryActual = sfdata.config.CategoryConditionActual;
             selectedCategoryTarget = sfdata.config.CategoryConditionTarget;
-            var series = {};
+            var series = [];
             var processed_json = new Array();
             data = [];
             targetData = [];
             changeData = [];
-            targetSeries = [];
+			seriesData=[];
+			targetSeries=[];
             if (selectionType == undefined || selectionType == "")
                 selectionType = sfdata.config.ChartType;
             colorCode = sfdata.config.ColorCode;
 
             for (i = 0; i < actualData.length; i++) {
-
-                data.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
-                targetData.push([parseInt(actualData[i].items[0]), actualData[i].items[3]]);
-                if (sfdata.config.ShowChange == "true") {
-                    changeData.push(actualData[i].items[4]);
-                }
-
+				if(sfdata.config.ShowTarget == "true")
+				{
+					var obj={};
+					obj.x=parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", ""));
+					obj.y=actualData[i].items[2];
+					obj.target=actualData[i].items[3];					
+					seriesData.push(obj);
+					data.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
+				}
+				else
+				{
+					data.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
+					
+				}
+				targetData.push([parseInt(actualData[i].items[0]), actualData[i].items[3]]);
+				if (sfdata.config.ShowChange == "true") {
+				 changeData.push(actualData[i].items[4]);
+				}
+				
             }
-
-            series = {
-                name: sfdata.config.lableText,
-                data: data,
-                color: colorCode,
-                type: "line"
+            series = 
+			{
+                name: sfdata.columns[2],
+                data: seriesData,
+				type:'line',
+				visible:true,
             };
+			processed_json.push(series);
+			series = {
+                name: "sample",
+                data: seriesData,
+				type:'column',
+				visible:true,
+            };			
             processed_json.push(series);
-
-            if (isMultiSeries == "true") {
-                for (i = 0; i < actualData.length; i++) {
-                    targetSeries.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[3]]);
-                }
-                series = {
-                    name: "Target",
-                    data: targetSeries,
-                    color: "#ffff00",
-                    type: "line"
-                }
-                processed_json.push(series);
-            }
-
+			if(isMultiSeries=="true")
+			{
+				for (i = 0; i < actualData.length; i++) {
+					var obj={};
+					obj.x=parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", ""));
+					obj.y=actualData[i].items[3];
+					obj.actual=actualData[i].items[2];					
+					targetSeries.push(obj);
+					//targetSeries.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
+					//targetSeries.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[3]]);
+				}
+				series={
+					 name: "Target",
+					 data: targetSeries,
+					 color:targetColorCode,
+					 type:"line"
+				}
+				processed_json.push(series);
+			}
 
             var lastData = 0;
             if (data.length > 0) {
@@ -238,8 +269,7 @@ function renderCore(sfdata) {
                     lastData = data[len][1] != 0 && data[len][1] != "" ? Math.round(data[len][1]) : 0;
                     lastTopData = lastData;
                     topValue = numberWithCommas(lastData);
-                    gaugeLabel = topValue;
-
+					gaugeLabel=topValue;
                     if (targetData.length > 0) {
                         var len = targetData.length - 1;
                         lastTargetData = targetData[len][1] != 0 && targetData[len][1] != "" ? Math.round(targetData[len][1]) : 0;
@@ -325,63 +355,76 @@ function renderCore(sfdata) {
                 lastTargetData = 0;
                 lastTopData = 0;
             }
-            //Showing Volume with Percentage
-            var actualVolume = [];
+			//Showing Volume with Percentage
+				var actualVolume = [];
             var targetVolume = [];
             var changeVolume = [];
-            if (isShowActualValue == "true") {
-                for (i = 0; i < actualData.length; i++) {
-                    actualVolume.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[5]]);
-                    targetVolume.push([parseInt(actualData[i].items[0]), actualData[i].items[6]]);
-                    if (sfdata.config.ShowChange == "true") {
-                        changeVolume.push(actualData[i].items[7]);
-                    }
+			if(isShowActualValue=="true")
+			{
+				 for (i = 0; i < actualData.length; i++) {
+					actualVolume.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[5]]);
+					if(isShowTargetValue=="true")
+					{
+						targetVolume.push([parseInt(actualData[i].items[0]), actualData[i].items[6]]);
+					}
+					if (isShowChangeValue == "true") {
+						
+						changeVolume.push(actualData[i].items[7]);
+					}
 
-                }
-                var lastActual = 0;
-                if (actualVolume.length > 0) {
-                    var len = actualVolume.length - 1;
-                    if (actualVolume[len][0] == DateValue.valueOf()) {
-
-                        lastActual = actualVolume[len][1] != 0 && actualVolume[len][1] != "" ? Math.round(actualVolume[len][1]) : 0;
-                        actualVolumeData = lastActual;
-                        actualVolumeValue = numberWithCommas(lastActual);
-                        if (targetVolume.length > 0) {
-                            var len = targetVolume.length - 1;
-                            targetVolumeData = targetVolume[len][1] != 0 && targetVolume[len][1] != "" ? Math.round(targetVolume[len][1]) : 0;
-                            targetVolumeValue = numberWithCommas(targetVolumeData);
-                        }
-                        if (sfdata.config.ShowChange == "true") {
-                            if (changeVolume.length > 0) {
-                                var len = changeVolume.length - 1;
-                                changeVolumeData = changeVolume[len] != 0 && changeVolume[len] != "" ? Math.round(changeVolume[len]) : 0;
-                                changeVolumeValue = numberWithCommas(changeVolumeData);
-                            }
-                        }
-                        topValue = topValue + "% (" + actualVolumeValue;
-                        targetValue = targetValue + "%(" + targetVolumeValue + ")";
-                        bottomValue = bottomValue + "%(" + changeVolumeValue + ")";
-
-                    }
-                    else {
-                        actualVolumeValue = "No Data";
-                        changeVolumeValue = "";
-                        targetVolumeValue = "";
-                        actualVolumeData = 0;
-                        targetVolumeData = 0;
-                        changeVolumeData = 0;
-                    }
-                }
-                else {
-                    actualVolumeValue = "No Data";
-                    changeVolumeValue = "";
-                    targetVolumeValue = "";
-                    actualVolumeData = 0;
-                    targetVolumeData = 0;
-                    changeVolumeData = 0;
-                }
-
-            }
+				}
+				var lastActual = 0;
+				if (actualVolume.length > 0) {
+					var len = actualVolume.length - 1;
+					if (actualVolume[len][0] == DateValue.valueOf()) {
+						
+						lastActual = actualVolume[len][1] != 0 && actualVolume[len][1] != "" ? Math.round(actualVolume[len][1]) : 0;
+						actualVolumeData = lastActual;
+						actualVolumeValue = numberWithCommas(lastActual);
+						if (targetVolume.length > 0) {
+							var len = targetVolume.length - 1;
+							targetVolumeData = targetVolume[len][1] != 0 && targetVolume[len][1] != "" ? Math.round(targetVolume[len][1]) : 0;
+							targetVolumeValue = numberWithCommas(targetVolumeData);
+						}
+						if (isShowChangeValue == "true") {
+							if (changeVolume.length > 0) {
+								var len = changeVolume.length - 1;
+								changeVolumeData = changeVolume[len] != 0 && changeVolume[len] != "" ? Math.round(changeVolume[len]) : 0;
+								changeVolumeValue = numberWithCommas(changeVolumeData);
+							}
+						}
+						if(IsOilGasLossKPI=="true")
+							topValue=topValue+"stb/d ("+actualVolumeValue;
+						else
+							topValue=topValue+"% ("+actualVolumeValue;
+						if(isShowTargetValue=="true")
+						{
+							targetValue=targetValue+"%("+targetVolumeValue+")";
+						}
+						if(isShowChangeValue == "true") {
+							bottomValue=bottomValue+"%("+changeVolumeValue+")";
+						}
+						
+					}
+					else {
+						actualVolumeValue = "No Data";
+						changeVolumeValue = "";
+						targetVolumeValue="";
+						actualVolumeData = 0;
+						targetVolumeData = 0;
+						changeVolumeData = 0;
+					}
+				}
+				else {
+						actualVolumeValue = "No Data";
+						changeVolumeValue = "";
+						targetVolumeValue="";
+						actualVolumeData = 0;
+						targetVolumeData = 0;
+						changeVolumeData = 0;
+				}
+				
+			}
             var chartObj = $("#js_chart");
 
             if ($('.wrapper', chartObj).length == 0) {
@@ -397,12 +440,13 @@ function renderCore(sfdata) {
 
 
                 $("header", drawChart).append("<h2>" + sfdata.config.lableText + " <span></span></h2>").append("<p>" + topValue + "</p>");
-                $("header ", drawChart).append("<span class='uom'>" + uomText + "<span>" + ")" + "</span></span>");
-                if (isShowActualValue == "true") {
-                    $(".uom ", drawChart).after("<span class='close-br'>" + " )" + "</span>");
-                }
+				$("header ", drawChart).append("<span class='uom'>" + uomText + "<span>"+ ")" + "</span></span>");
+				if(isShowActualValue =="true")
+				{
+					$(".uom ", drawChart).after("<span class='close-br'>" + " )"  + "</span>");
+				}
                 $("header", drawChart).append("<div class='target-holder'/>");
-                $("header .target-holder", drawChart).append("<div>" + targetLabelText + "</div><div>" + targetValue + "</div>");
+                $("header .target-holder", drawChart).append("<div>" + sfdata.config.TargetLableText + "</div><div>" + targetValue + "</div>");
 
                 $(drawChart).append("<footer id='footer'/>");
                 if (sfdata.config.ShowChange == "true") {
@@ -421,13 +465,12 @@ function renderCore(sfdata) {
             }
             $(".gaugeHolder").attr("data-top", gaugeLabel);
             $("header p").html(topValue);
-            $("header .uom").html(uomText);
-            //$("header .uom").after("<span>" + " )"  + "</span>");
+			 $("header .uom").html(uomText);
             $("#lableVal").html(topValue);
             if (sfdata.config.ShowChange == "true") {
                 $("footer span").html(bottomValue);
             }
-            $("header .target-holder").html("<div>" + targetLabelText + "</div><div>" + targetValue + "</div>");
+            $("header .target-holder").html("<div>Prev. Day</div><div>" + targetValue + "</div>");
 
             if (lastTopData > lastTargetData) {
                 if (DWPConfig != "") {
@@ -468,7 +511,7 @@ function renderCore(sfdata) {
         else if (sfdata.config.ShowTarget == "false") {
 
             selectedCategoryActual = sfdata.config.CategoryConditionActual;
-            var series = {};
+            var series = [];
             var processed_json = new Array();
             data = [];
             targetData = [];
@@ -491,11 +534,22 @@ function renderCore(sfdata) {
                     targetValue = numberWithCommas(lastTargetData);
                 }
             }
-            series = {
+             series = 
+			{
                 name: sfdata.columns[2],
-                data: data
+                data: data,
+				type:'line',
+				visible:true,
             };
-            processed_json.push(series);
+			processed_json.push(series);
+			series = {
+                name: "sample",
+                data: data,
+				type:'column',
+				visible:true,
+            };
+			processed_json.push(series);
+            
 
             var lastData = 0;
             if (data.length > 0) {
@@ -505,9 +559,8 @@ function renderCore(sfdata) {
                     lastData = data[len][1] != 0 && data[len][1] != "" ? Math.round(data[len][1]) : 0;
                     lastTopData = lastData;
                     topValue = numberWithCommas(lastData);
-                    gaugeLabel = topValue;
-
-
+					gaugeLabel=topValue;
+					
                     if (sfdata.config.ShowChange == "true") {
                         if (changeData.length > 0) {
                             var len = changeData.length - 1;
@@ -557,63 +610,72 @@ function renderCore(sfdata) {
                 lastTargetData = 0;
                 lastTopData = 0;
             }
-            //Showing Volume with Percentage
-            var actualVolume = [];
+				var actualVolume = [];
             var targetVolume = [];
             var changeVolume = [];
-            if (isShowActualValue == "true") {
-                for (i = 0; i < actualData.length; i++) {
-                    actualVolume.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[5]]);
-                    //targetVolume.push([parseInt(actualData[i].items[0]), actualData[i].items[6]]);
-                    if (sfdata.config.ShowChange == "true") {
-                        changeVolume.push(actualData[i].items[6]);
-                    }
+			if(isShowActualValue=="true")
+			{
+				 for (i = 0; i < actualData.length; i++) {
+					actualVolume.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[5]]);
+					if(isShowTargetValue=="true")
+					{
+						targetVolume.push([parseInt(actualData[i].items[0]), actualData[i].items[6]]);
+					}
+					if (isShowChangeValue == "true") {
+						
+						changeVolume.push(actualData[i].items[7]);
+					}
 
-                }
-                var lastActual = 0;
-                if (actualVolume.length > 0) {
-                    var len = actualVolume.length - 1;
-                    if (actualVolume[len][0] == DateValue.valueOf()) {
-
-                        lastActual = actualVolume[len][1] != 0 && actualVolume[len][1] != "" ? Math.round(actualVolume[len][1]) : 0;
-                        actualVolumeData = lastActual;
-                        actualVolumeValue = numberWithCommas(lastActual);
-                        /*if (targetVolume.length > 0) {
+				}
+				var lastActual = 0;
+				if (actualVolume.length > 0) {
+					var len = actualVolume.length - 1;
+					if (actualVolume[len][0] == DateValue.valueOf()) {
+						
+						lastActual = actualVolume[len][1] != 0 && actualVolume[len][1] != "" ? Math.round(actualVolume[len][1]) : 0;
+						actualVolumeData = lastActual;
+						actualVolumeValue = numberWithCommas(lastActual);
+						if (targetVolume.length > 0) {
 							var len = targetVolume.length - 1;
 							targetVolumeData = targetVolume[len][1] != 0 && targetVolume[len][1] != "" ? Math.round(targetVolume[len][1]) : 0;
 							targetVolumeValue = numberWithCommas(targetVolumeData);
-						}*/
-                        if (sfdata.config.ShowChange == "true") {
-                            if (changeVolume.length > 0) {
-                                var len = changeVolume.length - 1;
-                                changeVolumeData = changeVolume[len] != 0 && changeVolume[len] != "" ? Math.round(changeVolume[len]) : 0;
-                                changeVolumeValue = numberWithCommas(changeVolumeData);
-                            }
-                        }
-                        topValue = topValue + "% (" + actualVolumeValue;
-                        //targetValue=targetValue+"%("+targetVolumeValue+")";
-                        bottomValue = bottomValue + "%(" + changeVolumeValue + ")";
-
-                    }
-                    else {
-                        actualVolumeValue = "No Data";
-                        changeVolumeValue = "";
-                        targetVolumeValue = "";
-                        actualVolumeData = 0;
-                        targetVolumeData = 0;
-                        changeVolumeData = 0;
-                    }
-                }
-                else {
-                    actualVolumeValue = "No Data";
-                    changeVolumeValue = "";
-                    targetVolumeValue = "";
-                    actualVolumeData = 0;
-                    targetVolumeData = 0;
-                    changeVolumeData = 0;
-                }
-
-            }
+						}
+						if (isShowChangeValue == "true") {
+							if (changeVolume.length > 0) {
+								var len = changeVolume.length - 1;
+								changeVolumeData = changeVolume[len] != 0 && changeVolume[len] != "" ? Math.round(changeVolume[len]) : 0;
+								changeVolumeValue = numberWithCommas(changeVolumeData);
+							}
+						}
+						topValue=topValue+"% ("+actualVolumeValue;
+						if(isShowTargetValue=="true")
+						{
+							targetValue=targetValue+"%("+targetVolumeValue+")";
+						}
+						if(isShowChangeValue == "true") {
+							bottomValue=bottomValue+"%("+changeVolumeValue+")";
+						}
+						
+					}
+					else {
+						actualVolumeValue = "No Data";
+						changeVolumeValue = "";
+						targetVolumeValue="";
+						actualVolumeData = 0;
+						targetVolumeData = 0;
+						changeVolumeData = 0;
+					}
+				}
+				else {
+						actualVolumeValue = "No Data";
+						changeVolumeValue = "";
+						targetVolumeValue="";
+						actualVolumeData = 0;
+						targetVolumeData = 0;
+						changeVolumeData = 0;
+				}
+				
+			}
             var chartObj = $("#js_chart");
 
             if ($('.wrapper', chartObj).length == 0) {
@@ -629,15 +691,19 @@ function renderCore(sfdata) {
 
 
                 $("header", drawChart).append("<h2>" + sfdata.config.lableText + " <span></span></h2>").append("<p>" + topValue + "</p>");
-                $("header ", drawChart).append("<span class='uom'>" + uomText + "<span>" + ")" + "</span></span>");
-                if (isShowActualValue == "true") {
-                    $(".uom ", drawChart).after("<span class='close-br'>" + " )" + "</span>");
-                }
-                if (ALRunLife == "true") {
+				$("header ", drawChart).append("<span class='uom'>" + uomText + "<span>"+ ")" + "</span></span>");
+				if(isShowActualValue=="true")
+				{
+					$(".uom ", drawChart).after("<span class='close-br'>" + " )"  + "</span>");
+				}
+                if (ALRunLife == "true")
+
+                {
                     $("header", drawChart).append("<div class='target-holder'/>");
                     $("header .target-holder", drawChart).append("<div>" + sfdata.config.TargetLableText + "</div><div>" + targetValue + "</div>");
 
                 }
+
 
 
                 $(drawChart).append("<footer/>");
@@ -655,8 +721,8 @@ function renderCore(sfdata) {
 
             }
             $(".gaugeHolder").attr("data-top", gaugeLabel);
-            $("header p").html(topValue);
-            $("header .uom").html(uomText);
+           $("header p").html(topValue);
+			 $("header .uom").html(uomText);
             $("#lableVal").html(topValue);
             if (sfdata.config.ShowChange == "true") {
                 $("footer span").html(bottomValue);
@@ -688,12 +754,10 @@ function renderCore(sfdata) {
         if (sfdata.config.ShowChange == "true") {
             if (bottomData < 0) {
                 if (DWPConfig != "") {
-                    $(".smallSection span").addClass("lossdown");
-                    $(".smallSection span").removeClass("lossup");
-                    $(".smallSection span").removeClass("up");
-                    $(".smallSection span").removeClass("neutral");
-                    $(".smallSection header").addClass('red');
                     $(".smallSection span").removeClass("down");
+                    $(".smallSection span").addClass("up");
+                    $(".smallSection span").removeClass("neutral");
+                    $(".smallSection header").addClass('green');
                 }
                 else {
                     if (lossParameters == "true") {
@@ -722,9 +786,8 @@ function renderCore(sfdata) {
             else {
                 if (DWPConfig != "") {
                     //log("condition matching");
-                    $(".smallSection span").addClass("lossup");
-                    $(".smallSection span").removeClass("lossdown");
-                    $(".smallSection span").removeClass("down");
+                    $(".smallSection span").addClass("down");
+
                     $(".smallSection span").removeClass("up");
                     $(".smallSection span").removeClass("neutral");
                 }
@@ -811,7 +874,7 @@ function renderCore(sfdata) {
 
                     },
 
-                    color: colorCode,
+                    color: positiveColorCode,
                     pointPadding: 0,
                     groupPadding: 1,
                     lineWidth: .8,
@@ -849,34 +912,47 @@ function renderCore(sfdata) {
             }, ],
 
 
-            /*  tooltip: {
-                  formatter: function () {
-                      var d1 = new Date(this.x);
-                      var calendarNextDay = ("00" + (d1.getDate()).toString()).slice(-2) + "-" + ("00" + (d1.getMonth() + 1).toString()).slice(-2) + "-" + d1.getFullYear();
-                      return 'Date:' + calendarNextDay + '<br/>' + sfdata.config.lableText + ':'
-                       + Highcharts.numberFormat(this.y, 0); //Math.round(this.y) 
-                  }
-              },*/
             tooltip: {
                 formatter: function () {
-                    var s = [];
-
-                    $.each(this.points, function (i, point) {
-                        if (i == 0) {
-                            var d1 = new Date(point.x);
-                            var calendarNextDay = ("00" + (d1.getDate()).toString()).slice(-2) + "-" + ("00" + (d1.getMonth() + 1).toString()).slice(-2) + "-" + d1.getFullYear();
-                            s.push('<span>' + 'Date:' + calendarNextDay + '<br/>' + point.series.name + ' : ' +
-								Highcharts.numberFormat(point.y, 0) + '<span>');
-                        }
-                        else {
-                            s.push('<span>' + point.series.name + ' : ' +
-								Highcharts.numberFormat(point.y, 0) + '<span>');
-                        }
-                    });
-
-                    return s.join(' <br/> ');
-                },
-                shared: true
+                   if(isShowTargetValue=="true")
+				   {
+				       if (this.point.hasOwnProperty("target")) {
+							
+							var d1 = new Date(this.x);
+							var calendarNextDay = ("00" + (d1.getDate()).toString()).slice(-2) + "-" + ("00" + (d1.getMonth() + 1).toString()).slice(-2) + "-" + d1.getFullYear();
+							return 'Date:' + calendarNextDay + '<br/>' + sfdata.config.lableText + ':'
+							+ Highcharts.numberFormat(this.y, 0) + '<br/> Target:'
+							+ Highcharts.numberFormat(this.point.target, 0); //Math.round(this.y) 
+						}
+						else{
+							var d1 = new Date(this.x);
+							var calendarNextDay = ("00" + (d1.getDate()).toString()).slice(-2) + "-" + ("00" + (d1.getMonth() + 1).toString()).slice(-2) + "-" + d1.getFullYear();
+							return 'Date:' + calendarNextDay + '<br/>' + sfdata.config.lableText + ':'
+							+ Highcharts.numberFormat(this.point.actual, 0) + '<br/> Target:'
+							+ Highcharts.numberFormat(this.y, 0); //Math.round(this.y) 
+						}
+					}
+					else
+					{
+					   if(showTarget=="true")
+					   {
+							var d1 = new Date(this.x);
+							var calendarNextDay = ("00" + (d1.getDate()).toString()).slice(-2) + "-" + ("00" + (d1.getMonth() + 1).toString()).slice(-2) + "-" + d1.getFullYear();
+							return 'Date:' + calendarNextDay + '<br/>' + sfdata.config.lableText + ':'
+							+ Highcharts.numberFormat(this.y, 0) + '<br/> Target:'
+							+ Highcharts.numberFormat(this.point.target, 0); //Math.round(this.y) 
+					   }
+					   else
+					   {
+							var d1 = new Date(this.x);
+							var calendarNextDay = ("00" + (d1.getDate()).toString()).slice(-2) + "-" + ("00" + (d1.getMonth() + 1).toString()).slice(-2) + "-" + d1.getFullYear();
+							return 'Date:' + calendarNextDay + '<br/>' + sfdata.config.lableText + ':'
+							+ Highcharts.numberFormat(this.y, 0); //Math.round(this.y) 
+						}
+					}	
+					 
+					 
+                }
             },
             legend: {
 
@@ -941,7 +1017,7 @@ function chooseSelection() {
         $(".dataLabels").css("display", "block")
     }
 
-    updateColor();
+   // updateColor();
 }
 
 
@@ -953,18 +1029,12 @@ function updateColor() {
             if (chart.series.length > 0) {
                 chart.series[0].options.color = colorCode;
                 chart.series[0].update(chartValue.series[0].options);
-
             }
         } else {
             if (chart.series.length > 0) {
                 chart.series[0].options.color = colorCode;
                 chart.series[0].update(chartValue.series[0].options);
-
             }
-        }
-        if (isMultiSeries == "true") {
-            chart.series[1].options.color = "#ffff00";
-            chart.series[1].update(chartValue.series[1].options);
         }
     }
 
@@ -1008,23 +1078,9 @@ function createCustomGauge() {
         }
     }
     else {
-
         startColor = "#a5a5a5";
         stopColor = "#000";
         borderColor = "#434242";
-
-        if (showTarget == "false") {
-            lastTargetData = lastTopData;
-            if (lastTopData > 0) {
-                plotBandStartColor = "#429e2f";
-                plotBandEndColor = "#429e2f";
-            }
-            else if (lastTopData < 0) {
-                plotBandStartColor = "#ff5050";
-                plotBandEndColor = "#ff5050";
-            }
-        }
-
     }
     // log("=================================");
     // log("actualValue " + lastTopData);
@@ -1069,22 +1125,22 @@ function createCustomGauge() {
             center: ['50%', '93%'],
             size: '100%',
             background:
-			{
-			    backgroundColor: {
-			        radialGradient: {
-			            cx: 0.5,
-			            cy: 0.5,
-			            r: .34
-			        },
-			        stops: [
-						[0, startColor],
-						[1, stopColor]
-			        ]
-			    },
-			    borderColor: borderColor,
-			    outerRadius: '102%',
-			    innerRadius: '10%',
-			}
+{
+    backgroundColor: {
+        radialGradient: {
+            cx: 0.5,
+            cy: 0.5,
+            r: .34
+        },
+        stops: [
+ [0, startColor],
+ [1, stopColor]
+        ]
+    },
+    borderColor: borderColor,
+    outerRadius: '102%',
+    innerRadius: '10%',
+}
 
         },
 
@@ -1102,8 +1158,8 @@ function createCustomGauge() {
                             y2: 1
                         },
                         stops: [
-							[1, '#f5b120'],
-							[0, '#842829']
+[1, '#f5b120'],
+[0, '#842829']
                         ]
                     },
 
@@ -1125,8 +1181,8 @@ function createCustomGauge() {
                             y2: 1
                         },
                         stops: [
-							[0, '#080808'],
-							[1, '#262626']
+[0, '#080808'],
+[1, '#262626']
                         ]
                     }
                 },
@@ -1220,8 +1276,8 @@ function createCustomGauge() {
 }
 var chartFunction = function (gaugaChart, actualValue) {
     var point = gaugaChart.series[0].points[0],
-	newVal,
-	inc = actualValue;
+newVal,
+inc = actualValue;
 
     newVal = inc;
     if (newVal < 0 || newVal > 100) {
@@ -1267,14 +1323,17 @@ function clickedLine() {
     chart.inverted = false;
     chart.xAxis[0].update({}, false);
     chart.yAxis[0].update({}, false);
-    chart.series[0].update({
+	chart.series[0].show();
+	chart.series[1].hide();
+    /*chart.series[0].update({
         type: 'line'
-    });
-    if (isMultiSeries == "true") {
-        chart.series[1].update({
-            type: 'line'
-        });
-    }
+    });*/
+	if(isMultiSeries=="true")
+		{
+			chart.series[2].update({
+				type: 'line'
+			});
+		}
     $(".icon-holder button").removeClass("active");
     $("#line").addClass("active");
     selection = "chartHolder";
@@ -1286,18 +1345,39 @@ function clickedChart() {
     $('.gaugeHolder').addClass("pushBack");
     $(".dataLabels").css("display", "none")
     var chart = $('.chartHolder').highcharts();
+    //colorCode = sfdata.config.ColorCode;
     chart.inverted = false;
     chart.xAxis[0].update({}, false);
     chart.yAxis[0].update({}, false);
-    chart.series[0].update({
+    /*chart.series[0].update({
         type: 'column'
-    });
-    if (isMultiSeries == "true") {
-        chart.series[1].update({
-            type: 'column'
-        });
-    }
+    });*/
+	chart.series[0].hide();
+		chart.series[1].show();
+    if (IsOilGasLossKPI == "true" || isWaterGainLossKPI=="true") {
+        //log("chart.series[0].data.length" + chart.series[0].data.length);
+		                //chart.series[0].options.color =  '#319456';
+				  //chart.series[0].update(chartValue.series[0].options);
+        for (var i = 0; i < chart.series[1].options.data.length; i++)
+        {
+		if (chart.series[1].data[i].y >= 0) {
 
+                chart.series[1].data[i].update({ color: positiveColorCode });
+            }
+            else {
+
+                chart.series[1].data[i].update({ color: negativeColorCode });
+            }
+        }
+		if(isMultiSeries=="true")
+		{
+			chart.series[2].update({
+				type: 'column'
+			});
+		}
+		
+		//chart.series[0].update(chartValue.series[0].options);
+    }
     $(".icon-holder button").removeClass("active");
     $("#bar").addClass("active");
     selection = "chartHolder";
@@ -1308,17 +1388,9 @@ function checkNoData() {
     if (chartValue.series[0].data.length > 0) {
         //alert("data available")
         chartValue.yAxis[0].update({ lineWidth: 1, })
-        /*if(isMultiSeries=="true")
-		{
-			chartValue.yAxis[1].update({ lineWidth: 1, })
-		}*/
     }
     else {
         chartValue.yAxis[0].update({ lineWidth: 0, })
-        /*if(isMultiSeries=="true")
-		{
-			chartValue.yAxis[1].update({ lineWidth: 0, })
-		}*/
     }
 }
 
@@ -1364,3 +1436,5 @@ window.onresize = function (event) {
     resizing = false;
 }
 // JavaScript source code
+
+
