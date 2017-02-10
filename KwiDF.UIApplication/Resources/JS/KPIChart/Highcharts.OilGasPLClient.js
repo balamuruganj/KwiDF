@@ -751,65 +751,68 @@ css.attr({
 
 
         }
-        if (sfdata.config.ShowChange == "true") {
-            if (bottomData < 0) {
-                if (DWPConfig != "") {
-                    $(".smallSection span").removeClass("down");
-                    $(".smallSection span").addClass("up");
-                    $(".smallSection span").removeClass("neutral");
-                    $(".smallSection header").addClass('green');
-                }
-                else {
-                    if (lossParameters == "true") {
-                        $(".smallSection span").addClass("lossdown");
-                        $(".smallSection span").removeClass("lossup");
-                        $(".smallSection span").removeClass("up");
-                        $(".smallSection span").removeClass("neutral");
-                        $(".smallSection header").addClass('red');
-                        $(".smallSection span").removeClass("down");
-                    }
-                    else {
-                        $(".smallSection span").addClass("down");
-                        $(".smallSection span").removeClass("up");
-                        $(".smallSection span").removeClass("neutral");
-                        $(".smallSection header").addClass('red');
-                    }
-                }
-
-            }
-            else if (bottomData == 0) {
-                $(".smallSection span").addClass("neutral");
+    if (sfdata.config.ShowChange == "true") {
+        if (bottomData < 0) {
+            if (DWPConfig != "") {
+                $(".smallSection span").addClass("lossdown");
+                $(".smallSection span").removeClass("lossup");
                 $(".smallSection span").removeClass("up");
+                $(".smallSection span").removeClass("neutral");
+                $(".smallSection header").addClass('red');
                 $(".smallSection span").removeClass("down");
-
             }
             else {
-                if (DWPConfig != "") {
-                    //log("condition matching");
+                if (lossParameters == "true") {
+                    $(".smallSection span").addClass("lossdown");
+                    $(".smallSection span").removeClass("lossup");
+                    $(".smallSection span").removeClass("up");
+                    $(".smallSection span").removeClass("neutral");
+                    $(".smallSection header").addClass('red');
+                    $(".smallSection span").removeClass("down");
+                }
+                else {
                     $(".smallSection span").addClass("down");
+                    $(".smallSection span").removeClass("up");
+                    $(".smallSection span").removeClass("neutral");
+                    $(".smallSection header").addClass('red');
+                }
+            }
 
+        }
+        else if (bottomData == 0) {
+            $(".smallSection span").addClass("neutral");
+            $(".smallSection span").removeClass("up");
+            $(".smallSection span").removeClass("down");
+
+        }
+        else {
+            if (DWPConfig != "") {
+                //log("condition matching");
+                $(".smallSection span").addClass("lossup");
+                $(".smallSection span").removeClass("lossdown");
+                $(".smallSection span").removeClass("down");
+                $(".smallSection span").removeClass("up");
+                $(".smallSection span").removeClass("neutral");
+            }
+            else {
+                if (lossParameters == "true") {
+                    $(".smallSection span").addClass("lossup");
+                    $(".smallSection span").removeClass("lossdown");
+                    $(".smallSection span").removeClass("down");
                     $(".smallSection span").removeClass("up");
                     $(".smallSection span").removeClass("neutral");
                 }
                 else {
-                    if (lossParameters == "true") {
-                        $(".smallSection span").addClass("lossup");
-                        $(".smallSection span").removeClass("lossdown");
-                        $(".smallSection span").removeClass("down");
-                        $(".smallSection span").removeClass("up");
-                        $(".smallSection span").removeClass("neutral");
-                    }
-                    else {
-                        $(".smallSection span").removeClass("down");
-                        $(".smallSection span").addClass("up");
-                        $(".smallSection span").removeClass("neutral");
-                    }
+                    $(".smallSection span").removeClass("down");
+                    $(".smallSection span").addClass("up");
+                    $(".smallSection span").removeClass("neutral");
                 }
-
-
             }
 
+
         }
+
+    }
 
         Highcharts.setOptions({
 
