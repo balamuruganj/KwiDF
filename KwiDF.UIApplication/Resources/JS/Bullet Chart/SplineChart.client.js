@@ -48,9 +48,9 @@ function renderCore(sfdata) {
     markedAssets = [];
 
 
-    var DateValue = new Date(sfdata.config.DateFilter);
+    var DateValue = new Date(sfdata.config.DateFilter.replace('-', " "));
     var DateValueFormatted = DateValue.valueOf();
-    var nextDate = new Date(sfdata.config.DateFilter);
+    var nextDate = new Date(sfdata.config.DateFilter.replace('-', " "));
     var numberOfDaysToAdd = 1;
     nextDate.setDate(nextDate.getDate() + numberOfDaysToAdd);
     var nextDateValueFormatted = nextDate.valueOf();
@@ -210,8 +210,8 @@ function renderCore(sfdata) {
                 borderColor: 'transparent'
 
             }, scatter: {
-                marker: {   
-					symbol:'circle',
+                marker: {
+                    symbol: 'circle',
                     radius: 5,
                     lineColor: '#fcff01',
 
@@ -271,27 +271,27 @@ function GetSeriesdata(index, actualData) {
     var seriesdata = [];
     var x = null;
     var y = null;
-    for (i = 0; i < actualData.length-1; i++) {
+    for (i = 0; i < actualData.length - 1; i++) {
         x = actualData[i].items[index];
         y = actualData[i].items[index + 1];
-		if(x==0)
-					{
-						log("Value : " +x +  i ); 
-						x = null;}
-				if(y==0)
-					{ y = null;}
-					
-					
+        if (x == 0) {
+            log("Value : " + x + i);
+            x = null;
+        }
+        if (y == 0)
+        { y = null; }
+
+
         if (typeof (x) === 'string') {
             if (parseFloat(x) != NaN) {
                 x = parseFloat(x);
                 y = parseFloat(y);
-				if(x==0)
-					{
-						log("Value : " +x +  i ); 
-						x = null;}
-				if(y==0)
-					{ y = null;}
+                if (x == 0) {
+                    log("Value : " + x + i);
+                    x = null;
+                }
+                if (y == 0)
+                { y = null; }
             }
 
             else {

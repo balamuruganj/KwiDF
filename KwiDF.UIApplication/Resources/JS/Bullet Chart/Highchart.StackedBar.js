@@ -43,9 +43,9 @@ function renderCore(sfdata) {
     indicesarrayobject = [];
     markedAssets = [];
 
-    var DateValue = new Date(sfdata.config.DateFilter);
+    var DateValue = new Date(sfdata.config.DateFilter.replace('-', " "));
     var DateValueFormatted = DateValue.valueOf();
-    var nextDate = new Date(sfdata.config.DateFilter);
+    var nextDate = new Date(sfdata.config.DateFilter.replace('-', " "));
     var numberOfDaysToAdd = 1;
     nextDate.setDate(nextDate.getDate() + numberOfDaysToAdd);
     var nextDateValueFormatted = nextDate.valueOf();
@@ -53,7 +53,7 @@ function renderCore(sfdata) {
     var actualData = sfdata.data;
     //   log("actualDataBefore" + actualData.length);
     actualData = actualData.filter(function (el) {
-        DateValue = new Date(sfdata.config.DateFilter);
+        DateValue = new Date(sfdata.config.DateFilter.replace('-', " "));
         DateValueFormatted = DateValue.valueOf();
         var formatedDate = el.items[4].replace("/Date(", "").replace(")/", "").valueOf();
         if (DateValueFormatted <= formatedDate && nextDateValueFormatted > formatedDate) {
@@ -117,6 +117,7 @@ function renderCore(sfdata) {
         [{
             name: 'Actual1', //Green
             data: additionalData,
+
             dataLabels: {
                 enabled: true,
                 //rotation: -90,
@@ -404,8 +405,8 @@ function renderCore(sfdata) {
             positioner: function (boxWidth, boxHeight, point) {
 
                 return {
-                    x: point.plotX -25,
-                    y: point.plotY -25
+                    x: point.plotX - 25,
+                    y: point.plotY - 25
                 };
             },
             formatter: function () {

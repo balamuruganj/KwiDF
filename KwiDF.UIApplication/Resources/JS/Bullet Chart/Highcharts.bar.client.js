@@ -41,9 +41,9 @@ function renderCore(sfdata) {
     indicesarrayobject = [];
     markedAssets = [];
 
-    var DateValue = new Date(sfdata.config.DateFilter);
+    var DateValue = new Date(sfdata.config.DateFilter.replace('-', " "));
     var DateValueFormatted = DateValue.valueOf();
-    var nextDate = new Date(sfdata.config.DateFilter);
+    var nextDate = new Date(sfdata.config.DateFilter.replace('-', " "));
     var numberOfDaysToAdd = 1;
     nextDate.setDate(nextDate.getDate() + numberOfDaysToAdd);
     var nextDateValueFormatted = nextDate.valueOf();
@@ -52,7 +52,7 @@ function renderCore(sfdata) {
 
     //   log("actualDataBefore" + actualData.length);
     actualData = actualData.filter(function (el) {
-        DateValue = new Date(sfdata.config.DateFilter);
+        DateValue = new Date(sfdata.config.DateFilter.replace('-', " "));
         DateValueFormatted = DateValue.valueOf();
         var formatedDate = el.items[4].replace("/Date(", "").replace(")/", "").valueOf();
         if (DateValueFormatted <= formatedDate && nextDateValueFormatted > formatedDate) {
@@ -109,20 +109,20 @@ function renderCore(sfdata) {
         [{
             name: 'Actual',
             data: data,
-		 dataLabels: {
+            dataLabels: {
                 enabled: true,
                 //rotation: 90,
                 color: '#FFFFFF',
                 align: 'center',
                 format: '{point.y}', // one decimal
-               y:30, // 10 pixels down from the top
+                y: 30, // 10 pixels down from the top
                 style: {
                     fontSize: '12px',
                     fontFamily: 'arial, sans-serif',
-					textOutline:'1px 1px #646465',
+                    textOutline: '1px 1px #646465',
                 }
             },
-			
+
             pointPadding: 0,
             pointPlacement: 0,
             pointWidth: 30,
@@ -169,23 +169,23 @@ function renderCore(sfdata) {
                 }
             }
 
-            }, {
-                name: 'Target',
-                type: 'scatter',
-                pointWidth: 50,
-                visible:sfdata.config.showTarget =="true" ? true:false,
-                point: {
-                    events: {
-                        click: function ()
-                            //{
-                            //  runScript("OS1-Gauge");
-                            //}
-                        {
-                            for (var i = 0; i < this.series.data.length; i++) {
-                                //this.series.data[i].update({ color: '#294251' }, true, false);
-                            }
-                            //this.update({ color: '#26a2ed' }, true, false)
+        }, {
+            name: 'Target',
+            type: 'scatter',
+            pointWidth: 50,
+            visible: sfdata.config.showTarget == "true" ? true : false,
+            point: {
+                events: {
+                    click: function ()
+                        //{
+                        //  runScript("OS1-Gauge");
+                        //}
+                    {
+                        for (var i = 0; i < this.series.data.length; i++) {
+                            //this.series.data[i].update({ color: '#294251' }, true, false);
                         }
+                        //this.update({ color: '#26a2ed' }, true, false)
+                    }
 
 
                 }
@@ -219,12 +219,12 @@ function renderCore(sfdata) {
                 click: function (event) {
 
                     for (var i = 0; i < this.series[0].data.length; i++) {
-                        
 
-                            if (this.series[1].data[i].y >= this.series[0].data[i].y && sfdata.config.showTarget == "true") {
+
+                        if (this.series[1].data[i].y >= this.series[0].data[i].y && sfdata.config.showTarget == "true") {
                             //this.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)' });
-                                this.series[0].data[i].update({ color: 'rgba(240, 80, 80, 1)' });
-                            
+                            this.series[0].data[i].update({ color: 'rgba(240, 80, 80, 1)' });
+
                         } else {
 
                             this.series[0].data[i].update({ color: 'rgba(31, 174, 57,1)' });
@@ -259,7 +259,7 @@ function renderCore(sfdata) {
             labels:
 
 			{
-				rotation: -90,
+			    rotation: -90,
 			    style: {
 			        color: '#fff'
 			    }
@@ -287,25 +287,23 @@ function renderCore(sfdata) {
         exporting: { enabled: false },
         tooltip: {
             //shared: true
-			positioner: function(boxWidth, boxHeight, point) {
-             
+            positioner: function (boxWidth, boxHeight, point) {
+
                 return {
-                    x: point.plotX -25,
-                    y: point.plotY -25
+                    x: point.plotX - 25,
+                    y: point.plotY - 25
                 };
             },
             formatter: function () {
                 debugger;
-                if (sfdata.config.showTarget == "true")
-                {
+                if (sfdata.config.showTarget == "true") {
                     return "Field: <strong>" + this.x + "</strong>" + "<br /> Target: <strong>" + Highcharts.numberFormat(this.point.target, 0) + "</strong><br/>" + "Actual" + ": <strong>" + Highcharts.numberFormat(this.point.actual, 0) + "</strong><br/>";
 
                 }
-                else
-                {
+                else {
                     return "Field: <strong>" + this.x + "</strong>" + "<br /> Actual:<strong>" + Highcharts.numberFormat(this.point.actual, 0) + "</strong><br/>";
                 }
-                
+
                 ;
             }
         },
@@ -382,11 +380,11 @@ function renderCore(sfdata) {
 
                         //this.chartVal.series[0].data[i].update({ color: 'rgba(216, 24, 28, 1)', borderColor: '#fff', borderWidth: '0.5' });
                         this.chartVal.series[0].data[i].update({ color: '  rgba(240, 80, 80, 1)', borderColor: '#fff', borderWidth: '0.5' });
-                      
+
 
                     } else {
 
-                        this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)', borderColor: '#fff',borderWidth:'0.5' });
+                        this.chartVal.series[0].data[i].update({ color: 'rgba(31, 174, 57, 1)', borderColor: '#fff', borderWidth: '0.5' });
 
                     }
                     debugger;

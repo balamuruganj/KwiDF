@@ -510,3 +510,18 @@ position: absolute;
 
 .smallSection header p{display:inline-block !important}
 
+
+.smallSection header p  span {
+    font-size: 12px;
+    font-weight: 400;
+	color:#fff;
+}
+
+.smallSection header p ~ span {
+    font-size: 12px;
+    font-weight: 400;
+	color:#fff;
+	top: -11px !important;
+    position: relative;
+}
+

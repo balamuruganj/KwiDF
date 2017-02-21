@@ -6,7 +6,7 @@ $(document).ready(function () {
         //log("DocClick" + selectedCategoryActual);
         if ($(this).hasClass('selected')) {
             $(".overlay", $(this)).show();
-           // updateColor();
+            // updateColor();
 
             setDocumentProperty("RefreshKPI", "false");
             setDocumentProperty("RefreshKPIGC", "false");
@@ -89,36 +89,37 @@ var gainLossIndicator = "";
 var lossParameters = "";
 var IsOilGasLossKPI = "";
 var ALRunLife = "";
-var isShowTargetValue="";
-var isShowActualValue="";
-var isShowChangeValue="";
-var isMultiSeries="";
-var seriesData=[];
+var isShowTargetValue = "";
+var isShowActualValue = "";
+var isShowChangeValue = "";
+var isMultiSeries = "";
+var seriesData = [];
 var actualVolumeValue = "";
 var changeVolumeValue = "";
 var targetVolumeValue = "";
 var actualVolumeData = 0;
 var targetVolumeData = 0;
 var changeVolumeData = 0;
-var uomText="";
-var positiveColorCode="";
-var negativeColorCode="";
-var targetColorCode="";
-var isWaterGainLossKPI="";
-var gaugeLabel="";
+var uomText = "";
+var positiveColorCode = "";
+var negativeColorCode = "";
+var targetColorCode = "";
+var isWaterGainLossKPI = "";
+var gaugeLabel = "";
+var actualUOMText = "";
 function renderCore(sfdata) {
 
-  //var UrlCSS = "http://localhost/KwiDF/Resources/CSS/font-awesome.css"; //replace with sfdata.config
-var UrlCSS =  sfdata.config.UrlCSS;
-$("head").append("<link>");
-var css = $("head").children(":last");
-css.attr({
-      rel:  "stylesheet",
-      type: "text/css",
-      href: UrlCSS
-});
+    //var UrlCSS = "http://localhost/KwiDF/Resources/CSS/font-awesome.css"; //replace with sfdata.config
+    var UrlCSS = sfdata.config.UrlCSS;
+    $("head").append("<link>");
+    var css = $("head").children(":last");
+    css.attr({
+        rel: "stylesheet",
+        type: "text/css",
+        href: UrlCSS
+    });
 
-    var DateValue = new Date(sfdata.config.DateFilter);
+    var DateValue = new Date(sfdata.config.DateFilter.replace('-', " "));
     var DateValueFormatted = DateValue.valueOf();
     var nextDate = DateValue;
     var numberOfDaysToAdd = 1;
@@ -126,10 +127,10 @@ css.attr({
     var nextDateValueFormatted = nextDate.valueOf();
     showTarget = sfdata.config.ShowTarget;
     showChange = sfdata.config.ShowChange;
-	positiveColorCode=sfdata.config.PositiveColorCode;
-	negativeColorCode=sfdata.config.NegativeColorCode;
-	targetColorCode=sfdata.config.TargetColorCode;
-	uomText=sfdata.config.UOMText;;
+    positiveColorCode = sfdata.config.PositiveColorCode;
+    negativeColorCode = sfdata.config.NegativeColorCode;
+    targetColorCode = sfdata.config.TargetColorCode;
+    uomText = sfdata.config.UOMText;;
     if (sfdata.config.ShowTarget == "true") {
         actualVal = sfdata.config.ColumnName[0];
         targetVal = sfdata.config.ColumnName[1];
@@ -155,35 +156,35 @@ css.attr({
     if (sfdata.config.hasOwnProperty("IsOilGasLossKPI")) {
         IsOilGasLossKPI = sfdata.config.IsOilGasLossKPI;
     }
-	 if (sfdata.config.hasOwnProperty("IsWaterGainLossKPI")) {
+    if (sfdata.config.hasOwnProperty("IsWaterGainLossKPI")) {
         isWaterGainLossKPI = sfdata.config.IsWaterGainLossKPI;
     }
-	
+
     if (sfdata.config.hasOwnProperty("ALRunLife")) {
         ALRunLife = sfdata.config.ALRunLife;
     }
-	if (sfdata.config.hasOwnProperty("IsShowTargetValue")) {
+    if (sfdata.config.hasOwnProperty("IsShowTargetValue")) {
         isShowTargetValue = sfdata.config.IsShowTargetValue;
     }
-	if (sfdata.config.hasOwnProperty("IsShowActualValue")) {
+    if (sfdata.config.hasOwnProperty("IsShowActualValue")) {
         isShowActualValue = sfdata.config.IsShowActualValue;
     }
-	if (sfdata.config.hasOwnProperty("IsMultiSeries")) {
+    if (sfdata.config.hasOwnProperty("IsMultiSeries")) {
         isMultiSeries = sfdata.config.IsMultiSeries;
     }
-	
-	if (sfdata.config.hasOwnProperty("IsShowChangeValue")) {
+
+    if (sfdata.config.hasOwnProperty("IsShowChangeValue")) {
         isShowChangeValue = sfdata.config.IsShowChangeValue;
     }
     if (sfdata.config.RefreshKPI == "true") {
         dateRange = sfdata.config.DateRange;
 
-        var date2 = new Date(sfdata.config.DateFilter);
+        var date2 = new Date(sfdata.config.DateFilter.replace('-', " "));
         date2.setDate(date2.getDate() - dateRange);
 
         var actualData = sfdata.data;
         actualData = actualData.filter(function (el) {
-            DateValue = new Date(sfdata.config.DateFilter);
+            DateValue = new Date(sfdata.config.DateFilter.replace('-', " "));
             DateValueFormatted = DateValue.valueOf();
             startDateValue = date2.valueOf();
 
@@ -198,67 +199,64 @@ css.attr({
             data = [];
             targetData = [];
             changeData = [];
-			seriesData=[];
-			targetSeries=[];
+            seriesData = [];
+            targetSeries = [];
             if (selectionType == undefined || selectionType == "")
                 selectionType = sfdata.config.ChartType;
             colorCode = sfdata.config.ColorCode;
 
             for (i = 0; i < actualData.length; i++) {
-				if(sfdata.config.ShowTarget == "true")
-				{
-					var obj={};
-					obj.x=parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", ""));
-					obj.y=actualData[i].items[2];
-					obj.target=actualData[i].items[3];					
-					seriesData.push(obj);
-					data.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
-				}
-				else
-				{
-					data.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
-					
-				}
-				targetData.push([parseInt(actualData[i].items[0]), actualData[i].items[3]]);
-				if (sfdata.config.ShowChange == "true") {
-				 changeData.push(actualData[i].items[4]);
-				}
-				
+                if (sfdata.config.ShowTarget == "true") {
+                    var obj = {};
+                    obj.x = parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", ""));
+                    obj.y = actualData[i].items[2];
+                    obj.target = actualData[i].items[3];
+                    seriesData.push(obj);
+                    data.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
+                }
+                else {
+                    data.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
+
+                }
+                targetData.push([parseInt(actualData[i].items[0]), actualData[i].items[3]]);
+                if (sfdata.config.ShowChange == "true") {
+                    changeData.push(actualData[i].items[4]);
+                }
+
             }
-            series = 
+            series =
 			{
-                name: sfdata.columns[2],
-                data: seriesData,
-				type:'line',
-				visible:true,
-            };
-			processed_json.push(series);
-			series = {
+			    name: sfdata.columns[2],
+			    data: seriesData,
+			    type: 'line',
+			    visible: true,
+			};
+            processed_json.push(series);
+            series = {
                 name: "sample",
                 data: seriesData,
-				type:'column',
-				visible:true,
-            };			
+                type: 'column',
+                visible: true,
+            };
             processed_json.push(series);
-			if(isMultiSeries=="true")
-			{
-				for (i = 0; i < actualData.length; i++) {
-					var obj={};
-					obj.x=parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", ""));
-					obj.y=actualData[i].items[3];
-					obj.actual=actualData[i].items[2];					
-					targetSeries.push(obj);
-					//targetSeries.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
-					//targetSeries.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[3]]);
-				}
-				series={
-					 name: "Target",
-					 data: targetSeries,
-					 color:targetColorCode,
-					 type:"line"
-				}
-				processed_json.push(series);
-			}
+            if (isMultiSeries == "true") {
+                for (i = 0; i < actualData.length; i++) {
+                    var obj = {};
+                    obj.x = parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", ""));
+                    obj.y = actualData[i].items[3];
+                    obj.actual = actualData[i].items[2];
+                    targetSeries.push(obj);
+                    //targetSeries.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[2]]);
+                    //targetSeries.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[3]]);
+                }
+                series = {
+                    name: "Target",
+                    data: targetSeries,
+                    color: targetColorCode,
+                    type: "line"
+                }
+                processed_json.push(series);
+            }
 
             var lastData = 0;
             if (data.length > 0) {
@@ -269,7 +267,7 @@ css.attr({
                     lastData = data[len][1] != 0 && data[len][1] != "" ? Math.round(data[len][1]) : 0;
                     lastTopData = lastData;
                     topValue = numberWithCommas(lastData);
-					gaugeLabel=topValue;
+                    gaugeLabel = topValue;
                     if (targetData.length > 0) {
                         var len = targetData.length - 1;
                         lastTargetData = targetData[len][1] != 0 && targetData[len][1] != "" ? Math.round(targetData[len][1]) : 0;
@@ -355,76 +353,74 @@ css.attr({
                 lastTargetData = 0;
                 lastTopData = 0;
             }
-			//Showing Volume with Percentage
-				var actualVolume = [];
+            //Showing Volume with Percentage
+            var actualVolume = [];
             var targetVolume = [];
             var changeVolume = [];
-			if(isShowActualValue=="true")
-			{
-				 for (i = 0; i < actualData.length; i++) {
-					actualVolume.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[5]]);
-					if(isShowTargetValue=="true")
-					{
-						targetVolume.push([parseInt(actualData[i].items[0]), actualData[i].items[6]]);
-					}
-					if (isShowChangeValue == "true") {
-						
-						changeVolume.push(actualData[i].items[7]);
-					}
+            if (isShowActualValue == "true") {
+                for (i = 0; i < actualData.length; i++) {
+                    actualVolume.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[5]]);
+                    if (isShowTargetValue == "true") {
+                        targetVolume.push([parseInt(actualData[i].items[0]), actualData[i].items[6]]);
+                    }
+                    if (isShowChangeValue == "true") {
 
-				}
-				var lastActual = 0;
-				if (actualVolume.length > 0) {
-					var len = actualVolume.length - 1;
-					if (actualVolume[len][0] == DateValue.valueOf()) {
-						
-						lastActual = actualVolume[len][1] != 0 && actualVolume[len][1] != "" ? Math.round(actualVolume[len][1]) : 0;
-						actualVolumeData = lastActual;
-						actualVolumeValue = numberWithCommas(lastActual);
-						if (targetVolume.length > 0) {
-							var len = targetVolume.length - 1;
-							targetVolumeData = targetVolume[len][1] != 0 && targetVolume[len][1] != "" ? Math.round(targetVolume[len][1]) : 0;
-							targetVolumeValue = numberWithCommas(targetVolumeData);
-						}
-						if (isShowChangeValue == "true") {
-							if (changeVolume.length > 0) {
-								var len = changeVolume.length - 1;
-								changeVolumeData = changeVolume[len] != 0 && changeVolume[len] != "" ? Math.round(changeVolume[len]) : 0;
-								changeVolumeValue = numberWithCommas(changeVolumeData);
-							}
-						}
-						if(IsOilGasLossKPI=="true")
-							topValue=topValue+"stb/d ("+actualVolumeValue;
-						else
-							topValue=topValue+"% ("+actualVolumeValue;
-						if(isShowTargetValue=="true")
-						{
-							targetValue=targetValue+"%("+targetVolumeValue+")";
-						}
-						if(isShowChangeValue == "true") {
-							bottomValue=bottomValue+"%("+changeVolumeValue+")";
-						}
-						
-					}
-					else {
-						actualVolumeValue = "No Data";
-						changeVolumeValue = "";
-						targetVolumeValue="";
-						actualVolumeData = 0;
-						targetVolumeData = 0;
-						changeVolumeData = 0;
-					}
-				}
-				else {
-						actualVolumeValue = "No Data";
-						changeVolumeValue = "";
-						targetVolumeValue="";
-						actualVolumeData = 0;
-						targetVolumeData = 0;
-						changeVolumeData = 0;
-				}
-				
-			}
+                        changeVolume.push(actualData[i].items[7]);
+                    }
+
+                }
+                var lastActual = 0;
+                if (actualVolume.length > 0) {
+                    var len = actualVolume.length - 1;
+                    if (actualVolume[len][0] == DateValue.valueOf()) {
+
+                        lastActual = actualVolume[len][1] != 0 && actualVolume[len][1] != "" ? Math.round(actualVolume[len][1]) : 0;
+                        actualVolumeData = lastActual;
+                        actualVolumeValue = numberWithCommas(lastActual);
+                        if (targetVolume.length > 0) {
+                            var len = targetVolume.length - 1;
+                            targetVolumeData = targetVolume[len][1] != 0 && targetVolume[len][1] != "" ? Math.round(targetVolume[len][1]) : 0;
+                            targetVolumeValue = numberWithCommas(targetVolumeData);
+                        }
+                        if (isShowChangeValue == "true") {
+                            if (changeVolume.length > 0) {
+                                var len = changeVolume.length - 1;
+                                changeVolumeData = changeVolume[len] != 0 && changeVolume[len] != "" ? Math.round(changeVolume[len]) : 0;
+                                changeVolumeValue = numberWithCommas(changeVolumeData);
+                            }
+                        }
+
+                        if (IsOilGasLossKPI == "true")
+                            actualUOMText = "%";
+                        else
+                            actualUOMText = "stb/d";
+                        if (isShowTargetValue == "true") {
+                            targetValue = targetValue + "%(" + targetVolumeValue + ")";
+                        }
+                        if (isShowChangeValue == "true") {
+                            bottomValue = bottomValue + "%(" + changeVolumeValue + ")";
+                        }
+
+                    }
+                    else {
+                        actualVolumeValue = "No Data";
+                        changeVolumeValue = "";
+                        targetVolumeValue = "";
+                        actualVolumeData = 0;
+                        targetVolumeData = 0;
+                        changeVolumeData = 0;
+                    }
+                }
+                else {
+                    actualVolumeValue = "No Data";
+                    changeVolumeValue = "";
+                    targetVolumeValue = "";
+                    actualVolumeData = 0;
+                    targetVolumeData = 0;
+                    changeVolumeData = 0;
+                }
+
+            }
             var chartObj = $("#js_chart");
 
             if ($('.wrapper', chartObj).length == 0) {
@@ -439,12 +435,19 @@ css.attr({
                 $(drawChart).append("<section class='gaugeHolder' id='gaugeHolder'/>");
 
 
+                //    $("header", drawChart).append("<h2>" + sfdata.config.lableText + " <span></span></h2>").append("<p>" + topValue + "</p>");
+                //	$("header ", drawChart).append("<span class='uom'>" + uomText + "<span>"+ ")" + "</span></span>");
+                //	if(isShowActualValue =="true")
+                //	{
+                //		$(".uom ", drawChart).after("<span class='close-br'>" + " )"  + "</span>");
+                //	}
+                //	
+
                 $("header", drawChart).append("<h2>" + sfdata.config.lableText + " <span></span></h2>").append("<p>" + topValue + "</p>");
-				$("header ", drawChart).append("<span class='uom'>" + uomText + "<span>"+ ")" + "</span></span>");
-				if(isShowActualValue =="true")
-				{
-					$(".uom ", drawChart).after("<span class='close-br'>" + " )"  + "</span>");
-				}
+                $("header", drawChart).append("<span class='uom'>" + uomText + "<span>");
+                $("header", drawChart).append("<span class='actualVal'> (" + actualVolumeValue + " " + actualUOMText + ")</span>");
+
+
                 $("header", drawChart).append("<div class='target-holder'/>");
                 $("header .target-holder", drawChart).append("<div>" + sfdata.config.TargetLableText + "</div><div>" + targetValue + "</div>");
 
@@ -465,7 +468,8 @@ css.attr({
             }
             $(".gaugeHolder").attr("data-top", gaugeLabel);
             $("header p").html(topValue);
-			 $("header .uom").html(uomText);
+            $("header .uom").html(uomText);
+            $("header .actualVal").html("<span> (" + actualVolumeValue + " " + actualUOMText + ")</span>");
             $("#lableVal").html(topValue);
             if (sfdata.config.ShowChange == "true") {
                 $("footer span").html(bottomValue);
@@ -534,22 +538,22 @@ css.attr({
                     targetValue = numberWithCommas(lastTargetData);
                 }
             }
-             series = 
-			{
-                name: sfdata.columns[2],
-                data: data,
-				type:'line',
-				visible:true,
-            };
-			processed_json.push(series);
-			series = {
+            series =
+           {
+               name: sfdata.columns[2],
+               data: data,
+               type: 'line',
+               visible: true,
+           };
+            processed_json.push(series);
+            series = {
                 name: "sample",
                 data: data,
-				type:'column',
-				visible:true,
+                type: 'column',
+                visible: true,
             };
-			processed_json.push(series);
-            
+            processed_json.push(series);
+
 
             var lastData = 0;
             if (data.length > 0) {
@@ -559,8 +563,8 @@ css.attr({
                     lastData = data[len][1] != 0 && data[len][1] != "" ? Math.round(data[len][1]) : 0;
                     lastTopData = lastData;
                     topValue = numberWithCommas(lastData);
-					gaugeLabel=topValue;
-					
+                    gaugeLabel = topValue;
+
                     if (sfdata.config.ShowChange == "true") {
                         if (changeData.length > 0) {
                             var len = changeData.length - 1;
@@ -610,72 +614,72 @@ css.attr({
                 lastTargetData = 0;
                 lastTopData = 0;
             }
-				var actualVolume = [];
+            var actualVolume = [];
             var targetVolume = [];
             var changeVolume = [];
-			if(isShowActualValue=="true")
-			{
-				 for (i = 0; i < actualData.length; i++) {
-					actualVolume.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[5]]);
-					if(isShowTargetValue=="true")
-					{
-						targetVolume.push([parseInt(actualData[i].items[0]), actualData[i].items[6]]);
-					}
-					if (isShowChangeValue == "true") {
-						
-						changeVolume.push(actualData[i].items[7]);
-					}
+            if (isShowActualValue == "true") {
+                for (i = 0; i < actualData.length; i++) {
+                    actualVolume.push([parseInt(actualData[i].items[0].replace("/Date(", "").replace(")/", "")), actualData[i].items[5]]);
+                    if (isShowTargetValue == "true") {
+                        targetVolume.push([parseInt(actualData[i].items[0]), actualData[i].items[6]]);
+                    }
+                    if (isShowChangeValue == "true") {
 
-				}
-				var lastActual = 0;
-				if (actualVolume.length > 0) {
-					var len = actualVolume.length - 1;
-					if (actualVolume[len][0] == DateValue.valueOf()) {
-						
-						lastActual = actualVolume[len][1] != 0 && actualVolume[len][1] != "" ? Math.round(actualVolume[len][1]) : 0;
-						actualVolumeData = lastActual;
-						actualVolumeValue = numberWithCommas(lastActual);
-						if (targetVolume.length > 0) {
-							var len = targetVolume.length - 1;
-							targetVolumeData = targetVolume[len][1] != 0 && targetVolume[len][1] != "" ? Math.round(targetVolume[len][1]) : 0;
-							targetVolumeValue = numberWithCommas(targetVolumeData);
-						}
-						if (isShowChangeValue == "true") {
-							if (changeVolume.length > 0) {
-								var len = changeVolume.length - 1;
-								changeVolumeData = changeVolume[len] != 0 && changeVolume[len] != "" ? Math.round(changeVolume[len]) : 0;
-								changeVolumeValue = numberWithCommas(changeVolumeData);
-							}
-						}
-						topValue=topValue+"% ("+actualVolumeValue;
-						if(isShowTargetValue=="true")
-						{
-							targetValue=targetValue+"%("+targetVolumeValue+")";
-						}
-						if(isShowChangeValue == "true") {
-							bottomValue=bottomValue+"%("+changeVolumeValue+")";
-						}
-						
-					}
-					else {
-						actualVolumeValue = "No Data";
-						changeVolumeValue = "";
-						targetVolumeValue="";
-						actualVolumeData = 0;
-						targetVolumeData = 0;
-						changeVolumeData = 0;
-					}
-				}
-				else {
-						actualVolumeValue = "No Data";
-						changeVolumeValue = "";
-						targetVolumeValue="";
-						actualVolumeData = 0;
-						targetVolumeData = 0;
-						changeVolumeData = 0;
-				}
-				
-			}
+                        changeVolume.push(actualData[i].items[7]);
+                    }
+
+                }
+                var lastActual = 0;
+                if (actualVolume.length > 0) {
+                    var len = actualVolume.length - 1;
+                    if (actualVolume[len][0] == DateValue.valueOf()) {
+
+                        lastActual = actualVolume[len][1] != 0 && actualVolume[len][1] != "" ? Math.round(actualVolume[len][1]) : 0;
+                        actualVolumeData = lastActual;
+                        actualVolumeValue = numberWithCommas(lastActual);
+                        if (targetVolume.length > 0) {
+                            var len = targetVolume.length - 1;
+                            targetVolumeData = targetVolume[len][1] != 0 && targetVolume[len][1] != "" ? Math.round(targetVolume[len][1]) : 0;
+                            targetVolumeValue = numberWithCommas(targetVolumeData);
+                        }
+                        if (isShowChangeValue == "true") {
+                            if (changeVolume.length > 0) {
+                                var len = changeVolume.length - 1;
+                                changeVolumeData = changeVolume[len] != 0 && changeVolume[len] != "" ? Math.round(changeVolume[len]) : 0;
+                                changeVolumeValue = numberWithCommas(changeVolumeData);
+                            }
+                        }
+                        if (IsOilGasLossKPI == "true")
+                            actualUOMText = "%";
+                        else
+                            actualUOMText = "stb/d";
+                        if (isShowTargetValue == "true") {
+                            targetValue = targetValue + "%(" + targetVolumeValue + ")";
+                        }
+                        if (isShowChangeValue == "true") {
+                            bottomValue = bottomValue + "%(" + changeVolumeValue + ")";
+                        }
+
+                    }
+                    else {
+                        actualVolumeValue = "No Data";
+                        changeVolumeValue = "";
+                        targetVolumeValue = "";
+                        actualVolumeData = 0;
+                        targetVolumeData = 0;
+                        changeVolumeData = 0;
+                    }
+                }
+                else {
+                    actualVolumeValue = "No Data";
+                    changeVolumeValue = "";
+                    targetVolumeValue = "";
+                    actualVolumeData = 0;
+                    targetVolumeData = 0;
+                    changeVolumeData = 0;
+                }
+
+            }
             var chartObj = $("#js_chart");
 
             if ($('.wrapper', chartObj).length == 0) {
@@ -691,14 +695,10 @@ css.attr({
 
 
                 $("header", drawChart).append("<h2>" + sfdata.config.lableText + " <span></span></h2>").append("<p>" + topValue + "</p>");
-				$("header ", drawChart).append("<span class='uom'>" + uomText + "<span>"+ ")" + "</span></span>");
-				if(isShowActualValue=="true")
-				{
-					$(".uom ", drawChart).after("<span class='close-br'>" + " )"  + "</span>");
-				}
-                if (ALRunLife == "true")
+                $("header ", drawChart).append("<span class='uom'>" + uomText + "<span>");
+                $("header", drawChart).append("<span class='actualVal'> (" + actualVolumeValue + " " + actualUOMText + ")</span>");
 
-                {
+                if (ALRunLife == "true") {
                     $("header", drawChart).append("<div class='target-holder'/>");
                     $("header .target-holder", drawChart).append("<div>" + sfdata.config.TargetLableText + "</div><div>" + targetValue + "</div>");
 
@@ -721,8 +721,9 @@ css.attr({
 
             }
             $(".gaugeHolder").attr("data-top", gaugeLabel);
-           $("header p").html(topValue);
-			 $("header .uom").html(uomText);
+            $("header p").html(topValue);
+            $("header .uom").html(uomText);
+            $("header .actualVal").html("<span> (" + actualVolumeValue + " " + actualUOMText + ")</span>");
             $("#lableVal").html(topValue);
             if (sfdata.config.ShowChange == "true") {
                 $("footer span").html(bottomValue);
@@ -751,18 +752,9 @@ css.attr({
 
 
         }
-    if (sfdata.config.ShowChange == "true") {
-        if (bottomData < 0) {
-            if (DWPConfig != "") {
-                $(".smallSection span").addClass("lossdown");
-                $(".smallSection span").removeClass("lossup");
-                $(".smallSection span").removeClass("up");
-                $(".smallSection span").removeClass("neutral");
-                $(".smallSection header").addClass('red');
-                $(".smallSection span").removeClass("down");
-            }
-            else {
-                if (lossParameters == "true") {
+        if (sfdata.config.ShowChange == "true") {
+            if (bottomData < 0) {
+                if (DWPConfig != "") {
                     $(".smallSection span").addClass("lossdown");
                     $(".smallSection span").removeClass("lossup");
                     $(".smallSection span").removeClass("up");
@@ -771,31 +763,32 @@ css.attr({
                     $(".smallSection span").removeClass("down");
                 }
                 else {
-                    $(".smallSection span").addClass("down");
-                    $(".smallSection span").removeClass("up");
-                    $(".smallSection span").removeClass("neutral");
-                    $(".smallSection header").addClass('red');
+                    if (lossParameters == "true") {
+                        $(".smallSection span").addClass("lossdown");
+                        $(".smallSection span").removeClass("lossup");
+                        $(".smallSection span").removeClass("up");
+                        $(".smallSection span").removeClass("neutral");
+                        $(".smallSection header").addClass('red');
+                        $(".smallSection span").removeClass("down");
+                    }
+                    else {
+                        $(".smallSection span").addClass("down");
+                        $(".smallSection span").removeClass("up");
+                        $(".smallSection span").removeClass("neutral");
+                        $(".smallSection header").addClass('red');
+                    }
                 }
+
             }
-
-        }
-        else if (bottomData == 0) {
-            $(".smallSection span").addClass("neutral");
-            $(".smallSection span").removeClass("up");
-            $(".smallSection span").removeClass("down");
-
-        }
-        else {
-            if (DWPConfig != "") {
-                //log("condition matching");
-                $(".smallSection span").addClass("lossup");
-                $(".smallSection span").removeClass("lossdown");
-                $(".smallSection span").removeClass("down");
+            else if (bottomData == 0) {
+                $(".smallSection span").addClass("neutral");
                 $(".smallSection span").removeClass("up");
-                $(".smallSection span").removeClass("neutral");
+                $(".smallSection span").removeClass("down");
+
             }
             else {
-                if (lossParameters == "true") {
+                if (DWPConfig != "") {
+                    //log("condition matching");
                     $(".smallSection span").addClass("lossup");
                     $(".smallSection span").removeClass("lossdown");
                     $(".smallSection span").removeClass("down");
@@ -803,16 +796,24 @@ css.attr({
                     $(".smallSection span").removeClass("neutral");
                 }
                 else {
-                    $(".smallSection span").removeClass("down");
-                    $(".smallSection span").addClass("up");
-                    $(".smallSection span").removeClass("neutral");
+                    if (lossParameters == "true") {
+                        $(".smallSection span").addClass("lossup");
+                        $(".smallSection span").removeClass("lossdown");
+                        $(".smallSection span").removeClass("down");
+                        $(".smallSection span").removeClass("up");
+                        $(".smallSection span").removeClass("neutral");
+                    }
+                    else {
+                        $(".smallSection span").removeClass("down");
+                        $(".smallSection span").addClass("up");
+                        $(".smallSection span").removeClass("neutral");
+                    }
                 }
+
+
             }
 
-
         }
-
-    }
 
         Highcharts.setOptions({
 
@@ -900,7 +901,14 @@ css.attr({
                         color: '#fff'
                     },
                     formatter: function () {
-                        return Highcharts.numberFormat(this.value, 0)
+                        //return Highcharts.numberFormat(this.value, 0)
+
+                        if (this.value < 10000 && this.value > -10000) {
+                            return Highcharts.numberFormat(this.value, 0);
+                        }
+                        else {
+                            return this.axis.defaultLabelFormatter.call(this);
+                        }
                     }
                 },
 
@@ -917,44 +925,40 @@ css.attr({
 
             tooltip: {
                 formatter: function () {
-                   if(isShowTargetValue=="true")
-				   {
-				       if (this.point.hasOwnProperty("target")) {
-							
-							var d1 = new Date(this.x);
-							var calendarNextDay = ("00" + (d1.getDate()).toString()).slice(-2) + "-" + ("00" + (d1.getMonth() + 1).toString()).slice(-2) + "-" + d1.getFullYear();
-							return 'Date:' + calendarNextDay + '<br/>' + sfdata.config.lableText + ':'
+                    if (isShowTargetValue == "true") {
+                        if (this.point.hasOwnProperty("target")) {
+
+                            var d1 = new Date(this.x);
+                            var calendarNextDay = ("00" + (d1.getDate()).toString()).slice(-2) + "-" + ("00" + (d1.getMonth() + 1).toString()).slice(-2) + "-" + d1.getFullYear();
+                            return 'Date:' + calendarNextDay + '<br/>' + sfdata.config.lableText + ':'
 							+ Highcharts.numberFormat(this.y, 0) + '<br/> Target:'
 							+ Highcharts.numberFormat(this.point.target, 0); //Math.round(this.y) 
-						}
-						else{
-							var d1 = new Date(this.x);
-							var calendarNextDay = ("00" + (d1.getDate()).toString()).slice(-2) + "-" + ("00" + (d1.getMonth() + 1).toString()).slice(-2) + "-" + d1.getFullYear();
-							return 'Date:' + calendarNextDay + '<br/>' + sfdata.config.lableText + ':'
+                        }
+                        else {
+                            var d1 = new Date(this.x);
+                            var calendarNextDay = ("00" + (d1.getDate()).toString()).slice(-2) + "-" + ("00" + (d1.getMonth() + 1).toString()).slice(-2) + "-" + d1.getFullYear();
+                            return 'Date:' + calendarNextDay + '<br/>' + sfdata.config.lableText + ':'
 							+ Highcharts.numberFormat(this.point.actual, 0) + '<br/> Target:'
 							+ Highcharts.numberFormat(this.y, 0); //Math.round(this.y) 
-						}
-					}
-					else
-					{
-					   if(showTarget=="true")
-					   {
-							var d1 = new Date(this.x);
-							var calendarNextDay = ("00" + (d1.getDate()).toString()).slice(-2) + "-" + ("00" + (d1.getMonth() + 1).toString()).slice(-2) + "-" + d1.getFullYear();
-							return 'Date:' + calendarNextDay + '<br/>' + sfdata.config.lableText + ':'
+                        }
+                    }
+                    else {
+                        if (showTarget == "true") {
+                            var d1 = new Date(this.x);
+                            var calendarNextDay = ("00" + (d1.getDate()).toString()).slice(-2) + "-" + ("00" + (d1.getMonth() + 1).toString()).slice(-2) + "-" + d1.getFullYear();
+                            return 'Date:' + calendarNextDay + '<br/>' + sfdata.config.lableText + ':'
 							+ Highcharts.numberFormat(this.y, 0) + '<br/> Target:'
 							+ Highcharts.numberFormat(this.point.target, 0); //Math.round(this.y) 
-					   }
-					   else
-					   {
-							var d1 = new Date(this.x);
-							var calendarNextDay = ("00" + (d1.getDate()).toString()).slice(-2) + "-" + ("00" + (d1.getMonth() + 1).toString()).slice(-2) + "-" + d1.getFullYear();
-							return 'Date:' + calendarNextDay + '<br/>' + sfdata.config.lableText + ':'
+                        }
+                        else {
+                            var d1 = new Date(this.x);
+                            var calendarNextDay = ("00" + (d1.getDate()).toString()).slice(-2) + "-" + ("00" + (d1.getMonth() + 1).toString()).slice(-2) + "-" + d1.getFullYear();
+                            return 'Date:' + calendarNextDay + '<br/>' + sfdata.config.lableText + ':'
 							+ Highcharts.numberFormat(this.y, 0); //Math.round(this.y) 
-						}
-					}	
-					 
-					 
+                        }
+                    }
+
+
                 }
             },
             legend: {
@@ -1020,7 +1024,7 @@ function chooseSelection() {
         $(".dataLabels").css("display", "block")
     }
 
-   // updateColor();
+    // updateColor();
 }
 
 
@@ -1326,17 +1330,16 @@ function clickedLine() {
     chart.inverted = false;
     chart.xAxis[0].update({}, false);
     chart.yAxis[0].update({}, false);
-	chart.series[0].show();
-	chart.series[1].hide();
+    chart.series[0].show();
+    chart.series[1].hide();
     /*chart.series[0].update({
         type: 'line'
     });*/
-	if(isMultiSeries=="true")
-		{
-			chart.series[2].update({
-				type: 'line'
-			});
-		}
+    if (isMultiSeries == "true") {
+        chart.series[2].update({
+            type: 'line'
+        });
+    }
     $(".icon-holder button").removeClass("active");
     $("#line").addClass("active");
     selection = "chartHolder";
@@ -1355,15 +1358,14 @@ function clickedChart() {
     /*chart.series[0].update({
         type: 'column'
     });*/
-	chart.series[0].hide();
-		chart.series[1].show();
-    if (IsOilGasLossKPI == "true" || isWaterGainLossKPI=="true") {
+    chart.series[0].hide();
+    chart.series[1].show();
+    if (IsOilGasLossKPI == "true" || isWaterGainLossKPI == "true") {
         //log("chart.series[0].data.length" + chart.series[0].data.length);
-		                //chart.series[0].options.color =  '#319456';
-				  //chart.series[0].update(chartValue.series[0].options);
-        for (var i = 0; i < chart.series[1].options.data.length; i++)
-        {
-		if (chart.series[1].data[i].y >= 0) {
+        //chart.series[0].options.color =  '#319456';
+        //chart.series[0].update(chartValue.series[0].options);
+        for (var i = 0; i < chart.series[1].options.data.length; i++) {
+            if (chart.series[1].data[i].y >= 0) {
 
                 chart.series[1].data[i].update({ color: positiveColorCode });
             }
@@ -1372,14 +1374,13 @@ function clickedChart() {
                 chart.series[1].data[i].update({ color: negativeColorCode });
             }
         }
-		if(isMultiSeries=="true")
-		{
-			chart.series[2].update({
-				type: 'column'
-			});
-		}
-		
-		//chart.series[0].update(chartValue.series[0].options);
+        if (isMultiSeries == "true") {
+            chart.series[2].update({
+                type: 'column'
+            });
+        }
+
+        //chart.series[0].update(chartValue.series[0].options);
     }
     $(".icon-holder button").removeClass("active");
     $("#bar").addClass("active");

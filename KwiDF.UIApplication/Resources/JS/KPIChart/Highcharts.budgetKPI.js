@@ -90,8 +90,8 @@ function renderCore(sfdata) {
 
 
     //log(sfdata.config.DateFilter);
-    var month = new Date(sfdata.config.FilterDate).getUTCMonth() + 1; //months from 1-12
-    var year = new Date(sfdata.config.FilterDate).getUTCFullYear();
+    var month = new Date(sfdata.config.FilterDate.replace('-', " ")).getUTCMonth() + 1; //months from 1-12
+    var year = new Date(sfdata.config.FilterDate.replace('-', " ")).getUTCFullYear();
     refreshKPI = sfdata.config.RefreshKPI;
     configData = sfdata.config;
     var actualData = sfdata.data;
@@ -150,6 +150,7 @@ function renderCore(sfdata) {
 
         }
         else {
+            topExpenditureValue = "No Data";
             topValue = "";
             bottomValue = "";
             targetValue = 0;
@@ -322,7 +323,8 @@ function renderCore(sfdata) {
             $(".smallSection span").addClass("down");
             $(".smallSection span").removeClass("up");
             $(".smallSection span").removeClass("neutral");
-            $(".smallSection header").css("background", "red")
+            //$(".smallSection header").css("background", "red")
+            $(".smallSection header").addClass('red');
         }
         else if (bottomData == 0) {
             $(".smallSection span").addClass("neutral");

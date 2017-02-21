@@ -27,6 +27,11 @@
                 log("Marking");
                 runScript("MapMarkingFromKPI", [{ "Key": "layerName", "Value": labelText }, { "Key": "isDelete", "Value": 0 }, { "Key": "isReset", "Value": 1 }]);
             }
+            if (isWellEvents == "true") {
+                log("Marking");
+                setDocumentProperty("CategoryConditionEWEActual", selectedCategoryActual + " - " + labelText);
+                runScript("MapMarkingFromKPI", [{ "Key": "layerName", "Value": labelText }, { "Key": "isDelete", "Value": 0 }, { "Key": "isReset", "Value": 1 }]);
+            }
 
         } else {
             $(".overlay", $(this)).hide();
@@ -49,6 +54,12 @@
                 runScript("DynamicProductionCategory", [{ "Key": "actualValue", "Value": actual }, { "Key": "targetValue", "Value": "" }, { "Key": "isDelete", "Value": 1 }]);
             }
             if (isWellActivities == "true") {
+                runScript("MapMarkingFromKPI", [{ "Key": "layerName", "Value": labelText }, { "Key": "isDelete", "Value": 1 }, { "Key": "isReset", "Value": 1 }]);
+            }
+            if (isWellEvents == "true") {
+                log("Marking");
+
+                setDocumentProperty("CategoryConditionEWEActual", selectedCategoryActual + " - " + labelText);
                 runScript("MapMarkingFromKPI", [{ "Key": "layerName", "Value": labelText }, { "Key": "isDelete", "Value": 1 }, { "Key": "isReset", "Value": 1 }]);
             }
 
@@ -101,6 +112,7 @@ var labelText = "";
 var targetSeries = [];
 var isMultiSeries = "";
 var isShowActualValue = "";
+var isWellEvents = "";
 var actualVolumeValue = "";
 var changeVolumeValue = "";
 var targetVolumeValue = "";
@@ -122,7 +134,7 @@ function renderCore(sfdata) {
         href: UrlCSS
     });
 
-    var DateValue = new Date(sfdata.config.DateFilter);
+    var DateValue = new Date(sfdata.config.DateFilter.replace('-', " "));
     var DateValueFormatted = DateValue.valueOf();
     var nextDate = DateValue;
     var numberOfDaysToAdd = 1;
@@ -169,15 +181,18 @@ function renderCore(sfdata) {
     if (sfdata.config.hasOwnProperty("IsShowActualValue")) {
         isShowActualValue = sfdata.config.IsShowActualValue;
     }
+    if (sfdata.config.hasOwnProperty("IsWellEvents")) {
+        isWellEvents = sfdata.config.IsWellEvents;
+    }
     if (sfdata.config.RefreshKPI == "true") {
         dateRange = sfdata.config.DateRange;
 
-        var date2 = new Date(sfdata.config.DateFilter);
+        var date2 = new Date(sfdata.config.DateFilter.replace('-', " "));
         date2.setDate(date2.getDate() - dateRange);
 
         var actualData = sfdata.data;
         actualData = actualData.filter(function (el) {
-            DateValue = new Date(sfdata.config.DateFilter);
+            DateValue = new Date(sfdata.config.DateFilter.replace('-', " "));
             DateValueFormatted = DateValue.valueOf();
             startDateValue = date2.valueOf();
 
@@ -412,9 +427,13 @@ function renderCore(sfdata) {
                 //$("#footer").after(dataLabel);
 
                 $("footer", drawChart).append("<div class='icon-holder'/>");
+                $("footer .icon-holder", drawChart).append('<button onclick="clickMaximize()" id="btnMaximize" style="display:none;"><i class="fa fa-window-maximize" aria-hidden="true"></i></button>');
+                $("footer .icon-holder", drawChart).append('<button onclick="clickMinimize()" id="btnMinimize" style="display:none;"><i class="fa fa-expand" aria-hidden="true"></i></button>');
+
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedGuage()"  class="active" id="guage"><i class="fa fa-tachometer" aria-hidden="true"></i></button>');
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedLine()"  id="line"><i class="fa fa-line-chart" aria-hidden="true"></i></button>');
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedChart()" id="bar"><i class="fa fa-bar-chart" aria-hidden="true"></i></button>');
+
                 //$("footer .icon-holder",drawChart).append('<button onclick="clickedCurrency()"  id="currency"><i class="fa fa-arrows-h" aria-hidden="true"></i></button>');
                 drawChart.append("<div class='overlay'/>");
 
@@ -648,6 +667,10 @@ function renderCore(sfdata) {
                 //   $("#footer").after(dataLabel);
 
                 $("footer", drawChart).append("<div class='icon-holder'/>");
+
+                $("footer .icon-holder", drawChart).append('<button onclick="clickMaximize()" id="btnMaximize" style="display:none;"><i class="fa fa-window-maximize" aria-hidden="true"></i></button>');
+                $("footer .icon-holder", drawChart).append('<button onclick="clickMinimize()" id="btnMinimize" style="display:none;"><i class="fa fa-expand" aria-hidden="true"></i></button>');
+
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedGuage()"  class="active" id="guage"><i class="fa fa-tachometer" aria-hidden="true"></i></button>');
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedLine()"  id="line"><i class="fa fa-line-chart" aria-hidden="true"></i></button>');
                 $("footer .icon-holder", drawChart).append('<button onclick="clickedChart()" id="bar"><i class="fa fa-bar-chart" aria-hidden="true"></i></button>');
@@ -834,7 +857,14 @@ function renderCore(sfdata) {
                         color: '#fff'
                     },
                     formatter: function () {
-                        return Highcharts.numberFormat(this.value, 0)
+                        //return Highcharts.numberFormat(this.value, 0)
+                        if (this.value < 10000 && this.value > -10000) {
+                            return Highcharts.numberFormat(this.value, 0);
+                        }
+                        else {
+                            return this.axis.defaultLabelFormatter.call(this);
+                        }
+
                     }
                 },
 
@@ -896,17 +926,33 @@ function renderCore(sfdata) {
 
         var smallSecObj = $('.smallSection', drawChart);
 
-        if (selectedCategoryActual != "" && selectedCategoryActual != undefined) {
-            if (selectedCategoryActual.indexOf(sfdata.columns[2]) > -1) {
-                kpiactive = true;
+        if (isWellEvents == "true") {
+            if (selectedCategoryActual != "" && selectedCategoryActual != undefined) {
+                if (selectedCategoryActual.indexOf(labelText) > -1) {
+                    kpiactive = true;
 
+                }
+                else {
+                    kpiactive = false;
+                }
             }
             else {
                 kpiactive = false;
             }
         }
         else {
-            kpiactive = false;
+            if (selectedCategoryActual != "" && selectedCategoryActual != undefined) {
+                if (selectedCategoryActual.indexOf(sfdata.columns[2]) > -1) {
+                    kpiactive = true;
+
+                }
+                else {
+                    kpiactive = false;
+                }
+            }
+            else {
+                kpiactive = false;
+            }
         }
         if (kpiactive) {
             $('.wrapper', chartObj).addClass('selected');
@@ -1025,6 +1071,11 @@ function createCustomGauge() {
             }
         }
 
+    }
+    if (minValue == 0 && maxValue == 0) {
+        minValue = 0;
+        maxValue = 100;
+        lastTargetData = 0;
     }
     // log("=================================");
     // log("actualValue " + lastTopData);
@@ -1258,7 +1309,16 @@ function clickedGuage() {
     selection = "gaugeHolder";
     selectionType = "";
 }
-
+function clickMaximize() {
+    $("#btnMinimize").css("display", "block")
+    $("#btnMaximize").css("display", "none")
+    runScript("Maximize Visualization", [{ "Key": "title", "Value": "Calculated Production" }]);
+}
+function clickMinimize() {
+    $("#btnMinimize").css("display", "none")
+    $("#btnMaximize").css("display", "block")
+    runScript("Minimize Visualization", [{ "Key": "title", "Value": "Calculated Production" }]);
+}
 function clickedLine() {
     $('.chartHolder').removeClass("pushBack");
     $('.gaugeHolder').addClass("pushBack");

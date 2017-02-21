@@ -1,4 +1,4 @@
-/*
+distance/*
 Copyright (c) 2016 TIBCO Software Inc
 
 THIS SOFTWARE IS PROVIDED BY TIBCO SOFTWARE INC. ''AS IS'' AND ANY EXPRESS OR
@@ -38,9 +38,8 @@ function renderCore(sfdata) {
     markedAssets = [];
     titleTooltip = sfdata.config.title;
 
-    var DateValue = new Date(sfdata.config.DateFilter);
-    var DateValueFormatted = DateValue.valueOf();
-    var nextDate = new Date(sfdata.config.DateFilter);
+    var DateValue = new Date(sfdata.config.DateFilter.replace('-', " "));
+    var nextDate = new Date(sfdata.config.DateFilter.replace('-', " "));
     var numberOfDaysToAdd = 1;
     nextDate.setDate(nextDate.getDate() + numberOfDaysToAdd);
     var nextDateValueFormatted = nextDate.valueOf();
@@ -49,7 +48,7 @@ function renderCore(sfdata) {
 
     //   log("actualDataBefore" + actualData.length);
     actualData = actualData.filter(function (el) {
-        DateValue = new Date(sfdata.config.DateFilter);
+        DateValue = new Date(sfdata.config.DateFilter.replace('-', " "));
         DateValueFormatted = DateValue.valueOf();
         var formatedDate = el.items[3].replace("/Date(", "").replace(")/", "").valueOf();
         if (formatedDate >= DateValueFormatted && formatedDate < nextDate) {
